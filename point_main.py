@@ -9,7 +9,6 @@ from discord.ui import View, button, Select, Modal, InputText
 from discord import Embed, ButtonStyle
 from dotenv import load_dotenv
 
-
 load_dotenv()
 command_flag = os.getenv("SEARCHFI_BOT_FLAG")
 bot_token = os.getenv("BOT_TOKEN")
@@ -55,43 +54,43 @@ class WelcomeView(View):
             cursor.close()
             connection.close()
 
-    # @button(label="My Tickets", style=ButtonStyle.primary)
-    # async def button_my_tickets(self, _, interaction):
-    #     guild_id = str(interaction.guild_id)
-    #     user_id = str(interaction.user.id)
-    #
-    #     connection = self.db.get_connection()
-    #     cursor = connection.cursor()
-    #     try:
-    #         cursor.execute(
-    #             query.select_guild_user_tickets(),
-    #             (guild_id, user_id,)
-    #         )
-    #         all_user_tickets = cursor.fetchall()
-    #         if not all_user_tickets:
-    #             description = "```ℹ️ There is no ticket you applied for.```"
-    #             await interaction.response.send_message(description, ephemeral=True)
-    #             return
-    #
-    #         description = "My tickets:\n\n"
-    #         for user_ticket in all_user_tickets:
-    #             description += f"""`{user_ticket.get('name')}`     x{user_ticket.get('tickets')}\n"""
-    #         embed = make_embed({
-    #             'title': '',
-    #             'description': description,
-    #             'color': 0xFFFFFF,
-    #         })
-    #         await interaction.response.send_message(
-    #             embed=embed,
-    #             ephemeral=True
-    #         )
-    #     except Exception as e:
-    #         description = "```❌ There was a problem loading the ticket you applied for.```"
-    #         await interaction.response.send_message(description, ephemeral=True)
-    #         logging.error(f'button_my_tickets error: {e}')
-    #     finally:
-    #         cursor.close()
-    #         connection.close()
+    @button(label="My Tickets", style=ButtonStyle.primary)
+    async def button_my_tickets(self, _, interaction):
+        guild_id = str(interaction.guild_id)
+        user_id = str(interaction.user.id)
+
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(
+                query.select_guild_user_tickets(),
+                (guild_id, user_id,)
+            )
+            all_user_tickets = cursor.fetchall()
+            if not all_user_tickets:
+                description = "```ℹ️ There is no ticket you applied for.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                return
+
+            description = "My tickets:\n\n"
+            for user_ticket in all_user_tickets:
+                description += f"""`{user_ticket.get('name')}`     x{user_ticket.get('tickets')}\n"""
+            embed = make_embed({
+                'title': '',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+            await interaction.response.send_message(
+                embed=embed,
+                ephemeral=True
+            )
+        except Exception as e:
+            description = "```❌ There was a problem loading the ticket you applied for.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logging.error(f'button_my_tickets error: {e}')
+        finally:
+            cursor.close()
+            connection.close()
 
     @button(label="Check Balance", style=ButtonStyle.green)
     async def button_check_balance(self, _, interaction):
@@ -102,15 +101,15 @@ class WelcomeView(View):
         cursor = connection.cursor()
         try:
             cursor.execute(
-                query.select_guild_user_tokens(),
+                query.select_guild_user_points(),
                 (guild_id, user_id,)
             )
             user = cursor.fetchone()
             if not user:
-                user_tokens = 0
+                user_points = 0
             else:
-                user_tokens = format(int(user.get('tokens', 0)), ',')
-            description = f"You have a total of `{user_tokens}` points"
+                user_points = format(int(user.get('points', 0)), ',')
+            description = f"You have a total of `{user_points}` points"
             embed = make_embed({
                 'title': '💰 Balance 💰',
                 'description': description,
@@ -123,7 +122,7 @@ class WelcomeView(View):
         except Exception as e:
             description = "```❌ There was a problem loading data.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'button_my_tokens error: {e}')
+            logging.error(f'button_my_points error: {e}')
         finally:
             cursor.close()
             connection.close()
@@ -165,7 +164,7 @@ class ProductSelect(Select):
             'color': 0xFFFFFF,
             'image_url': selected_product.get('image'),
         })
-        embed.add_field(name="Price", value=f"```{selected_product.get('price')} tokens```", inline=True)
+        embed.add_field(name="Price", value=f"```{selected_product.get('price')} points```", inline=True)
 
         await interaction.response.send_message(
             embed=embed,
@@ -201,22 +200,22 @@ class BuyButton(View):
                 return
 
             cursor.execute(
-                query.select_guild_user_tokens(),
+                query.select_guild_user_points(),
                 (guild_id, user_id,)
             )
             user = cursor.fetchone()
 
             if user:
-                user_tokens = int(user.get('tokens'))
+                user_points = int(user.get('points'))
             else:
-                user_tokens = 0
+                user_points = 0
 
-            if user_tokens < price:
-                description = "```❌ Not enough tokens.```"
+            if user_points < price:
+                description = "```❌ Not enough points.```"
                 await interaction.response.send_message(description, ephemeral=True)
                 return
             else:
-                user_tokens -= price
+                user_points -= price
 
                 cursor.execute(
                     query.insert_guild_user_ticket(),
@@ -224,8 +223,13 @@ class BuyButton(View):
                 )
 
                 cursor.execute(
-                    query.update_guild_user_token(),
-                    (user_tokens, guild_id, user_id,)
+                    query.update_guild_user_point(),
+                    (user_points, guild_id, user_id,)
+                )
+
+                cursor.execute(
+                    query.insert_guild_user_point_logs(),
+                    (guild_id, user_id, price * (-1), 'item-buy', user_id)
                 )
 
                 description = f"You applied for the `{self.product.get('name')}` item."
@@ -395,6 +399,119 @@ async def add_item(ctx):
     })
     view = AddItemButton()
     await ctx.reply(embed=embed, view=view, mention_author=True)
+
+
+@bot.command(
+    name='give-rewards'
+)
+@commands.has_any_role('SF.Mod')
+async def give_rewards(ctx, user_tag, amount):
+    try:
+        params = {
+            'user_id': user_tag[2:-1],
+            'point': int(amount),
+            'action_user_id': ctx.author.id,
+            'action_type': 'give-rewards',
+        }
+
+        result = await save_rewards(ctx, params)
+
+        if result.get('success') > 0:
+            description = f"Successfully gave `{params.get('point')}` points to {user_tag}\n\n" \
+                          f"{user_tag} points: `{result.get('before_user_points')}` -> `{result.get('after_user_points')}`"
+            embed = make_embed({
+                'title': '✅ Point Given',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+            await ctx.reply(embed=embed, mention_author=True)
+    except Exception as e:
+        logging.error(f'give_rewards error: {e}')
+
+
+@bot.command(
+    name='remove-rewards'
+)
+@commands.has_any_role('SF.Mod')
+async def remove_rewards(ctx, user_tag, amount):
+    try:
+        params = {
+            'user_id': user_tag[2:-1],
+            'point': int(amount) * (-1),
+            'action_user_id': ctx.author.id,
+            'action_type': 'remove-rewards',
+        }
+
+        result = await save_rewards(ctx, params)
+
+        if result.get('success') > 0:
+            description = f"Successfully removed `{params.get('point')}` points to {user_tag}\n\n" \
+                          f"{user_tag} points: `{result.get('before_user_points')}` -> `{result.get('after_user_points')}`"
+            embed = make_embed({
+                'title': '✅ Point Removed',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+            await ctx.reply(embed=embed, mention_author=True)
+    except Exception as e:
+        logging.error(f'remove_rewards error: {e}')
+
+
+async def save_rewards(ctx, params):
+    guild_id = str(ctx.guild.id)
+    connection = db.get_connection()
+    cursor = connection.cursor()
+    result = 0
+    try:
+        user_id = params.get('user_id')
+        point = params.get('point')
+        action_user_id = params.get('action_user_id')
+        action_type = params.get('action_type')
+
+        cursor.execute(
+            query.select_guild_user_points(),
+            (guild_id, user_id,)
+        )
+        user = cursor.fetchone()
+
+        before_user_points = user.get('points')
+        if user:
+            user_points = int(before_user_points)
+            user_points += point
+
+            if user_points < 0:
+                user_points = 0
+        else:
+            user_points = 0
+
+        cursor.execute(
+            query.update_guild_user_point(),
+            (user_points, guild_id, user_id,)
+        )
+
+        cursor.execute(
+            query.insert_guild_user_point_logs(),
+            (guild_id, user_id, point, action_type, action_user_id)
+        )
+
+        connection.commit()
+        result = {
+            'success': 1,
+            'before_user_points': before_user_points,
+            'after_user_points': user_points
+        }
+    except Exception as e:
+        logging.error(f'save_rewards error: {e}')
+        connection.rollback()
+        result = {
+            'success': 0,
+            'before_user_points': 0,
+            'after_user_points': 0
+        }
+    finally:
+        cursor.close()
+        connection.close()
+        return result
 
 
 bot.run(bot_token)
