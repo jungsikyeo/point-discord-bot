@@ -181,11 +181,34 @@ class BuyButton(View):
 
     @button(label="Buy", style=discord.ButtonStyle.primary, custom_id="buy_button")
     async def button_buy(self, _, interaction):
+        await interaction.response.send_modal(modal=BuyAmountModal(db, self.product))
+
+
+class BuyAmountModal(Modal):
+    def __init__(self, db, product):
+        super().__init__(title="Buy Amount")
+        self.buy_amount = InputText(label="Amount",
+                                    placeholder="1",
+                                    custom_id="amount", )
+        self.add_item(self.buy_amount)
+        self.db = db
+        self.product = product
+
+    async def callback(self, interaction):
         guild_id = str(interaction.guild_id)
         user_id = str(interaction.user.id)
         connection = self.db.get_connection()
         cursor = connection.cursor()
+
         try:
+            try:
+                buy_amount = int(self.buy_amount.value)
+            except Exception as e:
+                description = "```❌ Amount must be entered numerically.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'BuyAmountModal price error: {e}')
+                return
+
             cursor.execute(
                 query.select_guild_product(),
                 (guild_id, self.product.get('id'),)
@@ -210,29 +233,30 @@ class BuyButton(View):
             else:
                 user_points = 0
 
-            if user_points < price:
+            if user_points < (price * buy_amount):
                 description = "```❌ Not enough points.```"
                 await interaction.response.send_message(description, ephemeral=True)
                 return
             else:
-                user_points -= price
+                loop = buy_amount
+                while loop > 0:
+                    user_points -= price
 
-                cursor.execute(
-                    query.insert_guild_user_ticket(),
-                    (guild_id, user_id, product.get('id'),)
-                )
+                    cursor.execute(
+                        query.insert_guild_user_ticket(),
+                        (guild_id, user_id, product.get('id'),)
+                    )
+                    cursor.execute(
+                        query.update_guild_user_point(),
+                        (user_points, guild_id, user_id,)
+                    )
+                    cursor.execute(
+                        query.insert_guild_user_point_logs(),
+                        (guild_id, user_id, price * (-1), 'item-buy', user_id)
+                    )
+                    loop -= 1
 
-                cursor.execute(
-                    query.update_guild_user_point(),
-                    (user_points, guild_id, user_id,)
-                )
-
-                cursor.execute(
-                    query.insert_guild_user_point_logs(),
-                    (guild_id, user_id, price * (-1), 'item-buy', user_id)
-                )
-
-                description = f"You applied for the `{self.product.get('name')}` item."
+                description = f"You applied for the `{self.product.get('name')}` x{buy_amount} item."
                 embed = make_embed({
                     'title': '✅ Item buy completed',
                     'description': description,
@@ -244,10 +268,10 @@ class BuyButton(View):
                 )
             connection.commit()
         except Exception as e:
-            description = "```❌ There was a problem applying for the item.```"
-            await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'buy error: {e}')
             connection.rollback()
+            description = "```❌ There was a problem processing the data.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logging.error(f'AddItemModal db error: {e}')
         finally:
             cursor.close()
             connection.close()
