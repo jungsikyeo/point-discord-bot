@@ -124,8 +124,8 @@ def select_guild_product_count():
 
 def insert_guild_product():
     return """
-        insert into products (guild_id, name, image, price, quantity)
-        values (%s, %s, %s, %s, %s)
+        insert into products (guild_id, round, name, image, price, quantity)
+        values (%s, %s, %s, %s, %s, %s)
     """
 
 

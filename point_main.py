@@ -224,6 +224,7 @@ class BuyQuantityModal(Modal):
             else:
                 description = "```❌ There was a problem applying for the item.```"
                 await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'BuyQuantityModal price error: There was a problem applying for the item.')
                 return
 
             cursor.execute(
@@ -240,6 +241,7 @@ class BuyQuantityModal(Modal):
             if user_points < (price * buy_quantity):
                 description = "```❌ Not enough points.```"
                 await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'BuyQuantityModal price error: Not enough points.')
                 return
             else:
                 loop = buy_quantity
@@ -275,7 +277,7 @@ class BuyQuantityModal(Modal):
             connection.rollback()
             description = "```❌ There was a problem processing the data.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'AddItemModal db error: {e}')
+            logging.error(f'BuyQuantityModal db error: {e}')
         finally:
             cursor.close()
             connection.close()
@@ -377,7 +379,7 @@ class AddItemModal(Modal):
 
             cursor.execute(
                 query.insert_guild_product(),
-                (guild_id, name, image, price, quantity,)
+                (guild_id, store.get('max_round'), name, image, price, quantity,)
             )
             description = f"`{name}` has been registered as a item."
             embed = make_embed({
