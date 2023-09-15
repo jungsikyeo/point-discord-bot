@@ -580,14 +580,19 @@ async def store_main(ctx):
         )
         products = cursor.fetchall()
 
+        if not store:
+            store = {
+                'title': '🎁 SearchFi Store 🎁',
+                'description': 'This is SearchFi Store!',
+                'image_url': 'https://images-ext-2.discordapp.net/external/OG6ABL87frdJQcTXA5shV_LcAZAmEv-vn9GUsx3TXrg/%3Fraw%3Dtrue/https/github.com/vmpyre/BotsOnDisplay/blob/main/twitter%2520activity%2520rewards/Blue%2520Modern%2520Futuristic%2520Desktop%2520Wallpaper%2520%282%29.gif?width=2022&height=1138',
+                'round': 0,
+            }
+
         embed = make_embed({
-            'title': store.get('title', '🎁 SearchFi Store 🎁'),
+            'title': store.get('title'),
             'description': store.get('description'),
             'color': 0xFFFFFF,
-            'image_url': store.get(
-                'image_url',
-                'https://media.discordapp.net/attachments/1069466892101746740/1148837901422035006/3c914e942de4d39a.gif?width=1920&height=1080'
-            ),
+            'image_url': store.get('image_url'),
         })
 
         items = ""
