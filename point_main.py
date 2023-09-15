@@ -4,7 +4,7 @@ import requests
 import db_pool
 import db_query as query
 import logging
-from logging_config import setup_logging
+import sys
 from discord.ext import commands
 from discord.ui import View, button, Select, Modal, InputText
 from discord import Embed, ButtonStyle, InputTextStyle
@@ -20,9 +20,12 @@ mysql_passwd = os.getenv("MYSQL_PASSWD")
 mysql_db = os.getenv("MYSQL_DB")
 
 
-setup_logging()
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
 logger = logging.getLogger(__name__)
-
 logger.info("This is an info message from point_main")
 
 
