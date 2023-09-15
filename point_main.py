@@ -4,6 +4,7 @@ import requests
 import logging
 import db_pool
 import db_query as query
+import sys
 from discord.ext import commands
 from discord.ui import View, button, Select, Modal, InputText
 from discord import Embed, ButtonStyle, InputTextStyle
@@ -21,7 +22,7 @@ mysql_db = os.getenv("MYSQL_DB")
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler()]
+    handlers=[logging.StreamHandler(sys.stdout)]
 )
 
 
