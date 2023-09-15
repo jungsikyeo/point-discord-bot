@@ -19,12 +19,18 @@ mysql_id = os.getenv("MYSQL_ID")
 mysql_passwd = os.getenv("MYSQL_PASSWD")
 mysql_db = os.getenv("MYSQL_DB")
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
+# logging.basicConfig(
+#     level=logging.DEBUG,
+#     format='%(asctime)s - %(levelname)s - %(message)s',
+#     handlers=[logging.StreamHandler(sys.stdout)]
+# )
 
+logger = logging.getLogger('my_logger')
+logger.setLevel(logging.INFO)
+
+handler = logging.StreamHandler(sys.stdout)
+logger.addHandler(handler)
+logger.info("This is a log message.")
 
 class WelcomeView(View):
     def __init__(self, db):
