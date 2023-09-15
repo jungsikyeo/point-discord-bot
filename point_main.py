@@ -23,6 +23,8 @@ mysql_db = os.getenv("MYSQL_DB")
 setup_logging()
 logger = logging.getLogger(__name__)
 
+logger.info("This is an info message from point_main")
+
 
 class WelcomeView(View):
     def __init__(self, db):
