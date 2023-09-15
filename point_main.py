@@ -6,7 +6,7 @@ import db_pool
 import db_query as query
 from discord.ext import commands
 from discord.ui import View, button, Select, Modal, InputText
-from discord import Embed, ButtonStyle
+from discord import Embed, ButtonStyle, InputTextStyle
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,7 +26,7 @@ class WelcomeView(View):
         super().__init__(timeout=None)
         self.db = db
 
-    @button(label="View Store item", style=ButtonStyle.danger)
+    @button(label="View Store Item", style=ButtonStyle.danger)
     async def button_items(self, _, interaction):
         guild_id = str(interaction.guild_id)
         connection = self.db.get_connection()
@@ -54,7 +54,7 @@ class WelcomeView(View):
             cursor.close()
             connection.close()
 
-    @button(label="My Tickets", style=ButtonStyle.primary)
+    @button(label="Check Tickets", style=ButtonStyle.primary)
     async def button_my_tickets(self, _, interaction):
         guild_id = str(interaction.guild_id)
         user_id = str(interaction.user.id)
@@ -72,11 +72,11 @@ class WelcomeView(View):
                 await interaction.response.send_message(description, ephemeral=True)
                 return
 
-            description = "My tickets:\n\n"
+            description = ""
             for user_ticket in all_user_tickets:
                 description += f"""`{user_ticket.get('name')}`     x{user_ticket.get('tickets')}\n"""
             embed = make_embed({
-                'title': '',
+                'title': f"My Tickets - {all_user_tickets[0].get('round')}Round",
                 'description': description,
                 'color': 0xFFFFFF,
             })
@@ -134,10 +134,10 @@ class ProductSelectView(View):
         self.db = db
         self.all_products = all_products
         self.options = [discord.SelectOption(
-                            label=f"""{product.get('name')}""",
-                            value=product.get('name'),
-                            description=f"""Price: {product.get('price')}""",
-                        ) for product in all_products]
+            label=f"""{product.get('name')}""",
+            value=product.get('name'),
+            description=f"""Price: {product.get('price')}""",
+        ) for product in all_products]
         self.add_item(ProductSelect(self.db, self.options, self.all_products))
 
 
@@ -181,16 +181,16 @@ class BuyButton(View):
 
     @button(label="Buy", style=discord.ButtonStyle.primary, custom_id="buy_button")
     async def button_buy(self, _, interaction):
-        await interaction.response.send_modal(modal=BuyAmountModal(db, self.product))
+        await interaction.response.send_modal(modal=BuyQuantityModal(db, self.product))
 
 
-class BuyAmountModal(Modal):
+class BuyQuantityModal(Modal):
     def __init__(self, db, product):
-        super().__init__(title="Buy Amount")
-        self.buy_amount = InputText(label="Amount",
-                                    placeholder="1",
-                                    custom_id="amount", )
-        self.add_item(self.buy_amount)
+        super().__init__(title="Buy Quantity")
+        self.buy_quantity = InputText(label="Quantity",
+                                      placeholder="1",
+                                      custom_id="quantity", )
+        self.add_item(self.buy_quantity)
         self.db = db
         self.product = product
 
@@ -202,11 +202,11 @@ class BuyAmountModal(Modal):
 
         try:
             try:
-                buy_amount = int(self.buy_amount.value)
+                buy_quantity = int(self.buy_quantity.value)
             except Exception as e:
-                description = "```❌ Amount must be entered numerically.```"
+                description = "```❌ Quantity must be entered numerically.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'BuyAmountModal price error: {e}')
+                logging.error(f'BuyQuantityModal price error: {e}')
                 return
 
             cursor.execute(
@@ -233,18 +233,18 @@ class BuyAmountModal(Modal):
             else:
                 user_points = 0
 
-            if user_points < (price * buy_amount):
+            if user_points < (price * buy_quantity):
                 description = "```❌ Not enough points.```"
                 await interaction.response.send_message(description, ephemeral=True)
                 return
             else:
-                loop = buy_amount
+                loop = buy_quantity
                 while loop > 0:
                     user_points -= price
 
                     cursor.execute(
                         query.insert_guild_user_ticket(),
-                        (guild_id, user_id, product.get('id'),)
+                        (user_id, product.get('id'), guild_id,)
                     )
                     cursor.execute(
                         query.update_guild_user_point(),
@@ -256,7 +256,7 @@ class BuyAmountModal(Modal):
                     )
                     loop -= 1
 
-                description = f"You applied for the `{self.product.get('name')}` x{buy_amount} item."
+                description = f"You applied for the `{self.product.get('name')}` x{buy_quantity} item."
                 embed = make_embed({
                     'title': '✅ Item buy completed',
                     'description': description,
@@ -299,9 +299,13 @@ class AddItemModal(Modal):
         self.item_price = InputText(label="Price",
                                     placeholder="100",
                                     custom_id="price", )
+        self.item_quantity = InputText(label="Quantity",
+                                       placeholder="1",
+                                       custom_id="quantity", )
         self.add_item(self.item_name)
         self.add_item(self.item_image)
         self.add_item(self.item_price)
+        self.add_item(self.item_quantity)
         self.db = db
 
     async def callback(self, interaction):
@@ -310,6 +314,18 @@ class AddItemModal(Modal):
         cursor = connection.cursor()
 
         try:
+            cursor.execute(
+                query.select_guild_store(),
+                (guild_id,)
+            )
+            store = cursor.fetchone()
+
+            if store.get('round_status') != 'OPEN':
+                description = "```❌ No rounds have been opened in the store yet.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'AddItemModal round_status error: No rounds have been opened in the store yet.')
+                return
+
             name = self.item_name.value
             cursor.execute(
                 query.select_guild_product_count(),
@@ -341,9 +357,17 @@ class AddItemModal(Modal):
                 logging.error(f'AddItemModal price error: {e}')
                 return
 
+            try:
+                quantity = int(self.item_quantity.value)
+            except Exception as e:
+                description = "```❌ Quantity must be entered numerically.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'AddItemModal quantity error: {e}')
+                return
+
             cursor.execute(
                 query.insert_guild_product(),
-                (guild_id, name, image, price,)
+                (guild_id, name, image, price, quantity,)
             )
             description = f"`{name}` has been registered as a item."
             embed = make_embed({
@@ -361,6 +385,121 @@ class AddItemModal(Modal):
             description = "```❌ There was a problem processing the data.```"
             await interaction.response.send_message(description, ephemeral=True)
             logging.error(f'AddItemModal db error: {e}')
+        finally:
+            cursor.close()
+            connection.close()
+
+
+class StoreSettingButton(View):
+    def __init__(self, store):
+        super().__init__()
+        self.store = store
+
+    @button(label="Change Setting", style=discord.ButtonStyle.primary, custom_id="button_change_setting")
+    async def button_store_information(self, _, interaction):
+        await interaction.response.send_modal(modal=StoreSettingModal(db, self.store))
+
+
+class StoreSettingModal(Modal):
+    def __init__(self, db, store):
+        super().__init__(title="Store Setting")
+        self.db = db
+        self.store_title = InputText(label="Store Title",
+                                     placeholder="🎁 SearchFi Store 🎁",
+                                     value=store.get('title', ''),
+                                     custom_id="title",
+                                     max_length=100, )
+        self.store_description = InputText(label="Store Description",
+                                           placeholder="This is a SearchFi Store.",
+                                           value=store.get('description', ''),
+                                           custom_id="description",
+                                           max_length=4000,
+                                           style=InputTextStyle.multiline)
+        self.store_image_url = InputText(label="Store Image URL",
+                                         placeholder="https://example.com/image.jpg",
+                                         value=store.get('image_url', ''),
+                                         custom_id="image_url", )
+        self.store_round = InputText(label="Store Round",
+                                     placeholder="1",
+                                     value=store.get('max_round', ''),
+                                     custom_id="round", )
+        self.add_item(self.store_title)
+        self.add_item(self.store_description)
+        self.add_item(self.store_image_url)
+        self.add_item(self.store_round)
+
+    async def callback(self, interaction):
+        guild_id = str(interaction.guild_id)
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+        try:
+            store_title = self.store_title.value
+            store_description = self.store_description.value
+
+            try:
+                store_image_url = self.store_image_url.value
+                response = requests.head(store_image_url)
+                if response.status_code == 200 and 'image' in response.headers.get('Content-Type'):
+                    pass
+            except Exception as e:
+                description = "```❌ You must enter a valid image URL.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'StoreSettingModal image error: {e}')
+                return
+
+            try:
+                store_round = int(self.store_round.value)
+            except Exception as e:
+                connection.rollback()
+                description = "```❌ Round must be entered numerically.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'StoreSettingModal Round error: {e}')
+                return
+
+            cursor.execute(
+                query.select_guild_store_round(),
+                (guild_id,)
+            )
+            store = cursor.fetchone()
+
+            if store.get('round_status') == 'OPEN':
+                description = "```❌ Round cannot be modified as the prize draw is still in progress.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'StoreSettingModal round_status error')
+                return
+
+            next_round = int(store.get('max_round')) + 1
+            if store_round != next_round:
+                description = f"```❌ Next round is {next_round}round.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'StoreSettingModal next_round error')
+                return
+
+            cursor.execute(
+                query.insert_guild_store_round(),
+                (guild_id, store_round, 'OPEN',)
+            )
+            cursor.execute(
+                query.update_guild_store(),
+                (guild_id, store_title, store_description, store_image_url,)
+            )
+
+            description = f"Store information has been saved."
+            embed = make_embed({
+                'title': '✅ Store save complete',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+            await interaction.response.send_message(
+                embed=embed,
+                ephemeral=True
+            )
+            connection.commit()
+        except Exception as e:
+            connection.rollback()
+            description = "```❌ There was a problem processing the data.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logging.error(f'StoreSettingModal db error: {e}')
         finally:
             cursor.close()
             connection.close()
@@ -384,7 +523,46 @@ def make_embed(embed_info):
     return embed
 
 
-@bot.command()
+@bot.command(
+    name='store-setting'
+)
+async def store_setting(ctx):
+    guild_id = str(ctx.guild.id)
+    connection = db.get_connection()
+    cursor = connection.cursor()
+    store = {}
+    try:
+        cursor.execute(
+            query.select_guild_store_round(),
+            (guild_id,)
+        )
+        store = cursor.fetchone()
+    except Exception as e:
+        logging.error(f'store_setting db error: {e}')
+    finally:
+        cursor.close()
+        connection.close()
+
+    description = f"⚙️ Press the `Change Setting` button to setting the store.\n\n"
+    embed = make_embed({
+        'title': 'Current Store Setting Information',
+        'description': description,
+        'color': 0xFFFFFF,
+    })
+    embed.add_field(name="Store Title", value=store.get('title', 'Not yet.'), inline=False)
+    embed.add_field(name="Store Description", value=f"```{store.get('description', 'Not yet.')}```", inline=False)
+    embed.add_field(name="Store Round", value=f"{store.get('max_round', 'Not yet.')} "
+                                              f"({store.get('round_status', 'Not yet')})", inline=False)
+    embed.add_field(name="Store Image URL", value="")
+    embed.set_image(url=store.get('image_url', 'Not yet.'))
+
+    view = StoreSettingButton(store)
+    await ctx.reply(embed=embed, view=view, mention_author=True)
+
+
+@bot.command(
+    name='store-main'
+)
 async def store_main(ctx):
     guild_id = str(ctx.guild.id)
     connection = db.get_connection()
@@ -395,15 +573,29 @@ async def store_main(ctx):
             (guild_id,)
         )
         store = cursor.fetchone()
+
+        cursor.execute(
+            query.select_guild_products(),
+            (guild_id,)
+        )
+        products = cursor.fetchall()
+
         embed = make_embed({
-            'title': store.get('title', '🎁 SearchFi Shop 🎁'),
+            'title': store.get('title', '🎁 SearchFi Store 🎁'),
             'description': store.get('description'),
             'color': 0xFFFFFF,
             'image_url': store.get(
-                            'image_url',
-                            'https://media.discordapp.net/attachments/1069466892101746740/1148837901422035006/3c914e942de4d39a.gif?width=1920&height=1080'
-                        ),
+                'image_url',
+                'https://media.discordapp.net/attachments/1069466892101746740/1148837901422035006/3c914e942de4d39a.gif?width=1920&height=1080'
+            ),
         })
+
+        items = ""
+        for product in products:
+            items += f"`{product.get('name')}` x{product.get('quantity')}\n"
+
+        embed.add_field(name=f"Store Items - {store.get('round')}Round", value=items)
+
         view = WelcomeView(db)
         await ctx.send(embed=embed, view=view)
     except Exception as e:
@@ -412,7 +604,9 @@ async def store_main(ctx):
         logging.error(f'store_main error: {e}')
 
 
-@bot.command()
+@bot.command(
+    name='add-item'
+)
 @commands.has_any_role('SF.Team')
 async def add_item(ctx):
     description = "🎁️ Press the 'Add Item' button to register the item."
