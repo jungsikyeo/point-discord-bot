@@ -625,7 +625,7 @@ async def store_main(ctx):
                 'title': '🎁 SearchFi Store 🎁',
                 'description': 'This is SearchFi Store!',
                 'image_url': 'https://images-ext-2.discordapp.net/external/OG6ABL87frdJQcTXA5shV_LcAZAmEv-vn9GUsx3TXrg/%3Fraw%3Dtrue/https/github.com/vmpyre/BotsOnDisplay/blob/main/twitter%2520activity%2520rewards/Blue%2520Modern%2520Futuristic%2520Desktop%2520Wallpaper%2520%282%29.gif?width=2022&height=1138',
-                'round': 0,
+                'max_round': 0,
             }
 
         embed = make_embed({
@@ -639,7 +639,7 @@ async def store_main(ctx):
         for product in products:
             items += f"`{product.get('name')}` x{product.get('quantity')}\n"
 
-        embed.add_field(name=f"Store Items - {store.get('round')}Round", value=items)
+        embed.add_field(name=f"Store Items - {store.get('max_round')}Round", value=items)
 
         view = WelcomeView(db)
         await ctx.send(embed=embed, view=view)
