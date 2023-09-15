@@ -1,10 +1,10 @@
 import discord
 import os
 import requests
-import logging
 import db_pool
 import db_query as query
-import sys
+import logging
+from logging_config import setup_logging
 from discord.ext import commands
 from discord.ui import View, button, Select, Modal, InputText
 from discord import Embed, ButtonStyle, InputTextStyle
@@ -19,18 +19,10 @@ mysql_id = os.getenv("MYSQL_ID")
 mysql_passwd = os.getenv("MYSQL_PASSWD")
 mysql_db = os.getenv("MYSQL_DB")
 
-# logging.basicConfig(
-#     level=logging.DEBUG,
-#     format='%(asctime)s - %(levelname)s - %(message)s',
-#     handlers=[logging.StreamHandler(sys.stdout)]
-# )
 
-logger = logging.getLogger('my_logger')
-logger.setLevel(logging.INFO)
+setup_logging()
+logger = logging.getLogger(__name__)
 
-handler = logging.StreamHandler(sys.stdout)
-logger.addHandler(handler)
-logger.info("This is a log message.")
 
 class WelcomeView(View):
     def __init__(self, db):
