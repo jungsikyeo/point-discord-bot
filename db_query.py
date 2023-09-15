@@ -1,14 +1,3 @@
-def select_guild_store():
-    return """
-        select id, guild_id, title, description, image_url,
-            (select max(round) 
-             from rounds 
-             where guild_id = s.guild_id) round
-        from stores s
-        where s.guild_id = %s
-    """
-
-
 def select_guild_store_round():
     return """
         with t_max_round as (

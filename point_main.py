@@ -319,10 +319,16 @@ class AddItemModal(Modal):
 
         try:
             cursor.execute(
-                query.select_guild_store(),
+                query.select_guild_store_round(),
                 (guild_id,)
             )
             store = cursor.fetchone()
+
+            if not store:
+                description = "```❌ Store Setting has not yet.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logging.error(f'AddItemModal empty store error: Store Setting has not yet')
+                return
 
             if store.get('round_status') != 'OPEN':
                 description = "```❌ No rounds have been opened in the store yet.```"
@@ -601,7 +607,7 @@ async def store_main(ctx):
     cursor = connection.cursor()
     try:
         cursor.execute(
-            query.select_guild_store(),
+            query.select_guild_store_round(),
             (guild_id,)
         )
         store = cursor.fetchone()
@@ -729,14 +735,15 @@ async def save_rewards(ctx, params):
         )
         user = cursor.fetchone()
 
-        before_user_points = user.get('points')
         if user:
+            before_user_points = user.get('points')
             user_points = int(before_user_points)
             user_points += point
 
             if user_points < 0:
                 user_points = 0
         else:
+            before_user_points = 0
             user_points = 0
 
         cursor.execute(
