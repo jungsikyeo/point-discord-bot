@@ -508,6 +508,9 @@ class StoreSettingModal(Modal):
 bot = commands.Bot(command_prefix=command_flag, intents=discord.Intents.all())
 db = db_pool.Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 
+team_role_ids = list(map(int, os.getenv('TEAM_ROLE_ID').split(',')))
+mod_role_ids = list(map(int, os.getenv('MOD_ROLE_ID').split(',')))
+
 
 def make_embed(embed_info):
     embed = Embed(
@@ -526,6 +529,7 @@ def make_embed(embed_info):
 @bot.command(
     name='store-setting'
 )
+@commands.has_any_role(*team_role_ids)
 async def store_setting(ctx):
     guild_id = str(ctx.guild.id)
     connection = db.get_connection()
@@ -563,6 +567,7 @@ async def store_setting(ctx):
 @bot.command(
     name='store-main'
 )
+@commands.has_any_role(*team_role_ids)
 async def store_main(ctx):
     guild_id = str(ctx.guild.id)
     connection = db.get_connection()
@@ -612,7 +617,7 @@ async def store_main(ctx):
 @bot.command(
     name='add-item'
 )
-@commands.has_any_role('SF.Team')
+@commands.has_any_role(*team_role_ids)
 async def add_item(ctx):
     description = "🎁️ Press the 'Add Item' button to register the item."
     embed = make_embed({
@@ -627,7 +632,7 @@ async def add_item(ctx):
 @bot.command(
     name='give-rewards'
 )
-@commands.has_any_role('SF.Mod')
+@commands.has_any_role(*mod_role_ids)
 async def give_rewards(ctx, user_tag, amount):
     try:
         params = {
@@ -655,7 +660,7 @@ async def give_rewards(ctx, user_tag, amount):
 @bot.command(
     name='remove-rewards'
 )
-@commands.has_any_role('SF.Mod')
+@commands.has_any_role(*mod_role_ids)
 async def remove_rewards(ctx, user_tag, amount):
     try:
         params = {
