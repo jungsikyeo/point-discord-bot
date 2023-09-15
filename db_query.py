@@ -98,6 +98,13 @@ def insert_guild_user_ticket():
     """
 
 
+def insert_guild_user_point():
+    return """
+        insert into user_points (guild_id, user_id, points)
+        values (%s, %s, %s)
+    """
+
+
 def update_guild_user_point():
     return """
         update user_points set points = %s

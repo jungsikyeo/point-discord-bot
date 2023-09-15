@@ -742,14 +742,19 @@ async def save_rewards(ctx, params):
 
             if user_points < 0:
                 user_points = 0
+
+            cursor.execute(
+                query.update_guild_user_point(),
+                (user_points, guild_id, user_id,)
+            )
         else:
             before_user_points = 0
-            user_points = 0
+            user_points = point
 
-        cursor.execute(
-            query.update_guild_user_point(),
-            (user_points, guild_id, user_id,)
-        )
+            cursor.execute(
+                query.insert_guild_user_point(),
+                (guild_id, user_id, user_points,)
+            )
 
         cursor.execute(
             query.insert_guild_user_point_logs(),
