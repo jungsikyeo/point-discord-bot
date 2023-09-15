@@ -433,6 +433,12 @@ class StoreSettingModal(Modal):
         connection = self.db.get_connection()
         cursor = connection.cursor()
         try:
+            cursor.execute(
+                query.select_guild_store_round(),
+                (guild_id,)
+            )
+            store = cursor.fetchone()
+
             store_title = self.store_title.value
             store_description = self.store_description.value
 
@@ -450,39 +456,46 @@ class StoreSettingModal(Modal):
             try:
                 store_round = int(self.store_round.value)
             except Exception as e:
-                connection.rollback()
                 description = "```❌ Round must be entered numerically.```"
                 await interaction.response.send_message(description, ephemeral=True)
                 logging.error(f'StoreSettingModal Round error: {e}')
                 return
 
-            cursor.execute(
-                query.select_guild_store_round(),
-                (guild_id,)
-            )
-            store = cursor.fetchone()
+            if store:
+                if store.get('round_status') == 'OPEN':
+                    description = "```❌ Round cannot be modified as the prize draw is still in progress.```"
+                    await interaction.response.send_message(description, ephemeral=True)
+                    logging.error(f'StoreSettingModal round_status error')
+                    return
 
-            if store.get('round_status') == 'OPEN':
-                description = "```❌ Round cannot be modified as the prize draw is still in progress.```"
-                await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'StoreSettingModal round_status error')
-                return
-
-            next_round = int(store.get('max_round')) + 1
-            if store_round != next_round:
-                description = f"```❌ Next round is {next_round}round.```"
-                await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'StoreSettingModal next_round error')
-                return
+                next_round = int(store.get('max_round')) + 1
+                if store_round != next_round:
+                    description = f"```❌ Next round is {next_round}round.```"
+                    await interaction.response.send_message(description, ephemeral=True)
+                    logging.error(f'StoreSettingModal next_round error')
+                    return
+            else:
+                if store_round > 1:
+                    description = "```❌ The first round can start at 1.```"
+                    await interaction.response.send_message(description, ephemeral=True)
+                    logging.error(f'StoreSettingModal First Round error')
+                    return
 
             cursor.execute(
                 query.insert_guild_store_round(),
                 (guild_id, store_round, 'OPEN',)
             )
-            cursor.execute(
-                query.update_guild_store(),
-                (guild_id, store_title, store_description, store_image_url,)
-            )
+
+            if store:
+                cursor.execute(
+                    query.update_guild_store(),
+                    (store_title, store_description, store_image_url, guild_id,)
+                )
+            else:
+                cursor.execute(
+                    query.insert_guild_store(),
+                    (guild_id, store_title, store_description, store_image_url,)
+                )
 
             description = f"Store information has been saved."
             embed = make_embed({

@@ -37,6 +37,13 @@ def insert_guild_store_round():
     """
 
 
+def insert_guild_store():
+    return """
+        insert into stores (guild_id, title, description, image_url)
+        values (%s, %s, %s, %s)
+    """
+
+
 def update_guild_store():
     return """
         update stores 
