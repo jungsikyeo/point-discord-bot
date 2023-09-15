@@ -481,11 +481,6 @@ class StoreSettingModal(Modal):
                     logging.error(f'StoreSettingModal First Round error')
                     return
 
-            cursor.execute(
-                query.insert_guild_store_round(),
-                (guild_id, store_round, 'OPEN',)
-            )
-
             if store:
                 cursor.execute(
                     query.update_guild_store(),
@@ -496,6 +491,11 @@ class StoreSettingModal(Modal):
                     query.insert_guild_store(),
                     (guild_id, store_title, store_description, store_image_url,)
                 )
+
+            cursor.execute(
+                query.insert_guild_store_round(),
+                (guild_id, store_round, 'OPEN',)
+            )
 
             description = f"Store information has been saved."
             embed = make_embed({
