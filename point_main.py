@@ -553,12 +553,22 @@ async def store_setting(ctx):
         'description': description,
         'color': 0xFFFFFF,
     })
-    embed.add_field(name="Store Title", value=store.get('title', 'Not yet.'), inline=False)
-    embed.add_field(name="Store Description", value=f"```{store.get('description', 'Not yet.')}```", inline=False)
-    embed.add_field(name="Store Round", value=f"{store.get('max_round', 'Not yet.')} "
-                                              f"({store.get('round_status', 'Not yet')})", inline=False)
-    embed.add_field(name="Store Image URL", value="")
-    embed.set_image(url=store.get('image_url', 'Not yet.'))
+
+    if store:
+        embed.add_field(name="Store Title", value=store.get('title', 'Not yet.'), inline=False)
+        embed.add_field(name="Store Description", value=f"```{store.get('description', 'Not yet.')}```", inline=False)
+        embed.add_field(name="Store Round", value=f"{store.get('max_round', 'Not yet.')} "
+                                                  f"({store.get('round_status', 'Not yet')})", inline=False)
+        embed.add_field(name="Store Image URL", value="")
+        embed.set_image(url=store.get('image_url', 'Not yet.'))
+    else:
+        store = {
+            'title': None,
+            'description': None,
+            'max_round': None,
+            'round_status': None,
+            'image_url': None,
+        }
 
     view = StoreSettingButton(store)
     await ctx.reply(embed=embed, view=view, mention_author=True)
