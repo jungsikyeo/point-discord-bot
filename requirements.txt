@@ -6,3 +6,4 @@ PyMySQL~=1.0.3
 requests~=2.29.0
 python-dotenv~=1.0.0
 DBUtils~=3.0.3
+prettyprinter~=0.18.0

@@ -45,7 +45,7 @@ def update_guild_store():
 
 def select_guild_products():
     return """
-        select p.id, p.name, p.image, p.price, p.quantity
+        select p.id, r.round, p.name, p.image, p.price, p.quantity
         from products p 
         inner join rounds r on r.guild_id = p.guild_id and r.round = p.round and r.round_status = 'OPEN'
         where p.guild_id = %s
@@ -61,6 +61,17 @@ def select_guild_user_tickets():
         where u.guild_id = %s 
         and u.user_id = %s
         group by p.id, p.name, p.image, p.price
+    """
+
+
+def select_guild_raffle_user_tickets():
+    return """
+        select u.user_id, p.name, count(u.id) tickets
+        from user_tickets u
+        inner join products p on p.guild_id = u.guild_id and p.id = u.product_id
+        inner join rounds r on r.guild_id = u.guild_id and r.round = p.round and r.round_status = 'OPEN'
+        where u.guild_id = %s
+        group by u.user_id, p.id, p.name 
     """
 
 
@@ -133,4 +144,19 @@ def insert_guild_user_point_logs():
     return """
         insert into user_point_logs (guild_id, user_id, point_amount, action_type, action_user_id)
         values (%s, %s, %s, %s, %s)
+    """
+
+
+def insert_guild_round_winners():
+    return """
+        insert into round_winners (product_id, guild_id, round, user_id, action_type, action_user_id)
+        values (%s, %s, %s, %s, %s, %s)
+    """
+
+
+def update_guild_rounds():
+    return """
+        update rounds set round_status = %s
+        where guild_id = %s
+        and round = %s
     """

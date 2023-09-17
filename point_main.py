@@ -5,6 +5,7 @@ import db_pool
 import db_query as query
 import logging
 import sys
+import raffle
 from discord.ext import commands
 from discord.ui import View, button, Select, Modal, InputText
 from discord import Embed, ButtonStyle, InputTextStyle
@@ -785,6 +786,42 @@ async def save_rewards(ctx, params):
         cursor.close()
         connection.close()
         return result
+
+
+@bot.command(
+    name='giveaway-raffle'
+)
+@commands.has_any_role(*mod_role_ids)
+async def giveaway_raffle(ctx):
+    guild_id = str(ctx.guild.id)
+    action_type = 'USER-MANUAL'
+    action_user_id =ctx.author.id
+    connection = db.get_connection()
+    cursor = connection.cursor()
+    try:
+        result = raffle.start_raffle(guild_id, action_type, action_user_id)
+
+        description = "Congratulations! " \
+                      "here is the winner list of last giveaway\n\n"
+        for product, users in result.items():
+            users_str = '\n'.join([f"<@{user}>" for user in users])
+            description += f"🏆 `{product}` winner:\n{users_str}\n\n"
+
+        embed = make_embed({
+            'title': '🎉 Giveaway Winner 🎉',
+            'description': description,
+            'color': 0xFFFFFF,
+        })
+
+        event_announce_channel = os.getenv("EVENT_ANNOUNCE_CHANNEL")
+        channel = bot.get_channel(int(event_announce_channel))
+        await channel.send(embed=embed)
+    except Exception as e:
+        logging.error(f'giveaway_raffle error: {e}')
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
 
 
 bot.run(bot_token)
