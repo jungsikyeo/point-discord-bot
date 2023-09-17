@@ -816,6 +816,14 @@ async def giveaway_raffle(ctx):
         event_announce_channel = os.getenv("EVENT_ANNOUNCE_CHANNEL")
         channel = bot.get_channel(int(event_announce_channel))
         await channel.send(embed=embed)
+
+        description = f"Check it out on the <#{int(event_announce_channel)}> channel."
+        embed = make_embed({
+            'title': 'Giveaway Raffle Complete',
+            'description': description,
+            'color': 0xFFFFFF,
+        })
+        await ctx.reply(embed=embed, mention_author=True)
     except Exception as e:
         logging.error(f'giveaway_raffle error: {e}')
         connection.rollback()
