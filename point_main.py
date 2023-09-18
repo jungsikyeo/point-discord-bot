@@ -605,7 +605,9 @@ class RaffleCog(commands.Cog):
             cursor.close()
             connection.close()
 
-    @commands.command()
+    @commands.command(
+        name='start-auto-raffle'
+    )
     async def start_auto_raffle(self, ctx):
         connection = self.db.get_connection()
         cursor = connection.cursor()
@@ -616,7 +618,6 @@ class RaffleCog(commands.Cog):
             )
             connection.commit()
 
-            self.auto_raffle.start()
             embed = make_embed({
                 'title': 'Auto Raffle Start',
                 'description': '✅ Auto raffle started.',
@@ -630,7 +631,9 @@ class RaffleCog(commands.Cog):
             cursor.close()
             connection.close()
 
-    @commands.command()
+    @commands.command(
+        name='stop-auto-raffle'
+    )
     async def stop_auto_raffle(self, ctx):
         connection = self.db.get_connection()
         cursor = connection.cursor()
@@ -641,7 +644,6 @@ class RaffleCog(commands.Cog):
             )
             connection.commit()
 
-            self.auto_raffle.cancel()
             embed = make_embed({
                 'title': 'Auto Raffle Stop',
                 'description': '✅ Auto raffle stopped.',
