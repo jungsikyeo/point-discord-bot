@@ -592,18 +592,19 @@ class RaffleCog(commands.Cog):
             self.event_announce_channel = store.get('raffle_announce_channel')
             self.auto_raffle_status = store.get('auto_raffle_status')
 
-            now = datetime.datetime.now()
-            next_run = datetime.datetime(now.year, now.month, now.day, int(self.hour), int(self.minute))
-            delta = next_run - now
-
-            if delta.total_seconds() > 0:
-                await asyncio.sleep(delta.total_seconds())
         except Exception as e:
             logging.error(f'before_auto_raffle error: {e}')
             connection.rollback()
         finally:
             cursor.close()
             connection.close()
+
+        now = datetime.datetime.now()
+        next_run = datetime.datetime(now.year, now.month, now.day, int(self.hour), int(self.minute))
+        delta = next_run - now
+
+        if delta.total_seconds() > 0:
+            await asyncio.sleep(delta.total_seconds())
 
     @commands.command(
         name='start-auto-raffle'
@@ -775,6 +776,9 @@ async def store_main(ctx):
         description = "```❌ There was a problem processing the data.```"
         await ctx.reply(description, mention_author=True)
         logging.error(f'store_main error: {e}')
+    finally:
+        cursor.close()
+        connection.close()
 
 
 @bot.command(
