@@ -1,3 +1,19 @@
+def select_guild_store():
+    return """
+        select id, guild_id, title, description, image_url,
+               raffle_announce_channel, raffle_bot_user_id, raffle_time_hour, raffle_time_minute, auto_raffle_status
+        from stores
+        where guild_id = %s
+    """
+
+
+def update_guild_store_raffle():
+    return """
+        update stores set auto_raffle_status = %s
+        where guild_id = %s
+    """
+
+
 def select_guild_store_round():
     return """
         with t_max_round as (

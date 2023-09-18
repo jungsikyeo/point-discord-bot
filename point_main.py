@@ -6,7 +6,9 @@ import db_query as query
 import logging
 import sys
 import raffle
-from discord.ext import commands
+import datetime
+import asyncio
+from discord.ext import tasks, commands
 from discord.ui import View, button, Select, Modal, InputText
 from discord import Embed, ButtonStyle, InputTextStyle
 from dotenv import load_dotenv
@@ -19,7 +21,6 @@ mysql_port = os.getenv("MYSQL_PORT")
 mysql_id = os.getenv("MYSQL_ID")
 mysql_passwd = os.getenv("MYSQL_PASSWD")
 mysql_db = os.getenv("MYSQL_DB")
-
 
 logging.basicConfig(
     level=logging.INFO,
@@ -535,6 +536,126 @@ class StoreSettingModal(Modal):
             connection.close()
 
 
+class RaffleCog(commands.Cog):
+
+    def __init__(self, bot, db):
+        self.bot = bot
+        self.db = db
+        self.guild_id = None
+        self.action_type = 'BOT-AUTO'
+        self.action_user_id = self.bot.user.id
+        self.event_announce_channel = 0
+        self.hour = 20
+        self.minute = 0
+        self.auto_raffle_status = 'OFF'
+        self.auto_raffle.start()
+
+    def cog_unload(self):
+        self.auto_raffle.cancel()
+
+    @tasks.loop(hours=24)
+    async def auto_raffle(self):
+        logging.info(f'auto_raffle_status: {self.auto_raffle_status}')
+        if self.auto_raffle_status == 'ON':
+            result = raffle.start_raffle(self.guild_id, self.action_type, self.action_user_id)
+
+            description = "Congratulations! " \
+                          "Here is the winner list of last giveaway\n\n"
+            for product, users in result.items():
+                users_str = '\n'.join([f"<@{user}>" for user in users])
+                description += f"🏆 `{product}` winner:\n{users_str}\n\n"
+
+            embed = make_embed({
+                'title': '🎉 Giveaway Winner 🎉',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+
+            channel = self.bot.get_channel(int(self.event_announce_channel))
+            await channel.send(embed=embed)
+
+    @auto_raffle.before_loop
+    async def before_auto_raffle(self):
+        self.guild_id = os.getenv('GUILD_ID')
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(
+                query.select_guild_store(),
+                (self.guild_id,)
+            )
+            store = cursor.fetchone()
+
+            self.hour = store.get('raffle_time_hour')
+            self.minute = store.get('raffle_time_minute')
+            self.action_user_id = store.get('raffle_bot_user_id', self.bot.user.id)
+            self.event_announce_channel = store.get('raffle_announce_channel')
+            self.auto_raffle_status = store.get('auto_raffle_status')
+
+            now = datetime.datetime.now()
+            next_run = datetime.datetime(now.year, now.month, now.day, int(self.hour), int(self.minute))
+            delta = next_run - now
+
+            if delta.total_seconds() > 0:
+                await asyncio.sleep(delta.total_seconds())
+        except Exception as e:
+            logging.error(f'before_auto_raffle error: {e}')
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+    @commands.command()
+    async def start_auto_raffle(self, ctx):
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(
+                query.update_guild_store_raffle(),
+                ('ON', self.guild_id,)
+            )
+            connection.commit()
+
+            self.auto_raffle.start()
+            embed = make_embed({
+                'title': 'Auto Raffle Start',
+                'description': '✅ Auto raffle started.',
+                'color': 0xFFFFFF,
+            })
+            await ctx.reply(embed=embed, mention_author=True)
+        except Exception as e:
+            logging.error(f'start_auto_raffle error: {e}')
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+    @commands.command()
+    async def stop_auto_raffle(self, ctx):
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(
+                query.update_guild_store_raffle(),
+                ('OFF', self.guild_id,)
+            )
+            connection.commit()
+
+            self.auto_raffle.cancel()
+            embed = make_embed({
+                'title': 'Auto Raffle Stop',
+                'description': '✅ Auto raffle stopped.',
+                'color': 0xff0000,
+            })
+            await ctx.reply(embed=embed, mention_author=True)
+        except Exception as e:
+            logging.error(f'stop_auto_raffle error: {e}')
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+
 bot = commands.Bot(command_prefix=command_flag, intents=discord.Intents.all())
 db = db_pool.Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 
@@ -659,7 +780,7 @@ async def store_main(ctx):
 )
 @commands.has_any_role(*team_role_ids)
 async def add_item(ctx):
-    description = "🎁️ Press the 'Add Item' button to register the item."
+    description = "🎁️ Press the `Add Item` button to register the item."
     embed = make_embed({
         'title': 'Add Item',
         'description': description,
@@ -795,10 +916,18 @@ async def save_rewards(ctx, params):
 async def giveaway_raffle(ctx):
     guild_id = str(ctx.guild.id)
     action_type = 'USER-MANUAL'
-    action_user_id =ctx.author.id
+    action_user_id = ctx.author.id
     connection = db.get_connection()
     cursor = connection.cursor()
     try:
+        cursor.execute(
+            query.select_guild_store(),
+            (guild_id,)
+        )
+        store = cursor.fetchone()
+
+        event_announce_channel = store.get('raffle_announce_channel')
+
         result = raffle.start_raffle(guild_id, action_type, action_user_id)
 
         description = "Congratulations! " \
@@ -813,7 +942,6 @@ async def giveaway_raffle(ctx):
             'color': 0xFFFFFF,
         })
 
-        event_announce_channel = os.getenv("EVENT_ANNOUNCE_CHANNEL")
         channel = bot.get_channel(int(event_announce_channel))
         await channel.send(embed=embed)
 
@@ -830,6 +958,11 @@ async def giveaway_raffle(ctx):
     finally:
         cursor.close()
         connection.close()
+
+
+@bot.event
+async def on_ready():
+    bot.add_cog(RaffleCog(bot, db))
 
 
 bot.run(bot_token)
