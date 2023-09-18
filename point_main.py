@@ -557,7 +557,7 @@ class RaffleCog(commands.Cog):
     async def auto_raffle(self):
         logging.info(f'auto_raffle_status: {self.auto_raffle_status}')
         if self.auto_raffle_status == 'ON':
-            result = raffle.start_raffle(self.guild_id, self.action_type, self.action_user_id)
+            result = raffle.start_raffle(self.db, self.guild_id, self.action_type, self.action_user_id)
 
             description = "Congratulations! " \
                           "Here is the winner list of last giveaway\n\n"
@@ -930,7 +930,7 @@ async def giveaway_raffle(ctx):
 
         event_announce_channel = store.get('raffle_announce_channel')
 
-        result = raffle.start_raffle(guild_id, action_type, action_user_id)
+        result = raffle.start_raffle(db, guild_id, action_type, action_user_id)
 
         description = "Congratulations! " \
                       "here is the winner list of last giveaway\n\n"
