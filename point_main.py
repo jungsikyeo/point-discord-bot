@@ -3,32 +3,33 @@ import os
 import requests
 import db_pool
 import db_query as query
-import logging
-import sys
 import raffle
 import datetime
 import asyncio
 from discord.ext import tasks, commands
+from discord.interactions import Interaction
 from discord.ui import View, button, Select, Modal, InputText
 from discord import Embed, ButtonStyle, InputTextStyle
 from dotenv import load_dotenv
 
 load_dotenv()
+
 command_flag = os.getenv("SEARCHFI_BOT_FLAG")
-bot_token = os.getenv("BOT_TOKEN")
 mysql_ip = os.getenv("MYSQL_IP")
 mysql_port = os.getenv("MYSQL_PORT")
 mysql_id = os.getenv("MYSQL_ID")
 mysql_passwd = os.getenv("MYSQL_PASSWD")
 mysql_db = os.getenv("MYSQL_DB")
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
-logger = logging.getLogger(__name__)
-logger.info("This is an info message from point_main")
+
+global logger
+
+
+def config_logging(module_logger):
+    global logger
+    logger = module_logger
+
+    raffle.config_logging(module_logger)
 
 
 class WelcomeView(View):
@@ -37,7 +38,7 @@ class WelcomeView(View):
         self.db = db
 
     @button(label="View Store Item", style=ButtonStyle.danger)
-    async def button_items(self, _, interaction):
+    async def button_items(self, _, interaction: Interaction):
         guild_id = str(interaction.guild_id)
         connection = self.db.get_connection()
         cursor = connection.cursor()
@@ -53,19 +54,19 @@ class WelcomeView(View):
                 return
 
             await interaction.response.send_message(
-                view=ProductSelectView(self.db, all_products),
+                view=ProductSelectView(self.db, all_products, interaction),
                 ephemeral=True
             )
         except Exception as e:
             description = "```❌ There was a problem while trying to retrieve the item.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'button_items error: {e}')
+            logger.error(f'button_items error: {e}')
         finally:
             cursor.close()
             connection.close()
 
     @button(label="Check Tickets", style=ButtonStyle.primary)
-    async def button_my_tickets(self, _, interaction):
+    async def button_my_tickets(self, _, interaction: Interaction):
         guild_id = str(interaction.guild_id)
         user_id = str(interaction.user.id)
 
@@ -97,13 +98,13 @@ class WelcomeView(View):
         except Exception as e:
             description = "```❌ There was a problem loading the ticket you applied for.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'button_my_tickets error: {e}')
+            logger.error(f'button_my_tickets error: {e}')
         finally:
             cursor.close()
             connection.close()
 
     @button(label="Check Balance", style=ButtonStyle.green)
-    async def button_check_balance(self, _, interaction):
+    async def button_check_balance(self, _, interaction: Interaction):
         guild_id = str(interaction.guild_id)
         user_id = str(interaction.user.id)
 
@@ -132,32 +133,38 @@ class WelcomeView(View):
         except Exception as e:
             description = "```❌ There was a problem loading data.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'button_my_points error: {e}')
+            logger.error(f'button_my_points error: {e}')
         finally:
             cursor.close()
             connection.close()
 
 
 class ProductSelectView(View):
-    def __init__(self, db, all_products):
+    def __init__(self, db, all_products, org_interaction: Interaction):
         super().__init__()
         self.db = db
         self.all_products = all_products
+        self.org_interaction = org_interaction
         self.options = [discord.SelectOption(
             label=f"""{product.get('name')}""",
             value=product.get('name'),
             description=f"""Price: {product.get('price')}""",
         ) for product in all_products]
-        self.add_item(ProductSelect(self.db, self.options, self.all_products))
+        self.add_item(ProductSelect(self.db, self.options, self.all_products, self.org_interaction))
+
+    async def on_timeout(self):
+        if self.org_interaction:
+            await self.org_interaction.delete_original_response()
 
 
 class ProductSelect(Select):
-    def __init__(self, db, options, all_products):
+    def __init__(self, db, options, all_products, org_interaction: Interaction):
         super().__init__(placeholder='Please choose a item', min_values=1, max_values=1, options=options)
         self.db = db
         self.all_products = all_products
+        self.org_interaction = org_interaction
 
-    async def callback(self, interaction):
+    async def callback(self, interaction: Interaction):
         selected_product = None
 
         for product in self.all_products:
@@ -165,7 +172,7 @@ class ProductSelect(Select):
                 selected_product = product
                 break
 
-        buy_button_view = BuyButton(self.db, selected_product)
+        buy_button_view = BuyButton(self.db, selected_product, interaction)
 
         description = "Please press the `Buy` button below to apply."
         embed = make_embed({
@@ -176,21 +183,23 @@ class ProductSelect(Select):
         })
         embed.add_field(name="Price", value=f"```{selected_product.get('price')} points```", inline=True)
 
-        await interaction.response.send_message(
+        await interaction.response.defer(ephemeral=True)
+
+        await self.org_interaction.edit_original_response(
             embed=embed,
-            view=buy_button_view,
-            ephemeral=True
+            view=buy_button_view
         )
 
 
 class BuyButton(View):
-    def __init__(self, db, product):
+    def __init__(self, db, product, org_interaction: Interaction):
         super().__init__()
         self.db = db
         self.product = product
+        self.org_interaction = org_interaction
 
     @button(label="Buy", style=discord.ButtonStyle.primary, custom_id="buy_button")
-    async def button_buy(self, _, interaction):
+    async def button_buy(self, _, interaction: Interaction):
         await interaction.response.send_modal(modal=BuyQuantityModal(db, self.product))
 
 
@@ -216,7 +225,7 @@ class BuyQuantityModal(Modal):
             except Exception as e:
                 description = "```❌ Quantity must be entered numerically.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'BuyQuantityModal price error: {e}')
+                logger.error(f'BuyQuantityModal price error: {e}')
                 return
 
             cursor.execute(
@@ -230,7 +239,7 @@ class BuyQuantityModal(Modal):
             else:
                 description = "```❌ There was a problem applying for the item.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'BuyQuantityModal price error: There was a problem applying for the item.')
+                logger.error(f'BuyQuantityModal price error: There was a problem applying for the item.')
                 return
 
             cursor.execute(
@@ -247,7 +256,7 @@ class BuyQuantityModal(Modal):
             if user_points < (price * buy_quantity):
                 description = "```❌ Not enough points.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'BuyQuantityModal price error: Not enough points.')
+                logger.error(f'BuyQuantityModal price error: Not enough points.')
                 return
             else:
                 loop = buy_quantity
@@ -283,7 +292,7 @@ class BuyQuantityModal(Modal):
             connection.rollback()
             description = "```❌ There was a problem processing the data.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'BuyQuantityModal db error: {e}')
+            logger.error(f'BuyQuantityModal db error: {e}')
         finally:
             cursor.close()
             connection.close()
@@ -335,13 +344,13 @@ class AddItemModal(Modal):
             if not store:
                 description = "```❌ Store Setting has not yet.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'AddItemModal empty store error: Store Setting has not yet')
+                logger.error(f'AddItemModal empty store error: Store Setting has not yet')
                 return
 
             if store.get('round_status') != 'OPEN':
                 description = "```❌ No rounds have been opened in the store yet.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'AddItemModal round_status error: No rounds have been opened in the store yet.')
+                logger.error(f'AddItemModal round_status error: No rounds have been opened in the store yet.')
                 return
 
             name = self.item_name.value
@@ -353,7 +362,7 @@ class AddItemModal(Modal):
             if int(item.get('cnt', 0)) > 0:
                 description = "```❌ You already have a item with the same name.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'AddItemModal name error: Already have a item with the same name.')
+                logger.error(f'AddItemModal name error: Already have a item with the same name.')
                 return
 
             try:
@@ -364,7 +373,7 @@ class AddItemModal(Modal):
             except Exception as e:
                 description = "```❌ You must enter a valid image URL.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'AddItemModal image error: {e}')
+                logger.error(f'AddItemModal image error: {e}')
                 return
 
             try:
@@ -372,7 +381,7 @@ class AddItemModal(Modal):
             except Exception as e:
                 description = "```❌ Price must be entered numerically.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'AddItemModal price error: {e}')
+                logger.error(f'AddItemModal price error: {e}')
                 return
 
             try:
@@ -380,7 +389,7 @@ class AddItemModal(Modal):
             except Exception as e:
                 description = "```❌ Quantity must be entered numerically.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'AddItemModal quantity error: {e}')
+                logger.error(f'AddItemModal quantity error: {e}')
                 return
 
             cursor.execute(
@@ -402,7 +411,7 @@ class AddItemModal(Modal):
             connection.rollback()
             description = "```❌ There was a problem processing the data.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'AddItemModal db error: {e}')
+            logger.error(f'AddItemModal db error: {e}')
         finally:
             cursor.close()
             connection.close()
@@ -468,7 +477,7 @@ class StoreSettingModal(Modal):
             except Exception as e:
                 description = "```❌ You must enter a valid image URL.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'StoreSettingModal image error: {e}')
+                logger.error(f'StoreSettingModal image error: {e}')
                 return
 
             try:
@@ -476,27 +485,27 @@ class StoreSettingModal(Modal):
             except Exception as e:
                 description = "```❌ Round must be entered numerically.```"
                 await interaction.response.send_message(description, ephemeral=True)
-                logging.error(f'StoreSettingModal Round error: {e}')
+                logger.error(f'StoreSettingModal Round error: {e}')
                 return
 
             if store:
                 if store.get('round_status') == 'OPEN':
                     description = "```❌ Round cannot be modified as the prize draw is still in progress.```"
                     await interaction.response.send_message(description, ephemeral=True)
-                    logging.error(f'StoreSettingModal round_status error')
+                    logger.error(f'StoreSettingModal round_status error')
                     return
 
                 next_round = int(store.get('max_round')) + 1
                 if store_round != next_round:
                     description = f"```❌ Next round is {next_round}round.```"
                     await interaction.response.send_message(description, ephemeral=True)
-                    logging.error(f'StoreSettingModal next_round error')
+                    logger.error(f'StoreSettingModal next_round error')
                     return
             else:
                 if store_round > 1:
                     description = "```❌ The first round can start at 1.```"
                     await interaction.response.send_message(description, ephemeral=True)
-                    logging.error(f'StoreSettingModal First Round error')
+                    logger.error(f'StoreSettingModal First Round error')
                     return
 
             if store:
@@ -530,7 +539,7 @@ class StoreSettingModal(Modal):
             connection.rollback()
             description = "```❌ There was a problem processing the data.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logging.error(f'StoreSettingModal db error: {e}')
+            logger.error(f'StoreSettingModal db error: {e}')
         finally:
             cursor.close()
             connection.close()
@@ -555,7 +564,7 @@ class RaffleCog(commands.Cog):
 
     @tasks.loop(hours=24)
     async def auto_raffle(self):
-        logging.info(f'auto_raffle_status: {self.auto_raffle_status}')
+        logger.info(f'auto_raffle_status: {self.auto_raffle_status}')
         if self.auto_raffle_status == 'ON':
             result = raffle.start_raffle(self.db, self.guild_id, self.action_type, self.action_user_id)
 
@@ -593,7 +602,7 @@ class RaffleCog(commands.Cog):
             self.auto_raffle_status = store.get('auto_raffle_status')
 
         except Exception as e:
-            logging.error(f'before_auto_raffle error: {e}')
+            logger.error(f'before_auto_raffle error: {e}')
             connection.rollback()
         finally:
             cursor.close()
@@ -626,7 +635,7 @@ class RaffleCog(commands.Cog):
             })
             await ctx.reply(embed=embed, mention_author=True)
         except Exception as e:
-            logging.error(f'start_auto_raffle error: {e}')
+            logger.error(f'start_auto_raffle error: {e}')
             connection.rollback()
         finally:
             cursor.close()
@@ -652,18 +661,25 @@ class RaffleCog(commands.Cog):
             })
             await ctx.reply(embed=embed, mention_author=True)
         except Exception as e:
-            logging.error(f'stop_auto_raffle error: {e}')
+            logger.error(f'stop_auto_raffle error: {e}')
             connection.rollback()
         finally:
             cursor.close()
             connection.close()
 
+    @commands.command(name='set-auto-raffle-interval')
+    async def set_auto_raffle_interval(self, ctx, hours: int):
+        self.auto_raffle.change_interval(hours=hours)
+        embed = make_embed({
+            'title': 'Set Auto Raffle Interval',
+            'description': f'✅ Auto raffle interval set to {hours} hours.',
+            'color': 0xff0000,
+        })
+        await ctx.reply(embed=embed, mention_author=True)
+
 
 bot = commands.Bot(command_prefix=command_flag, intents=discord.Intents.all())
 db = db_pool.Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
-
-team_role_ids = list(map(int, os.getenv('TEAM_ROLE_ID').split(',')))
-mod_role_ids = list(map(int, os.getenv('MOD_ROLE_ID').split(',')))
 
 
 def make_embed(embed_info):
@@ -676,14 +692,10 @@ def make_embed(embed_info):
         embed.set_image(
             url=embed_info.get('image_url')
         )
-    embed.set_footer(text="Powered by 으노아부지#2642")
+    embed.set_footer(text="Powered by SearchFi DEV")
     return embed
 
 
-@bot.command(
-    name='store-setting'
-)
-@commands.has_any_role(*team_role_ids)
 async def store_setting(ctx):
     guild_id = str(ctx.guild.id)
     connection = db.get_connection()
@@ -696,7 +708,7 @@ async def store_setting(ctx):
         )
         store = cursor.fetchone()
     except Exception as e:
-        logging.error(f'store_setting db error: {e}')
+        logger.error(f'store_setting db error: {e}')
     finally:
         cursor.close()
         connection.close()
@@ -728,10 +740,6 @@ async def store_setting(ctx):
     await ctx.reply(embed=embed, view=view, mention_author=True)
 
 
-@bot.command(
-    name='store-main'
-)
-@commands.has_any_role(*team_role_ids)
 async def store_main(ctx):
     guild_id = str(ctx.guild.id)
     connection = db.get_connection()
@@ -775,16 +783,12 @@ async def store_main(ctx):
     except Exception as e:
         description = "```❌ There was a problem processing the data.```"
         await ctx.reply(description, mention_author=True)
-        logging.error(f'store_main error: {e}')
+        logger.error(f'store_main error: {e}')
     finally:
         cursor.close()
         connection.close()
 
 
-@bot.command(
-    name='add-item'
-)
-@commands.has_any_role(*team_role_ids)
 async def add_item(ctx):
     description = "🎁️ Press the `Add Item` button to register the item."
     embed = make_embed({
@@ -796,10 +800,6 @@ async def add_item(ctx):
     await ctx.reply(embed=embed, view=view, mention_author=True)
 
 
-@bot.command(
-    name='give-rewards'
-)
-@commands.has_any_role(*mod_role_ids)
 async def give_rewards(ctx, user_tag, amount):
     try:
         params = {
@@ -821,13 +821,9 @@ async def give_rewards(ctx, user_tag, amount):
             })
             await ctx.reply(embed=embed, mention_author=True)
     except Exception as e:
-        logging.error(f'give_rewards error: {e}')
+        logger.error(f'give_rewards error: {e}')
 
 
-@bot.command(
-    name='remove-rewards'
-)
-@commands.has_any_role(*mod_role_ids)
 async def remove_rewards(ctx, user_tag, amount):
     try:
         params = {
@@ -849,7 +845,7 @@ async def remove_rewards(ctx, user_tag, amount):
             })
             await ctx.reply(embed=embed, mention_author=True)
     except Exception as e:
-        logging.error(f'remove_rewards error: {e}')
+        logger.error(f'remove_rewards error: {e}')
 
 
 async def save_rewards(ctx, params):
@@ -902,7 +898,7 @@ async def save_rewards(ctx, params):
             'after_user_points': user_points
         }
     except Exception as e:
-        logging.error(f'save_rewards error: {e}')
+        logger.error(f'save_rewards error: {e}')
         connection.rollback()
         result = {
             'success': 0,
@@ -915,10 +911,6 @@ async def save_rewards(ctx, params):
         return result
 
 
-@bot.command(
-    name='giveaway-raffle'
-)
-@commands.has_any_role(*mod_role_ids)
 async def giveaway_raffle(ctx):
     guild_id = str(ctx.guild.id)
     action_type = 'USER-MANUAL'
@@ -959,16 +951,8 @@ async def giveaway_raffle(ctx):
         })
         await ctx.reply(embed=embed, mention_author=True)
     except Exception as e:
-        logging.error(f'giveaway_raffle error: {e}')
+        logger.error(f'giveaway_raffle error: {e}')
         connection.rollback()
     finally:
         cursor.close()
         connection.close()
-
-
-@bot.event
-async def on_ready():
-    bot.add_cog(RaffleCog(bot, db))
-
-
-bot.run(bot_token)

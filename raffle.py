@@ -1,18 +1,17 @@
 import random
 import os
 import db_query as query
-import logging
-import sys
 from prettyprinter import pprint
 from dotenv import load_dotenv
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
-logger = logging.getLogger(__name__)
-logger.info("This is an info message from raffle")
+
+global logger
+
+
+def config_logging(module_logger):
+    global logger
+    logger = module_logger
+
 
 load_dotenv()
 mysql_ip = os.getenv("MYSQL_IP")
@@ -44,7 +43,7 @@ def get_products(db, guild_id):
         )
         products = cursor.fetchall()
     except Exception as e:
-        logging.error(f'get_products db error: {e}')
+        logger.error(f'get_products db error: {e}')
     finally:
         cursor.close()
         connection.close()
@@ -73,7 +72,7 @@ def get_user_tickets(db, guild_id):
 
             ticket_holders[user_id][name] = tickets
     except Exception as e:
-        logging.error(f'get_user_tickets db error: {e}')
+        logger.error(f'get_user_tickets db error: {e}')
     finally:
         cursor.close()
         connection.close()
@@ -126,7 +125,7 @@ def start_raffle(db, guild_id, action_type, action_user_id):
         connection.commit()
     except Exception as e:
         connection.rollback()
-        logging.error(f'start_raffle db error: {e}')
+        logger.error(f'start_raffle db error: {e}')
     finally:
         cursor.close()
         connection.close()
