@@ -1,6 +1,6 @@
 import os
+import sys
 import logging
-import point_main as base_bot
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -9,7 +9,12 @@ current_dir = os.path.dirname(current_path)
 folder_name = os.path.basename(current_dir)
 env_path = os.path.join(current_dir, f".env_{folder_name}")
 
+
 load_dotenv(dotenv_path=env_path)
+
+print(current_dir)
+sys.path.append(current_dir)
+import point_main as base_bot
 
 bot = base_bot.bot
 db = base_bot.db
