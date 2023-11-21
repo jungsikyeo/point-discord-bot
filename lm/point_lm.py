@@ -12,8 +12,8 @@ env_path = os.path.join(current_dir, f".env_{folder_name}")
 
 load_dotenv(dotenv_path=env_path)
 
-print(current_dir)
-sys.path.append(current_dir)
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 import point_main as base_bot
 
 bot = base_bot.bot
