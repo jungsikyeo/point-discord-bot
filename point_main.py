@@ -940,6 +940,9 @@ async def giveaway_raffle(ctx):
             'color': 0xFFFFFF,
         })
 
+        if not event_announce_channel:
+            event_announce_channel = ctx.channel.id
+
         channel = bot.get_channel(int(event_announce_channel))
         await channel.send(embed=embed)
 
