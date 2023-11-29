@@ -219,6 +219,7 @@ class StatsButtons(View):
                             f"'{channel}' channel_id, " \
                             f"'{bot.get_channel(int(channel))}' channel_name " \
                             "from dual "
+                index += 1
 
             cursor.execute(f"""
                 with times as (
