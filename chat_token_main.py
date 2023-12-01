@@ -41,8 +41,8 @@ weekly_top = []
 
 guild_id = ""
 channel_list = []
-token_type = "SF"
-searchfi_amount = 100
+token_type = "P"
+still_available = 100
 min_win = 1
 max_win = 5
 win_limit = 4
@@ -430,7 +430,7 @@ async def on_ready(current_guild_id, enabled_channel_list):
         """, (guild_id,))
         data = cursor.fetchone()
 
-        global token_type, searchfi_amount, min_win, max_win, win_limit, lock_status
+        global token_type, still_available, min_win, max_win, win_limit, lock_status
 
         # 토큰 초기화 및 스케줄링
         if not data:
@@ -446,7 +446,7 @@ async def on_ready(current_guild_id, enabled_channel_list):
             """, (guild_id,))
             data = cursor.fetchone()
 
-            searchfi_amount = data['still_available']
+            still_available = data['still_available']
             min_win = data['min_win']
             max_win = data['max_win']
             win_limit = data['win_limit']
@@ -476,7 +476,7 @@ async def schedule_reset(run_type=True):
     connection = db.get_connection()
     cursor = connection.cursor()
     try:
-        global searchfi_amount, min_win, max_win, win_limit
+        global still_available, min_win, max_win, win_limit
         cursor.execute("""
                 SELECT reset_at, still_available, daily_token_limit, min_win, max_win, win_limit
                 FROM c2e_token_tracking WHERE guild_id = %s
