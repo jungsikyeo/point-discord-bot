@@ -38,7 +38,7 @@ def get_products(db, guild_id):
     products = None
     try:
         cursor.execute(
-            query.select_guild_products(),
+            query.select_guild_products_raffle(),
             (guild_id,)
         )
         products = cursor.fetchall()
