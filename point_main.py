@@ -85,7 +85,7 @@ class WelcomeView(View):
 
             description = ""
             for user_ticket in all_user_tickets:
-                description += f"""`{user_ticket.get('name')}`     x{user_ticket.get('tickets')}\n"""
+                description += f"""`[{user_ticket.get('item_type')}]{user_ticket.get('name')}`     x{user_ticket.get('tickets')}\n"""
             embed = make_embed({
                 'title': f"My Tickets - {all_user_tickets[0].get('round')}Round",
                 'description': description,
@@ -146,9 +146,9 @@ class ProductSelectView(View):
         self.all_products = all_products
         self.org_interaction = org_interaction
         self.options = [discord.SelectOption(
-            label=f"""{product.get('name')}""",
+            label=f"""[{product.get('item_type')}] {product.get('name')}""",
             value=product.get('name'),
-            description=f"""Price: {product.get('price')}""",
+            description=f"""Type: Price: {product.get('price')}""",
         ) for product in all_products]
         self.add_item(ProductSelect(self.db, self.options, self.all_products, self.org_interaction))
 
@@ -200,7 +200,98 @@ class BuyButton(View):
 
     @button(label="Buy", style=discord.ButtonStyle.primary, custom_id="buy_button")
     async def button_buy(self, _, interaction: Interaction):
-        await interaction.response.send_modal(modal=BuyQuantityModal(db, self.product))
+        if self.product.get('item_type') == "FCFS":
+            guild_id = str(interaction.guild_id)
+            channel_id = str(interaction.channel.id)
+            channel_name = bot.get_channel(interaction.channel.id)
+            user_id = str(interaction.user.id)
+            connection = self.db.get_connection()
+            cursor = connection.cursor()
+
+            try:
+                buy_quantity = 1
+
+                cursor.execute(
+                    query.select_guild_product(),
+                    (guild_id, self.product.get('id'),)
+                )
+                product = cursor.fetchone()
+
+                if product:
+                    quantity = int(product.get('quantity'))
+                    buy_count = int(product.get('buy_count'))
+                    price = int(product.get('price'))
+
+                    if quantity == buy_count:
+                        description = "```❌ The purchase has been completed, so there is no quantity left.```"
+                        await interaction.response.send_message(description, ephemeral=True)
+                        logger.error(f'button_buy error: The purchase has been completed, so there is no quantity left.')
+                        return
+                else:
+                    description = "```❌ There was a problem applying for the item.```"
+                    await interaction.response.send_message(description, ephemeral=True)
+                    logger.error(f'button_buy price error: There was a problem applying for the item.')
+                    return
+
+                cursor.execute(
+                    query.select_guild_user_points(),
+                    (guild_id, user_id,)
+                )
+                user = cursor.fetchone()
+
+                if user:
+                    user_points = int(user.get('points'))
+                else:
+                    user_points = 0
+
+                if user_points < (price * buy_quantity):
+                    description = "```❌ Not enough points.```"
+                    await interaction.response.send_message(description, ephemeral=True)
+                    logger.error(f'BuyQuantityModal price error: Not enough points.')
+                    return
+                else:
+                    loop = buy_quantity
+                    while loop > 0:
+                        before_user_point = user_points
+                        user_points -= price
+
+                        cursor.execute(
+                            query.insert_guild_user_ticket(),
+                            (user_id, product.get('id'), guild_id,)
+                        )
+                        cursor.execute(
+                            query.update_guild_user_point(),
+                            (user_points, guild_id, user_id,)
+                        )
+                        cursor.execute(
+                            query.insert_guild_user_point_logs(),
+                            (guild_id, user_id, price * (-1),
+                             before_user_point, user_points, 'item-buy', user_id,
+                             channel_id, channel_name)
+                        )
+                        loop -= 1
+
+                    description = f"You applied for the `[{self.product.get('item_type')}]{self.product.get('name')}` x{buy_quantity} item."
+                    embed = make_embed({
+                        'title': '✅ Item buy completed',
+                        'description': description,
+                        'color': 0xFFFFFF,
+                    })
+                    await interaction.response.send_message(
+                        embed=embed,
+                        ephemeral=True
+                    )
+                connection.commit()
+            except Exception as e:
+                connection.rollback()
+                description = "```❌ There was a problem processing the data.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logger.error(f'button_buy db error: {e}')
+            finally:
+                cursor.close()
+                connection.close()
+        else:
+            await interaction.response.send_modal(modal=BuyQuantityModal(db, self.product))
 
 
 class BuyQuantityModal(Modal):
@@ -215,6 +306,8 @@ class BuyQuantityModal(Modal):
 
     async def callback(self, interaction):
         guild_id = str(interaction.guild_id)
+        channel_id = str(interaction.channel.id)
+        channel_name = bot.get_channel(interaction.channel.id)
         user_id = str(interaction.user.id)
         connection = self.db.get_connection()
         cursor = connection.cursor()
@@ -261,6 +354,7 @@ class BuyQuantityModal(Modal):
             else:
                 loop = buy_quantity
                 while loop > 0:
+                    before_user_point = user_points
                     user_points -= price
 
                     cursor.execute(
@@ -273,11 +367,13 @@ class BuyQuantityModal(Modal):
                     )
                     cursor.execute(
                         query.insert_guild_user_point_logs(),
-                        (guild_id, user_id, price * (-1), 'item-buy', user_id)
+                        (guild_id, user_id, price * (-1),
+                         before_user_point, user_points, 'item-buy', user_id,
+                         channel_id, channel_name)
                     )
                     loop -= 1
 
-                description = f"You applied for the `{self.product.get('name')}` x{buy_quantity} item."
+                description = f"You applied for the `[{self.product.get('item_type')}]{self.product.get('name')}` x{buy_quantity} item."
                 embed = make_embed({
                     'title': '✅ Item buy completed',
                     'description': description,
@@ -302,14 +398,19 @@ class AddItemButton(View):
     def __init__(self):
         super().__init__()
 
-    @button(label="Add Item", style=discord.ButtonStyle.primary, custom_id="add_item_button")
-    async def button_add_item(self, _, interaction):
-        await interaction.response.send_modal(modal=AddItemModal(db))
+    @button(label="RAFFLE", style=discord.ButtonStyle.green, custom_id="raffle_item_button")
+    async def button_raffle_item(self, _, interaction):
+        await interaction.response.send_modal(modal=AddItemModal(db, 'RAFFLE'))
+
+    @button(label="FCFS", style=discord.ButtonStyle.danger, custom_id="fcfs_item_button")
+    async def button_fcfs_item(self, _, interaction):
+        await interaction.response.send_modal(modal=AddItemModal(db, 'FCFS'))
 
 
 class AddItemModal(Modal):
-    def __init__(self, db):
-        super().__init__(title="Add Item")
+    def __init__(self, db, item_type):
+        super().__init__(title=f"Add {item_type} Item")
+        self.item_type = item_type
         self.item_name = InputText(label="Item Name",
                                    placeholder="Example Item",
                                    custom_id="name",
@@ -354,9 +455,10 @@ class AddItemModal(Modal):
                 return
 
             name = self.item_name.value
+            max_round = store.get('max_round')
             cursor.execute(
                 query.select_guild_product_count(),
-                (guild_id, name,)
+                (guild_id, max_round, name, )
             )
             item = cursor.fetchone()
             if int(item.get('cnt', 0)) > 0:
@@ -394,7 +496,7 @@ class AddItemModal(Modal):
 
             cursor.execute(
                 query.insert_guild_product(),
-                (guild_id, store.get('max_round'), name, image, price, quantity,)
+                (guild_id, store.get('max_round'), self.item_type, name, image, price, quantity,)
             )
             description = f"`{name}` has been registered as a item."
             embed = make_embed({
@@ -765,6 +867,12 @@ async def store_main(ctx):
                 'max_round': 0,
             }
 
+        if store.get('round_status') != 'OPEN':
+            description = "```❌ No rounds have been opened in the store yet.```"
+            await ctx.reply(description, mention_author=True)
+            logger.error(f'store_main error: No rounds have been opened in the store yet.')
+            return
+
         embed = make_embed({
             'title': store.get('title'),
             'description': store.get('description'),
@@ -774,7 +882,7 @@ async def store_main(ctx):
 
         items = ""
         for product in products:
-            items += f"`{product.get('name')}` x{product.get('quantity')}\n"
+            items += f"`[{product.get('item_type')}]{product.get('name')}` x{product.get('quantity')}\n"
 
         embed.add_field(name=f"Store Items - {store.get('max_round')}Round", value=items)
 
@@ -790,7 +898,7 @@ async def store_main(ctx):
 
 
 async def add_item(ctx):
-    description = "🎁️ Press the `Add Item` button to register the item."
+    description = "🎁️ Press the `RAFFLE` or `FCFS` button to register the item."
     embed = make_embed({
         'title': 'Add Item',
         'description': description,
@@ -850,6 +958,8 @@ async def remove_rewards(ctx, user_tag, amount):
 
 async def save_rewards(ctx, params):
     guild_id = str(ctx.guild.id)
+    channel_id = str(ctx.channel.id)
+    channel_name = bot.get_channel(ctx.channel.id)
     connection = db.get_connection()
     cursor = connection.cursor()
     result = 0
@@ -888,7 +998,9 @@ async def save_rewards(ctx, params):
 
         cursor.execute(
             query.insert_guild_user_point_logs(),
-            (guild_id, user_id, point, action_type, action_user_id)
+            (guild_id, user_id, point,
+             before_user_points, user_points, action_type, action_user_id,
+             channel_id, channel_name)
         )
 
         connection.commit()
@@ -955,6 +1067,72 @@ async def giveaway_raffle(ctx):
         await ctx.reply(embed=embed, mention_author=True)
     except Exception as e:
         logger.error(f'giveaway_raffle error: {e}')
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
+
+
+async def today_self_rewards(ctx, today_self_rewards_amount):
+    guild_id = str(ctx.guild.id)
+    channel_id = str(ctx.channel.id)
+    channel_name = bot.get_channel(ctx.channel.id)
+    action_type = 'today-self-rewards'
+    action_user_id = ctx.author.id
+    connection = db.get_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            query.select_today_self_rewards(),
+            (guild_id, action_user_id, action_type)
+        )
+        last_date = cursor.fetchone()['last_self_rewards']
+
+        # 유저가 오늘 이미 출석을 한 경우 에러 메시지 보내기
+        if last_date and last_date.strftime('%Y-%m-%d') == datetime.datetime.now().date().strftime('%Y-%m-%d'):
+            await ctx.reply("You've already done it\nPlease try again tomorrow", mention_author=True)
+            return
+
+        cursor.execute(
+            query.select_guild_user_points(),
+            (guild_id, action_user_id,)
+        )
+        user = cursor.fetchone()
+
+        if user:
+            user_points = user.get('points')
+            before_user_points = user_points
+            user_points += today_self_rewards_amount
+
+            if user_points < 0:
+                user_points = 0
+
+            cursor.execute(
+                query.update_guild_user_point(),
+                (user_points, guild_id, action_user_id,)
+            )
+        else:
+            before_user_points = 0
+            user_points = today_self_rewards_amount
+
+            cursor.execute(
+                query.insert_guild_user_point(),
+                (guild_id, action_user_id, user_points,)
+            )
+
+        cursor.execute(
+            query.insert_guild_user_point_logs(),
+            (guild_id, action_user_id, today_self_rewards_amount,
+             before_user_points, user_points, action_type, action_user_id,
+             channel_id, channel_name)
+        )
+
+        connection.commit()
+
+        await ctx.reply(f"`+{today_self_rewards_amount}` Added", mention_author=True)
+
+    except Exception as e:
+        logger.error(f'today_self_rewards error: {e}')
         connection.rollback()
     finally:
         cursor.close()

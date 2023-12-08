@@ -84,6 +84,16 @@ async def giveaway_raffle(ctx):
     await base_bot.giveaway_raffle(ctx)
 
 
+@bot.command(
+    name='today'
+)
+async def today(ctx):
+    today_channel_id = os.getenv("TODAY_CHANNEL_ID")
+    today_self_rewards_amount = int(os.getenv("TODAY_SELF_REWARDS_AMOUNT"))
+    if ctx.channel.id == int(today_channel_id):
+        await base_bot.today_self_rewards(ctx, today_self_rewards_amount)
+
+
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)

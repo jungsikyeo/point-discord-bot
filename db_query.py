@@ -26,7 +26,8 @@ def select_guild_store_round():
             select guild_id, max_round,
                 (select IF(count(r.round) > 0, 'OPEN', 'CLOSE') round_status
                  from rounds r
-                 where r.round_status = 'OPEN') round_status
+                 where r.guild_id = t_max_round.guild_id
+                 and r.round_status = 'OPEN') round_status
             from t_max_round
         )
         select t.guild_id, s.title, s.description, s.image_url, t.max_round, t.round_status
@@ -61,22 +62,23 @@ def update_guild_store():
 
 def select_guild_products():
     return """
-        select p.id, r.round, p.name, p.image, p.price, p.quantity
+        select p.id, r.round, p.item_type, p.name, p.image, p.price, p.quantity
         from products p 
         inner join rounds r on r.guild_id = p.guild_id and r.round = p.round and r.round_status = 'OPEN'
         where p.guild_id = %s
+        AND p.item_type = 'RAFFLE'
     """
 
 
 def select_guild_user_tickets():
     return """
-        select p.id, p.round, p.name, p.image, p.price, p.quantity, count(p.id) tickets
+        select p.id, p.round, p.item_type, p.name, p.image, p.price, p.quantity, count(p.id) tickets
         from user_tickets u
         inner join products p on p.guild_id = u.guild_id and p.id = u.product_id
         inner join rounds r on r.guild_id = u.guild_id and r.round = p.round and r.round_status = 'OPEN'
         where u.guild_id = %s 
         and u.user_id = %s
-        group by p.id, p.name, p.image, p.price
+        group by p.id, p.item_type, p.name, p.image, p.price
     """
 
 
@@ -87,6 +89,7 @@ def select_guild_raffle_user_tickets():
         inner join products p on p.guild_id = u.guild_id and p.id = u.product_id
         inner join rounds r on r.guild_id = u.guild_id and r.round = p.round and r.round_status = 'OPEN'
         where u.guild_id = %s
+        and p.item_type = 'RAFFLE'
         group by u.user_id, p.id, p.name 
     """
 
@@ -102,10 +105,12 @@ def select_guild_user_points():
 
 def select_guild_product():
     return """
-        select id, name, image, price, quantity
-        from products
-        where guild_id = %s 
-        and id = %s
+        select p.id, p.item_type, p.name, p.image, p.price, p.quantity, count(ut.user_id) buy_count
+        from products p
+        left outer join user_tickets ut on p.id = ut.product_id
+        where p.guild_id = %s
+          and p.id = %s
+        group by p.id, p.item_type, p.name, p.image, p.price, p.quantity
     """
 
 
@@ -145,21 +150,26 @@ def select_guild_product_count():
         select count(id) cnt
         from products
         where guild_id = %s 
+        and round = %s
         and name = %s
     """
 
 
 def insert_guild_product():
     return """
-        insert into products (guild_id, round, name, image, price, quantity)
-        values (%s, %s, %s, %s, %s, %s)
+        insert into products (guild_id, round, item_type, name, image, price, quantity)
+        values (%s, %s, %s, %s, %s, %s, %s)
     """
 
 
 def insert_guild_user_point_logs():
     return """
-        insert into user_point_logs (guild_id, user_id, point_amount, action_type, action_user_id)
-        values (%s, %s, %s, %s, %s)
+        insert into user_point_logs (
+            guild_id, user_id, point_amount, 
+            before_point, after_point, action_type, action_user_id,
+            channel_id, channel_name
+        )
+        values (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
 
 
@@ -176,3 +186,14 @@ def update_guild_rounds():
         where guild_id = %s
         and round = %s
     """
+
+
+def select_today_self_rewards():
+    return """
+        select max(timestamp) last_self_rewards
+        from user_point_logs
+        where guild_id = %s
+        and user_id = %s
+        and action_type = %s
+    """
+
