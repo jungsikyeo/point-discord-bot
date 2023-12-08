@@ -94,6 +94,13 @@ async def today(ctx):
         await base_bot.today_self_rewards(ctx, today_self_rewards_amount)
 
 
+@bot.command(
+    name='level-rewards'
+)
+async def level_rewards(ctx):
+    pass
+
+
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)
