@@ -66,6 +66,15 @@ def select_guild_products():
         from products p 
         inner join rounds r on r.guild_id = p.guild_id and r.round = p.round and r.round_status = 'OPEN'
         where p.guild_id = %s
+    """
+
+
+def select_guild_products_raffle():
+    return """
+        select p.id, r.round, p.item_type, p.name, p.image, p.price, p.quantity
+        from products p 
+        inner join rounds r on r.guild_id = p.guild_id and r.round = p.round and r.round_status = 'OPEN'
+        where p.guild_id = %s
         AND p.item_type = 'RAFFLE'
     """
 
