@@ -97,9 +97,25 @@ async def today(ctx):
 @bot.command(
     name='level-rewards'
 )
+@commands.has_any_role(*mod_role_ids)
 async def level_rewards(ctx):
-    pass
+    await base_bot.level_rewards(ctx)
 
+
+@bot.command(
+    name='level-reset'
+)
+@commands.has_any_role(*mod_role_ids)
+async def level_reset(ctx):
+    await base_bot.level_reset(ctx)
+
+
+@bot.command(
+    name='level-list'
+)
+@commands.has_any_role(*mod_role_ids)
+async def level_list(ctx):
+    await base_bot.level_list(ctx)
 
 @bot.event
 async def on_ready():

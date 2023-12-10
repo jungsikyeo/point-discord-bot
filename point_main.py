@@ -1,3 +1,5 @@
+import time
+
 import discord
 import os
 import requests
@@ -23,6 +25,7 @@ mysql_db = os.getenv("MYSQL_DB")
 
 
 global logger
+level_reset_status = False
 
 
 def config_logging(module_logger):
@@ -780,6 +783,116 @@ class RaffleCog(commands.Cog):
         await ctx.reply(embed=embed, mention_author=True)
 
 
+class ClaimPointButton(View):
+    def __init__(self, db):
+        super().__init__(timeout=None)
+        self.db = db
+
+    @button(label="Claim", style=discord.ButtonStyle.green, custom_id="claim_point_button")
+    async def button_claim_point(self, _, interaction: Interaction):
+        global level_reset_status
+
+        if level_reset_status:
+            description = "```❌ A reset is already in progress.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logger.error(f'ClaimPointButton error: {description}')
+            return
+
+        guild_id = str(interaction.guild_id)
+        user = interaction.user
+        user_id = str(user.id)
+        action_type = 'level-role-claim'
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(
+                query.select_last_reset_end_time(),
+                (guild_id,)
+            )
+            last_reset_end_time = cursor.fetchone()
+
+            cursor.execute(
+                query.select_guild_user_roles_claim_point(),
+                (guild_id,)
+            )
+            roles_claim_points = cursor.fetchall()
+            point_by_role = {role_claim_point['role_name']: role_claim_point['point'] for role_claim_point in roles_claim_points}
+            description = ""
+            total_count = 0
+            claim_count = 0
+            claim_sum = 0
+
+            if last_reset_end_time:
+                for role in user.roles:
+                    role_name = str(role.name)
+                    if point_by_role.get(role_name):
+                        cursor.execute(
+                            query.select_guild_user_claim_role(),
+                            (guild_id, user_id, role_name, last_reset_end_time.get('reset_end_time'))
+                        )
+                        last_claim_role = cursor.fetchone()
+
+                        if last_claim_role:
+                            description += f"`{role.name}` claim has already been claimed. -> `+0` Added.\n"
+                        else:
+                            cursor.execute(
+                                query.insert_guild_user_claim_role(),
+                                (guild_id, user_id, role_name,)
+                            )
+
+                            point = point_by_role[role_name]
+                            action_user_id = user_id
+                            channel_id = interaction.channel_id
+                            channel_name = bot.get_channel(interaction.channel_id)
+
+                            await save_point_and_log(cursor, guild_id, user_id, point,
+                                                     action_type, action_user_id,
+                                                     channel_id, channel_name)
+
+                            connection.commit()
+
+                            description += f"`{role.name}` claim completed. -> `+{point}` Added.\n"
+                            claim_count += 1
+                            claim_sum += point
+                        total_count += 1
+
+                if claim_count > 0:
+                    description += f"\n All Roles claim completed."
+                    embed = make_embed({
+                        'title': f'✅ Role Claim Complete. Total `+{claim_sum}` Added.',
+                        'description': description,
+                        'color': 0xFFFFFF,
+                    })
+                else:
+                    description += f"\n You don`t have role in claim."
+                    embed = make_embed({
+                        'title': '❌ Role Claim Failed',
+                        'description': description,
+                        'color': 0xff0000,
+                    })
+            else:
+                description += f"\n There is no record of resetting roles.\nplease contact administrator."
+                embed = make_embed({
+                    'title': '❌ Role Claim Failed',
+                    'description': description,
+                    'color': 0xff0000,
+                })
+
+            await interaction.response.send_message(
+                embed=embed,
+                ephemeral=True
+            )
+            connection.commit()
+        except Exception as e:
+            connection.rollback()
+            description = "```❌ There was a problem processing the data.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logger.error(f'button_claim_point db error: {e}')
+        finally:
+            cursor.close()
+            connection.close()
+
+
 bot = commands.Bot(command_prefix=command_flag, intents=discord.Intents.all())
 db = db_pool.Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 
@@ -796,6 +909,46 @@ def make_embed(embed_info):
         )
     embed.set_footer(text="Powered by SearchFi DEV")
     return embed
+
+
+async def save_point_and_log(cursor, guild_id, user_id, point,
+                             action_type, action_user_id,
+                             channel_id, channel_name):
+    cursor.execute(
+        query.select_guild_user_points(),
+        (guild_id, user_id,)
+    )
+    user = cursor.fetchone()
+
+    if user:
+        before_user_points = user.get('points')
+        user_points = int(before_user_points)
+        user_points += point
+
+        if user_points < 0:
+            user_points = 0
+
+        cursor.execute(
+            query.update_guild_user_point(),
+            (user_points, guild_id, user_id,)
+        )
+    else:
+        before_user_points = 0
+        user_points = point
+
+        cursor.execute(
+            query.insert_guild_user_point(),
+            (guild_id, user_id, user_points,)
+        )
+
+    cursor.execute(
+        query.insert_guild_user_point_logs(),
+        (guild_id, user_id, point,
+         before_user_points, user_points, action_type, action_user_id,
+         channel_id, channel_name)
+    )
+
+    return before_user_points, user_points
 
 
 async def store_setting(ctx):
@@ -969,39 +1122,9 @@ async def save_rewards(ctx, params):
         action_user_id = params.get('action_user_id')
         action_type = params.get('action_type')
 
-        cursor.execute(
-            query.select_guild_user_points(),
-            (guild_id, user_id,)
-        )
-        user = cursor.fetchone()
-
-        if user:
-            before_user_points = user.get('points')
-            user_points = int(before_user_points)
-            user_points += point
-
-            if user_points < 0:
-                user_points = 0
-
-            cursor.execute(
-                query.update_guild_user_point(),
-                (user_points, guild_id, user_id,)
-            )
-        else:
-            before_user_points = 0
-            user_points = point
-
-            cursor.execute(
-                query.insert_guild_user_point(),
-                (guild_id, user_id, user_points,)
-            )
-
-        cursor.execute(
-            query.insert_guild_user_point_logs(),
-            (guild_id, user_id, point,
-             before_user_points, user_points, action_type, action_user_id,
-             channel_id, channel_name)
-        )
+        before_user_points, user_points = await save_point_and_log(cursor, guild_id, user_id, point,
+                                                                   action_type, action_user_id,
+                                                                   channel_id, channel_name)
 
         connection.commit()
         result = {
@@ -1090,42 +1213,12 @@ async def today_self_rewards(ctx, today_self_rewards_amount):
 
         # 유저가 오늘 이미 출석을 한 경우 에러 메시지 보내기
         if last_date and last_date.strftime('%Y-%m-%d') == datetime.datetime.now().date().strftime('%Y-%m-%d'):
-            await ctx.reply("You've already done it\nPlease try again tomorrow", mention_author=True)
+            await ctx.reply("You've already done it. Please try again tomorrow.", mention_author=True)
             return
 
-        cursor.execute(
-            query.select_guild_user_points(),
-            (guild_id, action_user_id,)
-        )
-        user = cursor.fetchone()
-
-        if user:
-            user_points = user.get('points')
-            before_user_points = user_points
-            user_points += today_self_rewards_amount
-
-            if user_points < 0:
-                user_points = 0
-
-            cursor.execute(
-                query.update_guild_user_point(),
-                (user_points, guild_id, action_user_id,)
-            )
-        else:
-            before_user_points = 0
-            user_points = today_self_rewards_amount
-
-            cursor.execute(
-                query.insert_guild_user_point(),
-                (guild_id, action_user_id, user_points,)
-            )
-
-        cursor.execute(
-            query.insert_guild_user_point_logs(),
-            (guild_id, action_user_id, today_self_rewards_amount,
-             before_user_points, user_points, action_type, action_user_id,
-             channel_id, channel_name)
-        )
+        await save_point_and_log(cursor, guild_id, action_user_id, today_self_rewards_amount,
+                                 action_type, action_user_id,
+                                 channel_id, channel_name)
 
         connection.commit()
 
@@ -1133,6 +1226,161 @@ async def today_self_rewards(ctx, today_self_rewards_amount):
 
     except Exception as e:
         logger.error(f'today_self_rewards error: {e}')
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
+
+
+async def level_rewards(ctx):
+    description = "💎 Claim if you have an Level Role!"
+    embed = make_embed({
+        'title': 'Point Claim by Level',
+        'description': description,
+        'color': 0xFFFFFF,
+    })
+    view = ClaimPointButton(db)
+    await ctx.reply(embed=embed, view=view, mention_author=True)
+
+
+async def level_reset(ctx):
+    global level_reset_status
+
+    if level_reset_status:
+        description = "```❌ A reset is already in progress.```"
+        await ctx.reply(description, mention_author=True)
+        logger.error(f'level_reset error: {description}')
+        return
+
+    guild_id = str(ctx.guild.id)
+    action_type = 'level-role-point-reset'
+    user_id = ctx.author.id
+    action_user_id = ctx.author.id
+    connection = db.get_connection()
+    cursor = connection.cursor()
+    try:
+        level_reset_status = True
+
+        all_users = ctx.guild.members
+
+        cursor.execute(
+            query.select_guild_user_roles_claim_point(),
+            (guild_id,)
+        )
+        roles_claim_points = cursor.fetchall()
+        point_by_role = {role_claim_point['role_name']: role_claim_point['point'] for role_claim_point in roles_claim_points}
+
+        # 초기화 시작 로그 기록
+        cursor.execute(
+            query.insert_guild_user_roles_reset(),
+            (guild_id, action_user_id,)
+        )
+
+        # 초기화 로그 ID
+        reset_id = cursor.lastrowid
+        reset_count = 0
+
+        for user in all_users:
+            if not (str(user.id) == "732448005180883017" or str(user.id) == "952546993878741072"):
+                print(f"{user.name} -> no reset target!")
+                continue
+
+            print(f"{user.name} -> reset start!")
+
+            # user의 level role 초기화
+            for role in user.roles:
+                role_name = str(role.name)
+                if point_by_role.get(role_name):
+                    await user.remove_roles(role)
+                    logger.info(f"{user.name} -> {role_name} role delete.")
+
+            # user의 point 초기화
+            channel_id = ctx.channel.id
+            channel_name = bot.get_channel(ctx.channel.id)
+
+            cursor.execute(
+                query.select_guild_user_points(),
+                (guild_id, user_id,)
+            )
+            user = cursor.fetchone()
+
+            if user:
+                before_user_points = int(user.get('points'))
+                point = -before_user_points
+                user_points = before_user_points + point
+
+                cursor.execute(
+                    query.update_guild_user_point(),
+                    (user_points, guild_id, user_id,)
+                )
+
+                cursor.execute(
+                    query.insert_guild_user_point_logs(),
+                    (guild_id, user_id, point,
+                     before_user_points, user_points, action_type, action_user_id,
+                     channel_id, channel_name)
+                )
+
+                reset_count += 1
+
+        # 초기화 종료 로그 기록
+        cursor.execute(
+            query.update_guild_user_roles_reset(),
+            (action_user_id, reset_count, reset_id,)
+        )
+
+        connection.commit()
+
+        description = f"Level Reset completed."
+        embed = make_embed({
+            'title': '✅ Level Reset',
+            'description': description,
+            'color': 0xFFFFFF,
+        })
+        await ctx.reply(embed=embed, mention_author=True)
+
+    except Exception as e:
+        logger.error(f'level_reset error: {e}')
+        connection.rollback()
+    finally:
+        level_reset_status = False
+        cursor.close()
+        connection.close()
+
+
+async def level_list(ctx):
+    guild_id = str(ctx.guild.id)
+    user_id = ctx.author.id
+    connection = db.get_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            query.select_guild_user_roles_claim_point(),
+            (guild_id,)
+        )
+        roles = cursor.fetchall()
+
+        if roles:
+            header = "```\n{:<15}{:>10}\n".format("Level Role Name", "Point")
+            line = "-" * (15 + 10) + "\n"  # 각 열의 너비 합만큼 하이픈 추가
+            description = header + line
+            for role in roles:
+                description += "{:<20}{:>10}\n".format(role.get('role_name'), role.get('point'))
+            description += "```"
+            embed = make_embed({
+                'title': 'Level Role List',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+            await ctx.reply(embed=embed, mention_author=True)
+        else:
+            description = "```❌ No level role list.```"
+            await ctx.reply(description, mention_author=True)
+            logger.error(f'level_list error: {description}')
+
+    except Exception as e:
+        logger.error(f'level_list error: {e}')
         connection.rollback()
     finally:
         cursor.close()

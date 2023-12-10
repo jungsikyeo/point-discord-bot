@@ -206,3 +206,57 @@ def select_today_self_rewards():
         and action_type = %s
     """
 
+
+def insert_guild_user_roles_reset():
+    return """
+        insert into user_roles_reset (guild_id, action_user_id)
+        values (%s, %s)
+    """
+
+
+def update_guild_user_roles_reset():
+    return """
+        update user_roles_reset set
+             reset_end_time = current_timestamp,
+             action_user_id = %s,
+             reset_user_count = %s
+        where id = %s
+    """
+
+
+def select_last_reset_end_time():
+    return """
+        select reset_end_time
+        from user_roles_reset
+        where guild_id = %s 
+        and reset_end_time is not null
+        order by id desc
+        limit 1
+    """
+
+
+def select_guild_user_claim_role():
+    return """
+        select guild_id, user_id, role_name, timestamp
+        from user_roles_claim
+        where guild_id = %s
+        and user_id = %s
+        and role_name = %s
+        and timestamp > %s
+    """
+
+
+def insert_guild_user_claim_role():
+    return """
+        insert into user_roles_claim (guild_id, user_id, role_name)
+        values (%s, %s, %s)
+    """
+
+
+def select_guild_user_roles_claim_point():
+    return """
+        select guild_id, role_name, point
+        from user_roles_claim_point
+        where guild_id = %s
+    """
+
