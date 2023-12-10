@@ -893,6 +893,242 @@ class ClaimPointButton(View):
             connection.close()
 
 
+class LevelRoleButtons(View):
+    def __init__(self, db):
+        super().__init__(timeout=None)
+        self.db = db
+
+    @button(label="Role Add", style=discord.ButtonStyle.green, custom_id="role_add_button")
+    async def button_role_add(self, _, interaction: Interaction):
+        await interaction.response.send_modal(modal=EditRoleModal(db, {}, interaction))
+
+    @button(label="Role Edit", style=discord.ButtonStyle.primary, custom_id="role_edit_button")
+    async def button_role_edit(self, _, interaction: Interaction):
+        guild_id = str(interaction.guild_id)
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute(
+                query.select_guild_user_roles_claim_point(),
+                (guild_id,)
+            )
+            roles = cursor.fetchall()
+
+            await interaction.response.send_message(
+                content="Select the target you want to edit.",
+                view=LevelRoleSelectView(self.db, roles, 'edit', interaction),
+                ephemeral=True
+            )
+        except Exception as e:
+            logger.error(f'button_role_edit error: {e}')
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+    @button(label="Role Delete", style=discord.ButtonStyle.danger, custom_id="role_delete_button")
+    async def button_role_delete(self, _, interaction: Interaction):
+        guild_id = str(interaction.guild_id)
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute(
+                query.select_guild_user_roles_claim_point(),
+                (guild_id,)
+            )
+            roles = cursor.fetchall()
+
+            await interaction.response.send_message(
+                content="Select the target you want to delete.",
+                view=LevelRoleSelectView(self.db, roles, 'delete', interaction),
+                ephemeral=True
+            )
+        except Exception as e:
+            logger.error(f'button_role_delete error: {e}')
+            connection.rollback()
+        finally:
+            cursor.close()
+            connection.close()
+
+
+class LevelRoleSelectView(View):
+    def __init__(self, db, roles, action_type, org_interaction):
+        super().__init__()
+        self.db = db
+        self.roles = roles
+        self.action_type = action_type
+        self.org_interaction = org_interaction
+        self.options = [discord.SelectOption(
+            label=f"""{role.get('role_name')}""",
+            value=str(role.get('id')),
+            description=f"""Point: {role.get('point')}""",
+        ) for role in roles]
+        self.add_item(LevelRoleSelect(self.db, self.options, self.roles, self.action_type, self.org_interaction))
+
+
+class LevelRoleSelect(Select):
+    def __init__(self, db, options, roles, action_type, org_interaction):
+        super().__init__(placeholder='Please choose a role', min_values=1, max_values=1, options=options)
+        self.db = db
+        self.roles = roles
+        self.action_type = action_type
+        self.org_interaction = org_interaction
+
+    async def callback(self, interaction: Interaction):
+        guild_id = str(interaction.guild.id)
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+        try:
+            if self.action_type == "delete":
+                for role in self.roles:
+                    if str(role.get('id')) == str(self.values[0]):
+                        description = f"Do you want me to delete the `{role.get('role_name')}` role?"
+                        embed = make_embed({
+                            'title': 'ℹ️ Delete Confirm',
+                            'description': description,
+                            'color': 0xFFFFFF,
+                        })
+                        view = DeleteRoleButton(self.db, role, interaction)
+
+                        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+                        await self.org_interaction.delete_original_response()
+            else:
+                for role in self.roles:
+                    if str(role.get('id')) == str(self.values[0]):
+                        await interaction.response.send_modal(modal=EditRoleModal(db, role, interaction))
+        except Exception as e:
+            description = "```❌ There was a problem processing the data.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logger.error(f'LevelRoleSelect error: {e}')
+        finally:
+            cursor.close()
+            connection.close()
+
+
+class EditRoleModal(Modal):
+    def __init__(self, db, role, org_interaction):
+        super().__init__(title="Role Add/Edit")
+        self.role_name = InputText(label="Role Name",
+                                   value=f"{role.get('role_name', '')}",
+                                   placeholder="input a role name.",
+                                   custom_id="role_name", )
+        self.point = InputText(label="Point",
+                               value=f"{role.get('point', '')}",
+                               placeholder="input a point.",
+                               custom_id="point", )
+        self.add_item(self.role_name)
+        self.add_item(self.point)
+        self.db = db
+        self.role = role
+        self.org_interaction = org_interaction
+
+    async def callback(self, interaction):
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+
+        try:
+            guild_id = self.role.get('guild_id', str(interaction.guild_id))
+            role_id = self.role.get('id', None)
+            role_name = self.role_name.value
+
+            try:
+                point = int(self.point.value)
+            except Exception as e:
+                description = "```❌ Quantity must be entered numerically.```"
+                await interaction.response.send_message(description, ephemeral=True)
+                logger.error(f'EditRoleModal point error: {description}')
+                return
+
+            if role_id:
+                cursor.execute(
+                    query.update_guild_user_roles_claim_point(),
+                    (role_name, point, guild_id, role_id,)
+                )
+
+                connection.commit()
+
+                description = f"`{role_name}` role edit completed."
+                embed = make_embed({
+                    'title': '✅ Role Edit Complete',
+                    'description': description,
+                    'color': 0xFFFFFF,
+                })
+            else:
+                cursor.execute(
+                    query.insert_guild_user_roles_claim_point(),
+                    (guild_id, role_name, point,)
+                )
+
+                connection.commit()
+
+                description = f"`{role_name}` role add completed."
+                embed = make_embed({
+                    'title': '✅ Role Add Complete',
+                    'description': description,
+                    'color': 0xFFFFFF,
+                })
+
+            await interaction.response.defer(ephemeral=True)
+
+            await self.org_interaction.edit_original_response(
+                embed=embed,
+                view=None
+            )
+        except Exception as e:
+            connection.rollback()
+            description = "```❌ There was a problem processing the data.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logger.error(f'EditRoleModal db error: {e}')
+        finally:
+            cursor.close()
+            connection.close()
+
+
+class DeleteRoleButton(View):
+    def __init__(self, db, role, org_interaction):
+        super().__init__(timeout=None)
+        self.db = db
+        self.role = role
+        self.org_interaction = org_interaction
+
+    @button(label="Delete", style=discord.ButtonStyle.danger, custom_id="real_role_delete_button")
+    async def button_real_role_delete(self, _, interaction: Interaction):
+        guild_id = str(interaction.guild.id)
+        connection = self.db.get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(
+                query.delete_guild_user_roles_claim_point(),
+                (guild_id, self.role.get('id'))
+            )
+
+            connection.commit()
+
+            description = f"`{self.role.get('role_name')}` delete completed."
+            embed = make_embed({
+                'title': '✅ Delete Complete',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+
+            await interaction.response.defer(ephemeral=True)
+
+            await self.org_interaction.edit_original_response(
+                embed=embed,
+                view=None
+            )
+        except Exception as e:
+            description = "```❌ There was a problem processing the data.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logger.error(f'button_real_role_delete error: {e}')
+        finally:
+            cursor.close()
+            connection.close()
+
+
 bot = commands.Bot(command_prefix=command_flag, intents=discord.Intents.all())
 db = db_pool.Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 
@@ -1350,7 +1586,6 @@ async def level_reset(ctx):
 
 async def level_list(ctx):
     guild_id = str(ctx.guild.id)
-    user_id = ctx.author.id
     connection = db.get_connection()
     cursor = connection.cursor()
 
@@ -1366,14 +1601,15 @@ async def level_list(ctx):
             line = "-" * (15 + 10) + "\n"  # 각 열의 너비 합만큼 하이픈 추가
             description = header + line
             for role in roles:
-                description += "{:<20}{:>10}\n".format(role.get('role_name'), role.get('point'))
+                description += "{:<15}{:>10}\n".format(role.get('role_name'), role.get('point'))
             description += "```"
             embed = make_embed({
                 'title': 'Level Role List',
                 'description': description,
                 'color': 0xFFFFFF,
             })
-            await ctx.reply(embed=embed, mention_author=True)
+            view = LevelRoleButtons(db)
+            await ctx.reply(embed=embed, view=view, mention_author=True)
         else:
             description = "```❌ No level role list.```"
             await ctx.reply(description, mention_author=True)

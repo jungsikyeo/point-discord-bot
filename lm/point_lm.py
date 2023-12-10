@@ -117,6 +117,7 @@ async def level_reset(ctx):
 async def level_list(ctx):
     await base_bot.level_list(ctx)
 
+
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)

@@ -255,8 +255,33 @@ def insert_guild_user_claim_role():
 
 def select_guild_user_roles_claim_point():
     return """
-        select guild_id, role_name, point
+        select id, guild_id, role_name, point
         from user_roles_claim_point
         where guild_id = %s
+        order by point
     """
 
+
+def delete_guild_user_roles_claim_point():
+    return """
+        delete from user_roles_claim_point
+        where guild_id = %s
+        and id = %s
+    """
+
+
+def update_guild_user_roles_claim_point():
+    return """
+        update user_roles_claim_point 
+        set role_name = %s,
+            point = %s
+        where guild_id = %s
+        and id = %s
+    """
+
+
+def insert_guild_user_roles_claim_point():
+    return """
+        insert into user_roles_claim_point (guild_id, role_name, point)
+        value (%s, %s, %s)
+    """
