@@ -1517,11 +1517,11 @@ async def level_reset(ctx):
         reset_count = 0
 
         for user in all_users:
-            if not (str(user.id) == "732448005180883017" or str(user.id) == "952546993878741072"):
-                print(f"{user.name} -> no reset target!")
-                continue
+            # if not (str(user.id) == "732448005180883017" or str(user.id) == "952546993878741072"):
+            #     print(f"{user.name} -> no reset target!")
+            #     continue
 
-            print(f"{user.name} -> reset start!")
+            logger.info(f"{user.name} -> reset start!")
 
             # user의 level role 초기화
             for role in user.roles:
