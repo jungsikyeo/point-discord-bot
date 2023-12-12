@@ -1612,7 +1612,8 @@ async def level_list(ctx):
             await ctx.reply(embed=embed, view=view, mention_author=True)
         else:
             description = "```❌ No level role list.```"
-            await ctx.reply(description, mention_author=True)
+            view = LevelRoleButtons(db)
+            await ctx.reply(description, view=view, mention_author=True)
             logger.error(f'level_list error: {description}')
 
     except Exception as e:
