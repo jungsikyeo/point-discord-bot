@@ -11,7 +11,8 @@ import asyncio
 from discord.ext import tasks, commands
 from discord.interactions import Interaction
 from discord.ui import View, button, Select, Modal, InputText
-from discord import Embed, ButtonStyle, InputTextStyle
+from discord import Embed, ButtonStyle, InputTextStyle, Role
+from typing import Union
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -1345,6 +1346,55 @@ async def remove_rewards(ctx, user_tag, amount):
         logger.error(f'remove_rewards error: {e}')
 
 
+async def give_role_rewards(ctx, role: Union[Role, int, str], amount):
+    # 입력값이 롤 객체인 경우
+    if isinstance(role, discord.Role):
+        role_found = role
+    # 입력값이 역할 ID인 경우
+    elif isinstance(role, int):
+        role_found = discord.utils.get(ctx.guild.roles, id=role)
+    # 입력값이 역할 이름인 경우
+    else:
+        role_found = discord.utils.get(ctx.guild.roles, name=role)
+
+    if role_found is None:
+        embed = Embed(title="Error",
+                      description=f"❌ Role not found for name, ID, or mention {role}. Please enter a valid role name, ID, or mention.\n\n",
+                      color=0xff0000)
+        await ctx.reply(embed=embed, mention_author=True)
+        return
+
+    role_id = role_found.id
+    all_users = ctx.guild.members
+    total_count = len(all_users)
+    processed_count = 0
+
+    for user in all_users:
+        for role in user.roles:
+            if role.id == role_id:
+                params = {
+                    'user_id': str(user.id),
+                    'point': int(amount),
+                    'action_user_id': ctx.author.id,
+                    'action_type': 'give-role-rewards',
+                }
+
+                await save_rewards(ctx, params)
+        processed_count += 1
+
+        # 500명마다 진행률 확인
+        if processed_count % 500 == 0 or processed_count == total_count:
+            await ctx.send(f"progress: {processed_count}/{total_count} ({(processed_count / total_count) * 100:.2f}%)")
+
+    description = f"Successfully gave `{amount}` points to `{role_found.name}` role users."
+    embed = make_embed({
+        'title': '✅ Role Point Given',
+        'description': description,
+        'color': 0xFFFFFF,
+    })
+    await ctx.reply(embed=embed, mention_author=True)
+
+
 async def save_rewards(ctx, params):
     guild_id = str(ctx.guild.id)
     channel_id = str(ctx.channel.id)
@@ -1516,6 +1566,8 @@ async def level_reset(ctx):
         reset_id = cursor.lastrowid
         reset_count = 0
 
+        total_count = len(all_users)
+
         for user in all_users:
             # if not (str(user.id) == "732448005180883017" or str(user.id) == "952546993878741072"):
             #     print(f"{user.name} -> no reset target!")
@@ -1557,7 +1609,11 @@ async def level_reset(ctx):
                      channel_id, channel_name)
                 )
 
-                reset_count += 1
+            reset_count += 1
+
+            # 500명마다 진행률 확인
+            if reset_count % 500 == 0 or reset_count == total_count:
+                await ctx.send(f"progress: {reset_count}/{total_count} ({(reset_count / total_count) * 100:.2f}%)")
 
         # 초기화 종료 로그 기록
         cursor.execute(

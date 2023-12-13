@@ -2,6 +2,8 @@ import os
 import sys
 import logging
 from discord.ext import commands
+from discord import Role
+from typing import Union
 from dotenv import load_dotenv
 
 current_path = os.path.abspath(__file__)
@@ -74,6 +76,14 @@ async def give_rewards(ctx, user_tag, amount):
 @commands.has_any_role(*mod_role_ids)
 async def remove_rewards(ctx, user_tag, amount):
     await base_bot.remove_rewards(ctx, user_tag, amount)
+
+
+@bot.command(
+    name='give-role-rewards'
+)
+@commands.has_any_role(*mod_role_ids)
+async def give_role_rewards(ctx, role: Union[Role, int, str], amount):
+    await base_bot.give_role_rewards(ctx, role, amount)
 
 
 @bot.command(
