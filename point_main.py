@@ -668,7 +668,7 @@ class RaffleCog(commands.Cog):
     def cog_unload(self):
         self.auto_raffle.cancel()
 
-    @tasks.loop(hours=24)
+    @tasks.loop(minutes=5)
     async def auto_raffle(self):
         logger.info(f'auto_raffle_status: {self.auto_raffle_status}')
         if self.auto_raffle_status == 'ON':
@@ -1370,20 +1370,23 @@ async def give_role_rewards(ctx, role: Union[Role, int, str], amount):
     processed_count = 0
 
     for user in all_users:
-        for role in user.roles:
-            if role.id == role_id:
-                params = {
-                    'user_id': str(user.id),
-                    'point': int(amount),
-                    'action_user_id': ctx.author.id,
-                    'action_type': 'give-role-rewards',
-                }
+        try:
+            for role in user.roles:
+                if role.id == role_id:
+                    params = {
+                        'user_id': str(user.id),
+                        'point': int(amount),
+                        'action_user_id': ctx.author.id,
+                        'action_type': 'give-role-rewards',
+                    }
+                    await save_rewards(ctx, params)
+            processed_count += 1
+        except Exception as e:
+            logger.error(f"{user.id} - {user.name} - {e}")
+            await ctx.send(f"{user.id} - {user.name} - {e}")
 
-                await save_rewards(ctx, params)
-        processed_count += 1
-
-        # 500명마다 진행률 확인
-        if processed_count % 500 == 0 or processed_count == total_count:
+        # 10000명마다 진행률 확인
+        if processed_count % 10000 == 0 or processed_count == total_count:
             await ctx.send(f"progress: {processed_count}/{total_count} ({(processed_count / total_count) * 100:.2f}%)")
 
     description = f"Successfully gave `{amount}` points to `{role_found.name}` role users."
