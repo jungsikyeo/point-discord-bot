@@ -397,6 +397,19 @@ def make_numbers_emoji(server_guild: guild, numbers: list[int]):
     return user_input_numbers_emoji
 
 
+def check_lottery_number(user_numbers: list[int],
+                         winner_numbers: list[int],
+                         raffle_numbers: int):
+
+    correct_numbers = 0
+    for number in winner_numbers:
+        for user_number in user_numbers:
+            if user_number == number:
+                correct_numbers += 1
+                continue
+    return correct_numbers >= raffle_numbers
+
+
 async def lottery_setting(ctx: ApplicationContext):
     guild_id = str(ctx.guild.id)
     connection = db.get_connection()
@@ -500,9 +513,10 @@ async def end_lottery(ctx: ApplicationContext, numbers: list[int]):
                     where guild_id = %s
                     and round_status = 'OPEN'
                 )
-                select user_ticket.lottery_id, 
+                select user_ticket.lottery_id,
                        user_ticket.user_id,
-                       user_ticket.numbers
+                       user_ticket.numbers,
+                       round.raffle_numbers
                 from round
                 inner join lottery_user_tickets user_ticket
                     on user_ticket.lottery_id = round.id
@@ -514,7 +528,7 @@ async def end_lottery(ctx: ApplicationContext, numbers: list[int]):
         if user_tickets:
             winner_numbers_emoji = make_numbers_emoji(ctx.guild, numbers)
             embed = Embed(title="Lottery Winner Raffle",
-                          description=f"Winner Numbers: {winner_numbers_emoji}",
+                          description=f"Winner Numbers: `{user_tickets[0].get('raffle_numbers')}` numbers out of {winner_numbers_emoji}",
                           color=0xFFFFFF)
             embed.set_footer(text="Waiting for winner searching...")
             await ctx.respond(embed=embed, ephemeral=False)
@@ -524,11 +538,12 @@ async def end_lottery(ctx: ApplicationContext, numbers: list[int]):
             lottery_id = 0
             for user_ticket in user_tickets:
                 lottery_id = int(user_ticket.get("lottery_id"))
+                raffle_numbers = int(user_ticket.get("raffle_numbers"))
                 user_id = int(user_ticket.get("user_id"))
                 user_numbers_str = user_ticket.get("numbers").split(", ")
                 user_numbers = [int(num) for num in user_numbers_str]
                 user_numbers_emoji = make_numbers_emoji(ctx.guild, user_numbers)
-                if sorted(user_numbers) == sorted(numbers):
+                if check_lottery_number(user_numbers, numbers, raffle_numbers):
                     winner_count += 1
                     winner_description += f"{winner_count}. <@{user_id}> - {user_numbers_emoji}\n"
 
