@@ -1464,18 +1464,18 @@ async def giveaway_raffle(ctx):
             'color': 0xFFFFFF,
         })
 
-        # if not event_announce_channel:
-        #     event_announce_channel = ctx.channel.id
-        #
-        # channel = bot.get_channel(int(event_announce_channel))
-        # await channel.send(embed=embed)
+        if not event_announce_channel:
+            event_announce_channel = ctx.channel.id
 
-        # description = f"Check it out on the <#{int(event_announce_channel)}> channel."
-        # embed = make_embed({
-        #     'title': 'Giveaway Raffle Complete',
-        #     'description': description,
-        #     'color': 0xFFFFFF,
-        # })
+        channel = bot.get_channel(int(event_announce_channel))
+        await channel.send(embed=embed)
+
+        description = f"Check it out on the <#{int(event_announce_channel)}> channel."
+        embed = make_embed({
+            'title': 'Giveaway Raffle Complete',
+            'description': description,
+            'color': 0xFFFFFF,
+        })
         await ctx.reply(embed=embed, mention_author=True)
     except Exception as e:
         logger.error(f'giveaway_raffle error: {e}')
