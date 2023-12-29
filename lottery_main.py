@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.commands.context import ApplicationContext
 from discord.interactions import Interaction
 from discord.ui import View, button, Modal, InputText
-from discord import Embed, ButtonStyle
+from discord import Embed, ButtonStyle, guild
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -237,39 +237,16 @@ class LotteryPurchaseModal(Modal):
 
             # 사용자에게 선택한 숫자를 보여주고 구매할지 확인
             user_input_numbers = ', '.join(map(str, numbers))
-            user_input_numbers_emoji = ""
-            for number in numbers:
-                if number == 1:
-                    user_input_numbers_emoji += f":one: "
-                elif number == 2:
-                    user_input_numbers_emoji += f":two: "
-                elif number == 3:
-                    user_input_numbers_emoji += f":three: "
-                elif number == 4:
-                    user_input_numbers_emoji += f":four: "
-                elif number == 5:
-                    user_input_numbers_emoji += f":five: "
-                elif number == 6:
-                    user_input_numbers_emoji += f":six: "
-                elif number == 7:
-                    user_input_numbers_emoji += f":seven: "
-                elif number == 8:
-                    user_input_numbers_emoji += f":eight: "
-                elif number == 9:
-                    user_input_numbers_emoji += f":nine: "
-                elif number == 10:
-                    user_input_numbers_emoji += f":keycap_ten: "
-                else:
-                    guild_emojis = interaction.guild.emojis
-                    for guild_emoji in guild_emojis:
-                        if f"lottery_{number}" == guild_emoji.name:
-                            user_input_numbers_emoji += f"{guild_emoji} "
-                            break
+            user_input_numbers_emoji = make_numbers_emoji(interaction.guild, numbers)
             confirmation_message = f"You have chosen the numbers:\n{user_input_numbers_emoji}\n\n" \
                                    f"Ticket Price: `{self.ticket_price} points`\n\n" \
                                    f"Do you want to proceed with the purchase?"
             await interaction.response.send_message(content=confirmation_message,
-                                                    view=ConfirmPurchaseView(self.db, self.lottery_id, user_input_numbers, self.ticket_price, interaction),
+                                                    view=ConfirmPurchaseView(self.db,
+                                                                             self.lottery_id,
+                                                                             user_input_numbers,
+                                                                             self.ticket_price,
+                                                                             interaction),
                                                     ephemeral=True)
         except ValueError:
             # 숫자로 변환할 수 없는 입력이 있는 경우
@@ -387,6 +364,39 @@ def make_embed(embed_info):
     return embed
 
 
+def make_numbers_emoji(server_guild: guild, numbers: list[int]):
+    user_input_numbers = ', '.join(map(str, numbers))
+    user_input_numbers_emoji = ""
+    for number in numbers:
+        if number == 1:
+            user_input_numbers_emoji += f":one: "
+        elif number == 2:
+            user_input_numbers_emoji += f":two: "
+        elif number == 3:
+            user_input_numbers_emoji += f":three: "
+        elif number == 4:
+            user_input_numbers_emoji += f":four: "
+        elif number == 5:
+            user_input_numbers_emoji += f":five: "
+        elif number == 6:
+            user_input_numbers_emoji += f":six: "
+        elif number == 7:
+            user_input_numbers_emoji += f":seven: "
+        elif number == 8:
+            user_input_numbers_emoji += f":eight: "
+        elif number == 9:
+            user_input_numbers_emoji += f":nine: "
+        elif number == 10:
+            user_input_numbers_emoji += f":keycap_ten: "
+        else:
+            guild_emojis = server_guild.emojis
+            for guild_emoji in guild_emojis:
+                if f"lottery_{number}" == guild_emoji.name:
+                    user_input_numbers_emoji += f"{guild_emoji} "
+                    break
+    return user_input_numbers_emoji
+
+
 async def lottery_setting(ctx: ApplicationContext):
     guild_id = str(ctx.guild.id)
     connection = db.get_connection()
@@ -440,7 +450,6 @@ async def start_lottery(ctx: ApplicationContext):
     guild_id = str(ctx.guild.id)
     connection = db.get_connection()
     cursor = connection.cursor()
-
     try:
         cursor.execute(
             """
@@ -472,6 +481,82 @@ async def start_lottery(ctx: ApplicationContext):
             return
     except Exception as e:
         logger.error(f'start_lottery error: {e}')
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
+
+
+async def end_lottery(ctx: ApplicationContext, numbers: list[int]):
+    guild_id = str(ctx.guild.id)
+    connection = db.get_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            """
+                with round as (
+                    select id, raffle_numbers, ticket_price, max_ticket_count, round_status
+                    from lottery_rounds
+                    where guild_id = %s
+                    and round_status = 'OPEN'
+                )
+                select user_ticket.lottery_id, 
+                       user_ticket.user_id,
+                       user_ticket.numbers
+                from round
+                inner join lottery_user_tickets user_ticket
+                    on user_ticket.lottery_id = round.id
+            """,
+            guild_id
+        )
+        user_tickets = cursor.fetchall()
+
+        if user_tickets:
+            winner_numbers_emoji = make_numbers_emoji(ctx.guild, numbers)
+            embed = Embed(title="Lottery Winner Raffle",
+                          description=f"Winner Numbers: {winner_numbers_emoji}",
+                          color=0xFFFFFF)
+            embed.set_footer(text="Waiting for winner searching...")
+            await ctx.respond(embed=embed, ephemeral=False)
+
+            winner_count = 0
+            winner_description = ""
+            lottery_id = 0
+            for user_ticket in user_tickets:
+                lottery_id = int(user_ticket.get("lottery_id"))
+                user_id = int(user_ticket.get("user_id"))
+                user_numbers_str = user_ticket.get("numbers").split(", ")
+                user_numbers = [int(num) for num in user_numbers_str]
+                user_numbers_emoji = make_numbers_emoji(ctx.guild, user_numbers)
+                if sorted(user_numbers) == sorted(numbers):
+                    winner_count += 1
+                    winner_description += f"{winner_count}. <@{user_id}> - {user_numbers_emoji}\n"
+
+            cursor.execute(
+                """
+                    update lottery_rounds set round_status = 'CLOSE'
+                    where id = %s
+                """,
+                lottery_id
+            )
+            connection.commit()
+
+            description = "Congratulations, lottery game winners!! 🎉🎉\n\n" \
+                          f"Total number of winners is `{winner_count}` users. 😄\n\n" \
+                          f"{winner_description}"
+            embed = make_embed({
+                'title': '🏆 Lottery Game Winners 🏆',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+            await ctx.respond(embed=embed, ephemeral=False)
+        else:
+            description = "```❌ No rounds have been opened in lottery game yet.```"
+            await ctx.respond(description, ephemeral=True)
+            logger.error(f'start_lottery error: No rounds have been opened in lottery game yet.')
+            return
+    except Exception as e:
+        logger.error(f'end_lottery error: {e}')
         connection.rollback()
     finally:
         cursor.close()

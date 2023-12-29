@@ -2,13 +2,13 @@ import os
 import sys
 import logging
 from discord.ext import commands
+from discord.commands import Option
 from dotenv import load_dotenv
 
 current_path = os.path.abspath(__file__)
 current_dir = os.path.dirname(current_path)
 folder_name = os.path.basename(current_dir)
 env_path = os.path.join(current_dir, f".env_{folder_name}")
-
 
 load_dotenv(dotenv_path=env_path)
 
@@ -23,7 +23,6 @@ bot_token = os.getenv("BOT_GAME_TOKEN")
 team_role_ids = list(map(int, os.getenv('TEAM_ROLE_ID').split(',')))
 mod_role_ids = list(map(int, os.getenv('MOD_ROLE_ID').split(',')))
 guild_ids = list(map(int, os.getenv('GUILD_ID').split(',')))
-
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,6 +54,23 @@ async def lottery_setting(ctx):
 @commands.has_any_role(*team_role_ids)
 async def start_lottery(ctx):
     await base_bot.start_lottery(ctx)
+
+
+@bot.slash_command(
+    name='end-lottery',
+    description="End lottery game and winner raffle.",
+    guild_ids=guild_ids
+)
+@commands.has_any_role(*team_role_ids)
+async def end_lottery(ctx,
+                      number1: Option(int, "lottery number 1", min_value=1, max_value=45, required=True),
+                      number2: Option(int, "lottery number 2", min_value=1, max_value=45, required=True),
+                      number3: Option(int, "lottery number 3", min_value=1, max_value=45, required=True),
+                      number4: Option(int, "lottery number 4", min_value=1, max_value=45, required=True),
+                      number5: Option(int, "lottery number 5", min_value=1, max_value=45, required=True),
+                      number6: Option(int, "lottery number 6", min_value=1, max_value=45, required=True)):
+    numbers = [number1, number2, number3, number4, number5, number6]
+    await base_bot.end_lottery(ctx, numbers)
 
 
 @bot.event
