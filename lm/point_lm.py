@@ -133,5 +133,10 @@ async def on_ready():
     base_bot.config_logging(logger)
     bot.add_cog(base_bot.RaffleCog(bot, db))
 
+    guild_id = int(os.getenv("GUILD_ID"))
+    call_channel_id = int(os.getenv("ALPHA_CALL_CHANNEL_ID"))
+    announce_channel_id = int(os.getenv("ALPHA_CALL_ANNOUNCE_CHANNEL_ID"))
+    base_bot.alpha_call_rewards.start(guild_id, call_channel_id, announce_channel_id)
+
 
 bot.run(bot_token)

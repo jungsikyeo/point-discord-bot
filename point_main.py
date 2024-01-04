@@ -1614,8 +1614,8 @@ async def level_reset(ctx):
 
             reset_count += 1
 
-            # 500명마다 진행률 확인
-            if reset_count % 500 == 0 or reset_count == total_count:
+            # 10000명마다 진행률 확인
+            if reset_count % 10000 == 0 or reset_count == total_count:
                 await ctx.send(f"progress: {reset_count}/{total_count} ({(reset_count / total_count) * 100:.2f}%)")
 
         # 초기화 종료 로그 기록
@@ -1681,3 +1681,63 @@ async def level_list(ctx):
     finally:
         cursor.close()
         connection.close()
+
+
+async def give_alpha_call_rewards(guild_id, call_channel_id, announce_channel_id):
+    connection = db.get_connection()
+    cursor = connection.cursor()
+
+    try:
+        # 특정 채널의 메시지 검사
+        guild = bot.get_guild(guild_id)
+        call_channel = guild.get_channel(call_channel_id)
+        announce_channel = guild.get_channel(announce_channel_id)
+        yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+        messages = await call_channel.history(after=yesterday).flatten()
+
+        user_points = {}
+        for message in messages:
+            # 봇이 작성한 메시지는 무시
+            if message.author.bot:
+                continue
+            user_id = message.author.id
+            if user_id not in user_points:
+                user_points[user_id] = 0
+            user_points[user_id] += 50
+            if user_points[user_id] > 200:
+                user_points[user_id] = 200
+
+        # 포인트 부여 및 로그 저장
+        action_type = 'alpha-call-rewards'
+        action_user_id = bot.user.id
+        channel_id = call_channel_id
+        channel_name = bot.get_channel(channel_id)
+        for user_id, point in user_points.items():
+            user = guild.get_member(user_id)
+            before_user_points, user_points = await save_point_and_log(cursor, guild_id, user_id, point,
+                                                                       action_type, action_user_id,
+                                                                       channel_id, channel_name)
+            connection.commit()
+
+            description = f"Successfully gave `{point}` points to {user.mention}\n\n" \
+                          f"{user.mention} points: `{before_user_points}` -> `{user_points}`"
+            embed = make_embed({
+                'title': '✅ AlphaCall Point Given',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+            await announce_channel.send(embed=embed, mention_author=True)
+    except Exception as e:
+        logger.error(f'give_alpha_call_rewards error: {e}')
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
+
+
+@tasks.loop(minutes=1)
+async def alpha_call_rewards(guild_id, call_channel_id, announce_channel_id):
+    now = datetime.datetime.now()
+    if now.hour == 22 and now.minute == 53:  # 한국시간 15시
+        logger.info(f"alpha call batch start! now time: {now}")
+        await give_alpha_call_rewards(guild_id, call_channel_id, announce_channel_id)
