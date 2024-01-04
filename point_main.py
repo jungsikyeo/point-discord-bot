@@ -1738,6 +1738,6 @@ async def give_alpha_call_rewards(guild_id, call_channel_id, announce_channel_id
 @tasks.loop(minutes=1)
 async def alpha_call_rewards(guild_id, call_channel_id, announce_channel_id):
     now = datetime.datetime.now()
-    if now.hour == 16 and now.minute == 25:  # 한국시간 15시
+    if now.hour == 16 and now.minute == 30:  # 한국시간 16시 30분
         logger.info(f"alpha call batch start! now time: {now}")
         await give_alpha_call_rewards(guild_id, call_channel_id, announce_channel_id)
