@@ -365,7 +365,6 @@ def make_embed(embed_info):
 
 
 def make_numbers_emoji(server_guild: guild, numbers: list[int]):
-    user_input_numbers = ', '.join(map(str, numbers))
     user_input_numbers_emoji = ""
     for number in numbers:
         guild_emojis = server_guild.emojis
