@@ -370,7 +370,7 @@ def make_numbers_emoji(server_guild: guild, numbers: list[int]):
     for number in numbers:
         guild_emojis = server_guild.emojis
         for guild_emoji in guild_emojis:
-            if f"lottery_{number}" == guild_emoji.name:
+            if f"new_lottery_{number}" == guild_emoji.name:
                 user_input_numbers_emoji += f"{guild_emoji} "
                 break
     return user_input_numbers_emoji
