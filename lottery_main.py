@@ -238,7 +238,7 @@ class LotteryPurchaseModal(Modal):
             # 사용자에게 선택한 숫자를 보여주고 구매할지 확인
             user_input_numbers = ', '.join(map(str, numbers))
             user_input_numbers_emoji = make_numbers_emoji(interaction.guild, numbers)
-            confirmation_message = f"You have chosen the numbers:\n{user_input_numbers_emoji}\n\n" \
+            confirmation_message = f"You have chosen the numbers:\n# {user_input_numbers_emoji}\n\n" \
                                    f"Ticket Price: `{self.ticket_price} points`\n\n" \
                                    f"Do you want to proceed with the purchase?"
             await interaction.response.send_message(content=confirmation_message,
@@ -368,32 +368,11 @@ def make_numbers_emoji(server_guild: guild, numbers: list[int]):
     user_input_numbers = ', '.join(map(str, numbers))
     user_input_numbers_emoji = ""
     for number in numbers:
-        if number == 1:
-            user_input_numbers_emoji += f":one: "
-        elif number == 2:
-            user_input_numbers_emoji += f":two: "
-        elif number == 3:
-            user_input_numbers_emoji += f":three: "
-        elif number == 4:
-            user_input_numbers_emoji += f":four: "
-        elif number == 5:
-            user_input_numbers_emoji += f":five: "
-        elif number == 6:
-            user_input_numbers_emoji += f":six: "
-        elif number == 7:
-            user_input_numbers_emoji += f":seven: "
-        elif number == 8:
-            user_input_numbers_emoji += f":eight: "
-        elif number == 9:
-            user_input_numbers_emoji += f":nine: "
-        elif number == 10:
-            user_input_numbers_emoji += f":keycap_ten: "
-        else:
-            guild_emojis = server_guild.emojis
-            for guild_emoji in guild_emojis:
-                if f"lottery_{number}" == guild_emoji.name:
-                    user_input_numbers_emoji += f"{guild_emoji} "
-                    break
+        guild_emojis = server_guild.emojis
+        for guild_emoji in guild_emojis:
+            if f"lottery_{number}" == guild_emoji.name:
+                user_input_numbers_emoji += f"{guild_emoji} "
+                break
     return user_input_numbers_emoji
 
 
