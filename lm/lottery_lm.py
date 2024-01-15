@@ -64,13 +64,23 @@ async def start_lottery(ctx):
 @commands.has_any_role(*team_role_ids)
 async def end_lottery(ctx,
                       number1: Option(int, "lottery number 1", min_value=1, max_value=45, required=True),
-                      number2: Option(int, "lottery number 2", min_value=1, max_value=45, required=True),
-                      number3: Option(int, "lottery number 3", min_value=1, max_value=45, required=True),
-                      number4: Option(int, "lottery number 4", min_value=1, max_value=45, required=True),
-                      number5: Option(int, "lottery number 5", min_value=1, max_value=45, required=True),
-                      number6: Option(int, "lottery number 6", min_value=1, max_value=45, required=True)):
+                      number2: Option(int, "lottery number 2", min_value=1, max_value=45, required=False),
+                      number3: Option(int, "lottery number 3", min_value=1, max_value=45, required=False),
+                      number4: Option(int, "lottery number 4", min_value=1, max_value=45, required=False),
+                      number5: Option(int, "lottery number 5", min_value=1, max_value=45, required=False),
+                      number6: Option(int, "lottery number 6", min_value=1, max_value=45, required=False)):
     numbers = [number1, number2, number3, number4, number5, number6]
     await base_bot.end_lottery(ctx, numbers)
+
+
+@bot.slash_command(
+    name='round-member-excel',
+    description="Lottery number from member by round",
+    guild_ids=guild_ids
+)
+@commands.has_any_role(*team_role_ids)
+async def round_member_excel(ctx, round: int):
+    await base_bot.round_member_excel(ctx, round)
 
 
 @bot.event

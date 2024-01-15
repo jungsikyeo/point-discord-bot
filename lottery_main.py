@@ -1,8 +1,11 @@
+import datetime
+
 import discord
 import os
 import re
 import db_pool
 import point_main
+import pandas as pd
 from discord.ext import commands
 from discord.commands.context import ApplicationContext
 from discord.interactions import Interaction
@@ -144,6 +147,17 @@ class LotteryMainView(View):
 
     @button(label="Buy Ticket", style=discord.ButtonStyle.green, custom_id="buy_ticket_button")
     async def button_buy_ticket(self, _, interaction: Interaction):
+        allow_status = False
+        roles = interaction.user.roles
+        for role in roles:
+            if "LV.2" == role.name:
+                allow_status = True
+        if not allow_status:
+            description = "```❌ You can only purchase it if you have an LV.2 role.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logger.error(f'button_buy_ticket error: You can only purchase it if you have an LV.2 role.')
+            return
+
         user_id = interaction.user.id
         connection = self.db.get_connection()
         cursor = connection.cursor()
@@ -173,12 +187,13 @@ class LotteryMainView(View):
             )
             lottery = cursor.fetchone()
 
+            raffle_numbers = int(lottery.get("raffle_numbers"))
             ticket_price = int(lottery.get("ticket_price"))
             max_ticket_count = int(lottery.get("max_ticket_count"))
             buy_ticket_cnt = int(lottery.get("buy_ticket_count"))
 
             if max_ticket_count > buy_ticket_cnt:
-                modal = LotteryPurchaseModal(self.db, self.guild_id, self.lottery_id, ticket_price)
+                modal = LotteryPurchaseModal(self.db, self.guild_id, self.lottery_id, ticket_price, raffle_numbers)
                 await interaction.response.send_modal(modal)
             else:
                 description = "```❌ Maximum purchase limit has been exceeded.```"
@@ -195,23 +210,24 @@ class LotteryMainView(View):
 
 
 class LotteryPurchaseModal(Modal):
-    def __init__(self, db, guild_id, lottery_id, ticket_price):
+    def __init__(self, db, guild_id, lottery_id, ticket_price, raffle_numbers):
         super().__init__(title="Buy Lottery Ticket")
         self.db = db
         self.guild_id = guild_id
         self.lottery_id = lottery_id
         self.ticket_price = ticket_price
-        self.add_item(InputText(label="Numbers", placeholder="6 Numbers between 1 and 45"))
+        self.raffle_numbers = raffle_numbers
+        self.add_item(InputText(label="Numbers", placeholder=f"{raffle_numbers} Numbers between 1 and 45"))
 
     async def callback(self, interaction: Interaction):
         # 입력된 텍스트를 콤마와 공백으로 분리하여 숫자 리스트 생성
         input_numbers = re.split(r'[,\s]+', self.children[0].value)
 
-        # 입력된 숫자들이 6개인지 확인
-        if len(input_numbers) != 6:
-            description = "```❌ Please enter exactly 6 numbers.```"
+        # 입력된 숫자들이 raffle_numbers개인지 확인
+        if len(input_numbers) != self.raffle_numbers:
+            description = f"```❌ Please enter exactly {self.raffle_numbers} numbers.```"
             await interaction.response.send_message(description, ephemeral=True)
-            logger.error(f'LotteryPurchaseModal error: Please enter exactly 6 numbers.')
+            logger.error(f'LotteryPurchaseModal error: Please enter exactly {self.raffle_numbers} numbers.')
             return
 
         connection = self.db.get_connection()
@@ -229,7 +245,7 @@ class LotteryPurchaseModal(Modal):
                 return
 
             # 중복된 숫자가 없는지 확인
-            if len(set(numbers)) != 6:
+            if len(set(numbers)) != self.raffle_numbers:
                 description = "```❌ Numbers must not be duplicated.```"
                 await interaction.response.send_message(description, ephemeral=True)
                 logger.error(f'LotteryPurchaseModal error: Numbers must not be duplicated.')
@@ -543,6 +559,8 @@ async def end_lottery(ctx: ApplicationContext, numbers: list[int]):
                 'color': 0xFFFFFF,
             })
             await ctx.respond(embed=embed, ephemeral=False)
+
+            await round_member_excel(ctx, lottery_id)
         else:
             description = "```❌ No rounds have been opened in lottery game yet.```"
             await ctx.respond(description, ephemeral=True)
@@ -550,6 +568,83 @@ async def end_lottery(ctx: ApplicationContext, numbers: list[int]):
             return
     except Exception as e:
         logger.error(f'end_lottery error: {e}')
+        connection.rollback()
+    finally:
+        cursor.close()
+        connection.close()
+
+
+async def round_member_excel(ctx: ApplicationContext, lottery_id: int):
+    guild_id = str(ctx.guild.id)
+    connection = db.get_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            """
+                select lut.lottery_id, 
+                        lr.round_status, 
+                        lut.user_id, 
+                        lut.numbers,
+                        lut.timestamp
+                from lottery_user_tickets lut 
+                inner join lottery_rounds lr on lut.lottery_id = lr.id
+                where lut.guild_id = %s
+                and lut.lottery_id = %s
+            """,
+            (guild_id, lottery_id)
+        )
+        user_lotterys = cursor.fetchall()
+
+        file_name = f'lottery_members(lotterid-{lottery_id}).xlsx'
+        with pd.ExcelWriter(file_name, engine='xlsxwriter') as writer:
+            # 사용자별 통계 데이터를 포함하는 새 데이터 프레임 생성
+            data = []
+            for user_lottery in user_lotterys:
+                lottery_id = user_lottery.get("lottery_id")
+                round_status = user_lottery.get("round_status")
+                user_id = user_lottery.get("user_id")
+                numbers = user_lottery.get("numbers")
+                timestamp = user_lottery.get("timestamp").strftime("%Y-%m-%d_%H-%M-%S")
+                try:
+                    user = bot.get_user(int(user_id))
+                    if user:  # 사용자가 여전히 서버에 있는 경우
+                        user_name = user.name  # 멤버의 디스플레이 이름 가져오기
+                    else:  # 사용자가 서버를 떠난 경우
+                        user_name = f"@{str(user_id)}"  # 멤버의 ID를 문자열로 사용
+                except Exception as e:  # 다른 예외 처리
+                    user_name = "Unknown"
+                    logger.error(f"An error occurred while getting member info: {str(e)}")
+
+                data.append({
+                    'lottery_id': lottery_id,
+                    'round_status': round_status,
+                    'user_id': user_id,
+                    'user_name': user_name,
+                    'numbers': numbers,
+                    'timestamp': timestamp,
+                })
+
+            df_summary = pd.DataFrame(data)
+            df_summary.to_excel(writer, sheet_name='users', index=False)  # 'Summary' 시트에 데이터 기록
+
+        try:
+            with open(file_name, 'rb') as f:
+                await ctx.respond(file=discord.File(f), ephemeral=True)
+            os.remove(file_name)  # 파일 사용이 완료된 후 파일 삭제
+        except discord.HTTPException as e:
+            embed = Embed(title="Error",
+                          description=f"Failed to upload the file: {str(e)}",
+                          color=0xff0000)
+            await ctx.respond(embed=embed, ephemeral=True)
+            logger.error(f"Failed to upload the file: {str(e)}")
+        except FileNotFoundError as e:
+            embed = Embed(title="Error",
+                          description=f"Failed to delete the file. It might have been already deleted or not found: {str(e)}",
+                          color=0xff0000)
+            await ctx.respond(embed=embed, ephemeral=True)
+            logger.error(f"Failed to delete the file: {str(e)}")
+    except Exception as e:
+        logger.error(f'round_member_excel error: {e}')
         connection.rollback()
     finally:
         cursor.close()
