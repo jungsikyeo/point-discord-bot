@@ -1543,7 +1543,6 @@ async def level_reset(ctx):
 
     guild_id = str(ctx.guild.id)
     action_type = 'level-role-point-reset'
-    user_id = ctx.author.id
     action_user_id = ctx.author.id
     connection = db.get_connection()
     cursor = connection.cursor()
@@ -1565,6 +1564,8 @@ async def level_reset(ctx):
             (guild_id, action_user_id,)
         )
 
+        connection.commit()
+
         # 초기화 로그 ID
         reset_id = cursor.lastrowid
         reset_count = 0
@@ -1576,6 +1577,7 @@ async def level_reset(ctx):
             #     print(f"{user.name} -> no reset target!")
             #     continue
 
+            user_id = user.id
             logger.info(f"{user.name} -> reset start!")
 
             # user의 level role 초기화
@@ -1611,6 +1613,8 @@ async def level_reset(ctx):
                      before_user_points, user_points, action_type, action_user_id,
                      channel_id, channel_name)
                 )
+
+                connection.commit()
 
             reset_count += 1
 
