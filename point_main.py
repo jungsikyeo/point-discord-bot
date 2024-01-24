@@ -204,6 +204,17 @@ class BuyButton(View):
 
     @button(label="Buy", style=discord.ButtonStyle.primary, custom_id="buy_button")
     async def button_buy(self, _, interaction: Interaction):
+        allow_status = False
+        roles = interaction.user.roles
+        for role in roles:
+            if "LV.2" == role.name:
+                allow_status = True
+        if not allow_status:
+            description = "```❌ You can only purchase it if you have an LV.2 role.```"
+            await interaction.response.send_message(description, ephemeral=True)
+            logger.error(f'button_buy error: You can only purchase it if you have an LV.2 role.')
+            return
+
         if self.product.get('item_type') == "FCFS":
             guild_id = str(interaction.guild_id)
             channel_id = str(interaction.channel.id)

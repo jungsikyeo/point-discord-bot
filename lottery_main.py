@@ -147,17 +147,6 @@ class LotteryMainView(View):
 
     @button(label="Buy Ticket", style=discord.ButtonStyle.green, custom_id="buy_ticket_button")
     async def button_buy_ticket(self, _, interaction: Interaction):
-        allow_status = False
-        roles = interaction.user.roles
-        for role in roles:
-            if "LV.2" == role.name:
-                allow_status = True
-        if not allow_status:
-            description = "```❌ You can only purchase it if you have an LV.2 role.```"
-            await interaction.response.send_message(description, ephemeral=True)
-            logger.error(f'button_buy_ticket error: You can only purchase it if you have an LV.2 role.')
-            return
-
         user_id = interaction.user.id
         connection = self.db.get_connection()
         cursor = connection.cursor()
