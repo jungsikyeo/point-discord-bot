@@ -1750,6 +1750,75 @@ async def give_alpha_call_rewards(guild_id, call_channel_id, announce_channel_id
         connection.close()
 
 
+async def bulk_role(ctx, channel: Union[discord.TextChannel, int, str], role: Union[discord.Role, int, str]):
+    # 입력값이 롤 객체인 경우
+    if isinstance(role, discord.Role):
+        role_found = role
+    # 입력값이 역할 ID인 경우
+    elif isinstance(role, int):
+        role_found = discord.utils.get(ctx.guild.roles, id=role)
+    # 입력값이 역할 이름인 경우
+    else:
+        role_found = discord.utils.get(ctx.guild.roles, name=role)
+
+    if role_found is None:
+        embed = Embed(title="Error",
+                      description=f"❌ Role not found for name, [ID, or mention {role}. Please enter a valid role name, ID, or mention.\n\n"
+                                  f"❌ {role} 이름, ID 또는 멘션의 역할을 찾을 수 없습니다. 올바른 역할 이름, ID 또는 멘션을 입력해주세요.",
+                      color=0xff0000)
+        await ctx.reply(embed=embed, mention_author=True)
+        return
+
+    # 입력값이 채널 객체인 경우
+    if isinstance(channel, discord.TextChannel):
+        channel_found = channel
+    # 입력값이 채널 ID인 경우
+    elif isinstance(channel, int):
+        channel_found = discord.utils.get(ctx.guild.channels, id=channel)
+    # 입력값이 채널 이름인 경우
+    else:
+        channel_found = discord.utils.get(ctx.guild.channels, name=channel)
+
+    if channel_found is None:
+        embed = Embed(title="Error",
+                      description=f"❌ Channel not found for name, ID, or mention {channel}. Please enter a valid channel name, ID, or mention.\n\n"
+                                  f"❌ {channel} 이름, ID 또는 멘션의 채널을 찾을 수 없습니다. 올바른 채널 이름, ID 또는 멘션을 입력해주세요.",
+                      color=0xff0000)
+        await ctx.reply(embed=embed, mention_author=True)
+        return
+
+    user_ids = []
+    try:
+        # 스레드의 모든 메시지를 가져와 각 메시지의 작성자 ID를 수집합니다.
+        async for message in channel_found.history(limit=None):
+            if message.author != ctx.bot.user:  # 봇은 제외
+                user_ids.append(message.author.id)
+
+        # 수집된 사용자 ID에서 중복을 제거합니다.
+        unique_user_ids = set(user_ids)
+
+        # 각 사용자에게 역할을 부여합니다.
+        for user_id in unique_user_ids:
+            member = ctx.guild.get_member(user_id)
+            if member is not None:
+                await member.add_roles(role_found)
+                await ctx.send(f"🟢 Role `{role_found.name}` has been assigned to <@{member.id}>.")
+
+        embed = discord.Embed(title=f"{role_found.name} assigned",
+                              description=f"✅ 총 {len(unique_user_ids)}명의 사용자에게 `{role_found.name}` 역할이 부여되었습니다.\n\n"
+                                          f"✅ The `{role_found.name}` role has been assigned to {len(unique_user_ids)} users.",
+                              color=0x00ff00)
+        await ctx.send(embed=embed)
+
+    except Exception as e:
+        logger.error(f'Error: {e}')
+        embed = discord.Embed(title="Error",
+                              description="🔴 명령어 처리 중 오류가 발생했습니다.\n\n"
+                                          "🔴 An error occurred while processing the command.",
+                              color=0xff0000)
+        await ctx.send(embed=embed)
+
+
 @tasks.loop(minutes=1)
 async def alpha_call_rewards(guild_id, call_channel_id, announce_channel_id):
     now = datetime.datetime.now()
