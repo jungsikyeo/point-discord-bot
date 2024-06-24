@@ -1,11 +1,9 @@
 import os
+import sys
 import logging
-from typing import Union
-
 import discord as discord
-
-import point_main as base_bot
 from discord.ext import commands
+from typing import Union
 from dotenv import load_dotenv
 
 current_path = os.path.abspath(__file__)
@@ -14,6 +12,10 @@ folder_name = os.path.basename(current_dir)
 env_path = os.path.join(current_dir, f".env_{folder_name}")
 
 load_dotenv(dotenv_path=env_path)
+
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+import point_main as base_bot
 
 bot = base_bot.bot
 db = base_bot.db
