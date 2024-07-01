@@ -1,0 +1,460 @@
+2024-06-24 09:57:23,466 - INFO - This is an info message from point_maple_story
+2024-06-24 09:57:23,467 - INFO - logging in using static token
+2024-06-24 09:57:24,073 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-24 09:57:24,387 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-2n0x",{"micros":89396,"calls":["id_created",{"micros":690,"calls":[]},"session_lookup_time",{"micros":1809,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-27",{"micros":86440,"calls":["start_session",{"micros":38446,"calls":["discord-api-rpc-6dd4c5ff9-ktbpq",{"micros":35016,"calls":["get_user",{"micros":5995},"get_guilds",{"micros":2539},"send_scheduled_deletion_message",{"micros":8},"guild_join_requests",{"micros":1},"authorized_ip_coro",{"micros":11}]}]},"starting_guild_connect",{"micros":61,"calls":[]},"presence_started",{"micros":336,"calls":[]},"guilds_started",{"micros":136,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":47432,"calls":[]},"connect_finished",{"micros":47436,"calls":[]},"build_ready",{"micros":19,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: c36d1b86278560e8afa6fd0598651ae2).
+2024-06-24 12:26:44,171 - ERROR - Error: 403 Forbidden (error code: 50013): Missing Permissions
+2024-06-24 12:54:34,070 - INFO - Got a request to RESUME the websocket.
+2024-06-24 12:54:34,459 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-24 12:54:34,712 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-dfcf",{"micros":28235,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":287,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-27",{"micros":102}]}].
+2024-06-24 13:39:40,361 - INFO - Got a request to RESUME the websocket.
+2024-06-24 13:39:40,711 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-24 13:39:40,948 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-d-0bt2",{"micros":9342,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":6953,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-27",{"micros":82}]}].
+2024-06-24 15:44:14,356 - INFO - Got a request to RESUME the websocket.
+2024-06-24 15:44:14,723 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-24 15:44:14,990 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-41dm",{"micros":44675,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":241,"calls":[]},"session_lookup_finished",{"micros":10,"calls":[]},"discord-sessions-prd-1-27",{"micros":49}]}].
+2024-06-24 18:28:47,154 - INFO - Got a request to RESUME the websocket.
+2024-06-24 18:28:47,482 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-24 18:28:47,704 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-sw9x",{"micros":1269,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":284,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-27",{"micros":120}]}].
+2024-06-24 20:18:25,636 - INFO - Got a request to RESUME the websocket.
+2024-06-24 20:18:25,994 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-24 20:18:26,226 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-wrr2",{"micros":1433,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":278,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-27",{"micros":97}]}].
+2024-06-24 23:28:33,428 - ERROR - Error: 503 Service Unavailable (error code: 0): upstream connect error or disconnect/reset before headers. reset reason: connection termination
+2024-06-24 23:38:03,866 - INFO - Got a request to RESUME the websocket.
+2024-06-24 23:38:04,223 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-24 23:38:04,476 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-5pm5",{"micros":1387,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":288,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-27",{"micros":83}]}].
+2024-06-25 01:29:21,986 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 01:29:21,988 - INFO - Got a request to RESUME the websocket.
+2024-06-25 01:29:22,348 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 01:29:22,583 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-jq7d",{"micros":1652,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":399,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-27",{"micros":107}]}].
+2024-06-25 02:17:52,908 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 02:17:52,909 - INFO - Got a request to RESUME the websocket.
+2024-06-25 02:17:53,303 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 02:17:53,540 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-d-snzt",{"micros":2946,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":230,"calls":[]},"session_lookup_finished",{"micros":17,"calls":[]},"discord-sessions-prd-1-27",{"micros":319}]}].
+2024-06-25 05:45:35,193 - INFO - Got a request to RESUME the websocket.
+2024-06-25 05:45:35,521 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 05:45:35,746 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-d-s7kf",{"micros":3811,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":517,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-27",{"micros":73}]}].
+2024-06-25 06:07:46,143 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 06:07:46,145 - INFO - Got a request to RESUME the websocket.
+2024-06-25 06:07:46,515 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 06:07:46,744 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-qlxj",{"micros":1920,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":305,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-27",{"micros":85}]}].
+2024-06-25 09:45:17,652 - INFO - Got a request to RESUME the websocket.
+2024-06-25 09:45:18,036 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 09:45:18,261 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-1frz",{"micros":1276,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":303,"calls":[]},"session_lookup_finished",{"micros":18,"calls":[]},"discord-sessions-prd-1-27",{"micros":127}]}].
+2024-06-25 10:01:40,408 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 10:01:40,409 - INFO - Got a request to RESUME the websocket.
+2024-06-25 10:01:40,765 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 10:01:40,993 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-rr27",{"micros":1278,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":276,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-27",{"micros":98}]}].
+2024-06-25 11:09:22,396 - INFO - Got a request to RESUME the websocket.
+2024-06-25 11:09:22,822 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 11:09:23,054 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-zffs",{"micros":1973,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":275,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-27",{"micros":101}]}].
+2024-06-25 12:48:58,673 - INFO - Got a request to RESUME the websocket.
+2024-06-25 12:48:59,080 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 12:48:59,349 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-33px",{"micros":44586,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":374,"calls":[]},"session_lookup_finished",{"micros":11,"calls":[]},"discord-sessions-prd-1-27",{"micros":78}]}].
+2024-06-25 13:20:15,541 - WARNING - Can't keep up, shard ID None websocket is 20.2s behind.
+2024-06-25 13:52:32,087 - INFO - Got a request to RESUME the websocket.
+2024-06-25 13:52:32,459 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 13:52:32,695 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-d-gqlh",{"micros":13284,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":210,"calls":[]},"session_lookup_finished",{"micros":18,"calls":[]},"discord-sessions-prd-1-27",{"micros":127}]}].
+2024-06-25 14:11:26,707 - INFO - Got a request to RESUME the websocket.
+2024-06-25 14:11:27,104 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 14:11:27,343 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-v6dj",{"micros":10139,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":285,"calls":[]},"session_lookup_finished",{"micros":11,"calls":[]},"discord-sessions-prd-1-27",{"micros":75}]}].
+2024-06-25 16:26:38,851 - INFO - Got a request to RESUME the websocket.
+2024-06-25 16:26:39,209 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 16:26:39,446 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-qzg9",{"micros":1157,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":261,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-27",{"micros":100}]}].
+2024-06-25 17:26:37,515 - INFO - Got a request to RESUME the websocket.
+2024-06-25 17:26:37,900 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 17:26:38,168 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-t0w6",{"micros":35531,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":332,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-27",{"micros":72}]}].
+2024-06-25 17:47:07,641 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 17:47:07,642 - INFO - Got a request to RESUME the websocket.
+2024-06-25 17:47:07,998 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 17:47:08,240 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-wfmv",{"micros":12874,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":239,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-27",{"micros":97}]}].
+2024-06-25 17:47:22,262 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 17:47:22,263 - INFO - Got a request to RESUME the websocket.
+2024-06-25 17:47:22,577 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 17:47:22,858 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-qzg9",{"micros":47529,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":266,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-27",{"micros":75}]}].
+2024-06-25 17:49:03,753 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 17:49:03,753 - INFO - Got a request to RESUME the websocket.
+2024-06-25 17:49:04,142 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 17:49:04,381 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-lwnj",{"micros":8653,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":252,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-27",{"micros":88}]}].
+2024-06-25 18:34:49,083 - INFO - Got a request to RESUME the websocket.
+2024-06-25 18:34:49,428 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 18:34:49,676 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-dfcf",{"micros":18283,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":285,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-27",{"micros":108}]}].
+2024-06-25 18:43:04,610 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 18:43:04,611 - INFO - Got a request to RESUME the websocket.
+2024-06-25 18:43:04,956 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 18:43:05,221 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-b-74pj",{"micros":44345,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":264,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-27",{"micros":69}]}].
+2024-06-25 20:40:58,433 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-25 20:40:58,434 - INFO - Got a request to RESUME the websocket.
+2024-06-25 20:40:58,807 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 20:40:59,036 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-tf6j",{"micros":1103,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":303,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-27",{"micros":97}]}].
+2024-06-25 21:15:59,622 - INFO - Got a request to RESUME the websocket.
+2024-06-25 21:15:59,965 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 21:16:00,194 - INFO - Shard ID None has successfully RESUMED session c36d1b86278560e8afa6fd0598651ae2 under trace ["gateway-prd-us-east1-c-x8v4",{"micros":1233,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":301,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-27",{"micros":81}]}].
+2024-06-25 21:51:55,784 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-25 21:51:55,785 - INFO - Got a request to RESUME the websocket.
+2024-06-25 21:51:56,392 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-25 21:52:00,297 - INFO - Shard ID None session has been invalidated.
+2024-06-25 21:52:00,592 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-25 21:52:06,117 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-25 21:52:06,501 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-m3gk",{"micros":83639,"calls":["id_created",{"micros":1170,"calls":[]},"session_lookup_time",{"micros":282,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-50",{"micros":78819,"calls":["start_session",{"micros":77118,"calls":["discord-api-rpc-75b8989cd7-5h464",{"micros":72663,"calls":["get_user",{"micros":33621},"get_guilds",{"micros":9168},"send_scheduled_deletion_message",{"micros":8},"guild_join_requests",{"micros":510},"authorized_ip_coro",{"micros":7}]}]},"starting_guild_connect",{"micros":53,"calls":[]},"presence_started",{"micros":383,"calls":[]},"guilds_started",{"micros":158,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":1078,"calls":[]},"connect_finished",{"micros":1082,"calls":[]},"build_ready",{"micros":19,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: 3a1f78d4999deff003bd2d6eaecfdf15).
+2024-06-26 00:36:23,166 - INFO - Got a request to RESUME the websocket.
+2024-06-26 00:36:23,573 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 00:36:23,811 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-b-2rwq",{"micros":3873,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":2721,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-50",{"micros":66}]}].
+2024-06-26 02:54:18,196 - INFO - Got a request to RESUME the websocket.
+2024-06-26 02:54:18,545 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 02:54:18,776 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-snzt",{"micros":1349,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":320,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-50",{"micros":116}]}].
+2024-06-26 04:08:46,845 - INFO - Got a request to RESUME the websocket.
+2024-06-26 04:08:47,248 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 04:08:47,481 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-b-ckcz",{"micros":1631,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":337,"calls":[]},"session_lookup_finished",{"micros":18,"calls":[]},"discord-sessions-prd-1-50",{"micros":73}]}].
+2024-06-26 07:00:30,326 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-26 07:00:30,328 - INFO - Got a request to RESUME the websocket.
+2024-06-26 07:00:30,696 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 07:00:30,920 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-3p3t",{"micros":1421,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":270,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-50",{"micros":87}]}].
+2024-06-26 07:51:31,687 - INFO - Got a request to RESUME the websocket.
+2024-06-26 07:51:32,033 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 07:51:32,267 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-zz62",{"micros":3935,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":2531,"calls":[]},"session_lookup_finished",{"micros":21,"calls":[]},"discord-sessions-prd-1-50",{"micros":49}]}].
+2024-06-26 09:19:42,600 - INFO - Got a request to RESUME the websocket.
+2024-06-26 09:19:42,940 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 09:19:43,172 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-x8v4",{"micros":2594,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":159,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-50",{"micros":67}]}].
+2024-06-26 10:10:24,417 - INFO - Got a request to RESUME the websocket.
+2024-06-26 10:10:24,772 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 10:10:25,046 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-zmks",{"micros":47903,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":336,"calls":[]},"session_lookup_finished",{"micros":17,"calls":[]},"discord-sessions-prd-1-50",{"micros":100}]}].
+2024-06-26 11:19:35,531 - INFO - Got a request to RESUME the websocket.
+2024-06-26 11:19:35,949 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 11:19:36,176 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-zz62",{"micros":3330,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":2640,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-50",{"micros":98}]}].
+2024-06-26 13:30:33,327 - INFO - Got a request to RESUME the websocket.
+2024-06-26 13:30:33,712 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 13:30:33,940 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-gwm8",{"micros":1031,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":249,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-50",{"micros":79}]}].
+2024-06-26 15:02:34,440 - INFO - Got a request to RESUME the websocket.
+2024-06-26 15:02:34,805 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 15:02:35,033 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-jl3d",{"micros":3811,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":336,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-50",{"micros":94}]}].
+2024-06-26 15:41:57,143 - INFO - Got a request to RESUME the websocket.
+2024-06-26 15:41:57,511 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 15:41:57,741 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-fp6q",{"micros":1242,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":310,"calls":[]},"session_lookup_finished",{"micros":19,"calls":[]},"discord-sessions-prd-1-50",{"micros":144}]}].
+2024-06-26 16:15:42,150 - INFO - Got a request to RESUME the websocket.
+2024-06-26 16:15:42,522 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 16:15:42,748 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-b-74pj",{"micros":1006,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":284,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-50",{"micros":61}]}].
+2024-06-26 18:27:16,376 - INFO - Got a request to RESUME the websocket.
+2024-06-26 18:27:16,778 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 18:27:17,028 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-b-v6dj",{"micros":18336,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":263,"calls":[]},"session_lookup_finished",{"micros":11,"calls":[]},"discord-sessions-prd-1-50",{"micros":45}]}].
+2024-06-26 19:39:50,820 - INFO - Got a request to RESUME the websocket.
+2024-06-26 19:39:51,198 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 19:39:51,434 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-8vlb",{"micros":8992,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":289,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-50",{"micros":91}]}].
+2024-06-26 20:55:08,706 - INFO - Got a request to RESUME the websocket.
+2024-06-26 20:55:09,057 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-26 20:55:09,287 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-qrwv",{"micros":5726,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":1539,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-50",{"micros":117}]}].
+2024-06-27 00:02:35,409 - INFO - Got a request to RESUME the websocket.
+2024-06-27 00:02:35,771 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 00:02:36,005 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-1frz",{"micros":1113,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":169,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-50",{"micros":143}]}].
+2024-06-27 02:19:31,923 - INFO - Got a request to RESUME the websocket.
+2024-06-27 02:19:32,301 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 02:19:32,524 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-sz0h",{"micros":1622,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":300,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-50",{"micros":95}]}].
+2024-06-27 03:26:53,221 - INFO - Got a request to RESUME the websocket.
+2024-06-27 03:26:53,590 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 03:26:53,815 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-mrvp",{"micros":2279,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":170,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-50",{"micros":131}]}].
+2024-06-27 05:58:18,487 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-27 05:58:18,489 - INFO - Got a request to RESUME the websocket.
+2024-06-27 05:58:18,819 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 05:58:19,059 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-r73h",{"micros":12425,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":283,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-50",{"micros":44}]}].
+2024-06-27 07:39:56,173 - INFO - Got a request to RESUME the websocket.
+2024-06-27 07:39:56,529 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 07:39:56,762 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-g4h4",{"micros":4995,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":386,"calls":[]},"session_lookup_finished",{"micros":11,"calls":[]},"discord-sessions-prd-1-50",{"micros":99}]}].
+2024-06-27 09:40:16,567 - INFO - Got a request to RESUME the websocket.
+2024-06-27 09:40:16,927 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 09:40:17,161 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-mj14",{"micros":7797,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":6167,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-50",{"micros":53}]}].
+2024-06-27 12:42:00,065 - INFO - Got a request to RESUME the websocket.
+2024-06-27 12:42:00,411 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 12:42:00,683 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-d-d93m",{"micros":43086,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":270,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-50",{"micros":67}]}].
+2024-06-27 15:50:09,601 - INFO - Got a request to RESUME the websocket.
+2024-06-27 15:50:10,020 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 15:50:10,260 - INFO - Shard ID None has successfully RESUMED session 3a1f78d4999deff003bd2d6eaecfdf15 under trace ["gateway-prd-us-east1-c-m1vg",{"micros":5376,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":4624,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-50",{"micros":122}]}].
+2024-06-27 17:13:09,724 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-27 17:13:09,725 - INFO - Got a request to RESUME the websocket.
+2024-06-27 17:13:10,183 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 17:13:14,631 - INFO - Shard ID None session has been invalidated.
+2024-06-27 17:13:14,872 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-27 17:13:20,225 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-27 17:13:20,628 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-g6x9",{"micros":139726,"calls":["id_created",{"micros":805,"calls":[]},"session_lookup_time",{"micros":4868,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-77",{"micros":133709,"calls":["start_session",{"micros":75701,"calls":["discord-api-rpc-dd8c4fdd-w928p",{"micros":71112,"calls":["get_user",{"micros":8426},"get_guilds",{"micros":8775},"send_scheduled_deletion_message",{"micros":8},"guild_join_requests",{"micros":314},"authorized_ip_coro",{"micros":8}]}]},"starting_guild_connect",{"micros":49,"calls":[]},"presence_started",{"micros":4002,"calls":[]},"guilds_started",{"micros":139,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":53786,"calls":[]},"connect_finished",{"micros":53791,"calls":[]},"build_ready",{"micros":19,"calls":[]},"clean_ready",{"micros":3,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: d4f04875fe271965205057daadf4c2db).
+2024-06-27 18:19:30,644 - INFO - Got a request to RESUME the websocket.
+2024-06-27 18:19:31,010 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 18:19:31,247 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-d-q76g",{"micros":1197,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":324,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-77",{"micros":81}]}].
+2024-06-27 19:41:19,704 - INFO - Got a request to RESUME the websocket.
+2024-06-27 19:41:20,102 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 19:41:20,341 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-c-h2zj",{"micros":6473,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":204,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-77",{"micros":77}]}].
+2024-06-27 20:13:04,907 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-27 20:13:04,909 - INFO - Got a request to RESUME the websocket.
+2024-06-27 20:13:05,327 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 20:13:05,582 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-c-g20z",{"micros":1584,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":221,"calls":[]},"session_lookup_finished",{"micros":20,"calls":[]},"discord-sessions-prd-1-77",{"micros":100}]}].
+2024-06-27 20:37:25,589 - INFO - Got a request to RESUME the websocket.
+2024-06-27 20:37:25,973 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 20:37:26,213 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-b-5qvc",{"micros":5774,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":247,"calls":[]},"session_lookup_finished",{"micros":21,"calls":[]},"discord-sessions-prd-1-77",{"micros":97}]}].
+2024-06-27 20:46:43,655 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-27 20:46:43,655 - INFO - Got a request to RESUME the websocket.
+2024-06-27 20:46:44,021 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-27 20:46:44,253 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-d-jql7",{"micros":3142,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":318,"calls":[]},"session_lookup_finished",{"micros":11,"calls":[]},"discord-sessions-prd-1-77",{"micros":123}]}].
+2024-06-28 00:32:45,706 - INFO - Got a request to RESUME the websocket.
+2024-06-28 00:32:46,048 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 00:32:46,286 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-c-5k0l",{"micros":5272,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":2434,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-77",{"micros":111}]}].
+2024-06-28 00:58:18,570 - INFO - Got a request to RESUME the websocket.
+2024-06-28 00:58:18,917 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 00:58:19,160 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-d-0mv8",{"micros":19547,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":342,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-77",{"micros":61}]}].
+2024-06-28 04:09:30,269 - INFO - Got a request to RESUME the websocket.
+2024-06-28 04:09:30,598 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 04:09:30,832 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-d-g342",{"micros":11718,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":605,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-77",{"micros":47}]}].
+2024-06-28 05:32:46,855 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-28 05:32:46,857 - INFO - Got a request to RESUME the websocket.
+2024-06-28 05:32:47,183 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 05:32:47,425 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-b-4m0z",{"micros":20158,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":355,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-77",{"micros":51}]}].
+2024-06-28 06:54:43,620 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-28 06:54:43,621 - INFO - Got a request to RESUME the websocket.
+2024-06-28 06:54:43,982 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 06:54:44,207 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-c-fh7d",{"micros":5367,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":3016,"calls":[]},"session_lookup_finished",{"micros":17,"calls":[]},"discord-sessions-prd-1-77",{"micros":72}]}].
+2024-06-28 07:10:39,131 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-28 07:10:39,132 - INFO - Got a request to RESUME the websocket.
+2024-06-28 07:10:39,448 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 07:10:39,671 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-b-54wr",{"micros":3448,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":260,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-77",{"micros":67}]}].
+2024-06-28 11:06:51,708 - INFO - Got a request to RESUME the websocket.
+2024-06-28 11:06:52,064 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 11:06:52,334 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-b-d8g2",{"micros":41044,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":298,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-77",{"micros":86}]}].
+2024-06-28 12:18:10,819 - INFO - Got a request to RESUME the websocket.
+2024-06-28 12:18:11,211 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 12:18:11,485 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-b-2p6h",{"micros":41601,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":260,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-77",{"micros":131}]}].
+2024-06-28 13:54:10,924 - INFO - Got a request to RESUME the websocket.
+2024-06-28 13:54:11,300 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 13:54:11,551 - INFO - Shard ID None has successfully RESUMED session d4f04875fe271965205057daadf4c2db under trace ["gateway-prd-us-east1-c-x50w",{"micros":21416,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":20572,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-77",{"micros":114}]}].
+2024-06-28 15:40:57,697 - WARNING - Can't keep up, shard ID None websocket is 12.5s behind.
+2024-06-28 15:43:56,098 - WARNING - Can't keep up, shard ID None websocket is 25.9s behind.
+2024-06-28 15:50:50,560 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-28 15:50:50,561 - INFO - Got a request to RESUME the websocket.
+2024-06-28 15:50:53,809 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 15:50:59,614 - INFO - Shard ID None session has been invalidated.
+2024-06-28 15:50:59,881 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-28 15:51:09,733 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-28 15:51:10,083 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-hljb",{"micros":79494,"calls":["id_created",{"micros":499,"calls":[]},"session_lookup_time",{"micros":272,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-128",{"micros":77716,"calls":["start_session",{"micros":31876,"calls":["discord-api-rpc-74479cdc5b-x2tkv",{"micros":28470,"calls":["get_user",{"micros":6070},"get_guilds",{"micros":3115},"send_scheduled_deletion_message",{"micros":9},"guild_join_requests",{"micros":1},"authorized_ip_coro",{"micros":10}]}]},"starting_guild_connect",{"micros":66,"calls":[]},"presence_started",{"micros":17072,"calls":[]},"guilds_started",{"micros":139,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":28534,"calls":[]},"connect_finished",{"micros":28540,"calls":[]},"build_ready",{"micros":17,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: d54ba51a09b672800ac5980d9166fea7).
+2024-06-28 15:52:10,516 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-28 15:52:10,516 - INFO - Got a request to RESUME the websocket.
+2024-06-28 15:52:12,750 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 15:52:18,389 - INFO - Shard ID None session has been invalidated.
+2024-06-28 15:52:19,044 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-28 15:52:26,685 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-28 15:52:27,140 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-c1mq",{"micros":114952,"calls":["id_created",{"micros":1149,"calls":[]},"session_lookup_time",{"micros":7985,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-293",{"micros":105502,"calls":["start_session",{"micros":33694,"calls":["discord-api-rpc-74479cdc5b-fsbtj",{"micros":30390,"calls":["get_user",{"micros":4386},"get_guilds",{"micros":3668},"send_scheduled_deletion_message",{"micros":9},"guild_join_requests",{"micros":0},"authorized_ip_coro",{"micros":16}]}]},"starting_guild_connect",{"micros":57,"calls":[]},"presence_started",{"micros":256,"calls":[]},"guilds_started",{"micros":157,"calls":[]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":71305,"calls":[]},"connect_finished",{"micros":71310,"calls":[]},"build_ready",{"micros":19,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: b00af04733fec5b318719ca809f9b687).
+2024-06-28 15:53:28,983 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-28 15:53:28,984 - INFO - Got a request to RESUME the websocket.
+2024-06-28 15:53:31,064 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 15:53:36,295 - INFO - Shard ID None session has been invalidated.
+2024-06-28 15:53:36,669 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-28 15:53:42,569 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-28 15:53:42,979 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-h2zj",{"micros":135670,"calls":["id_created",{"micros":595,"calls":[]},"session_lookup_time",{"micros":287,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-155",{"micros":133308,"calls":["start_session",{"micros":122833,"calls":["discord-api-rpc-74479cdc5b-fmvxq",{"micros":119554,"calls":["get_user",{"micros":5333},"get_guilds",{"micros":15954},"send_scheduled_deletion_message",{"micros":5},"guild_join_requests",{"micros":1},"authorized_ip_coro",{"micros":6}]}]},"starting_guild_connect",{"micros":59,"calls":[]},"presence_started",{"micros":10029,"calls":[]},"guilds_started",{"micros":135,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":221,"calls":[]},"connect_finished",{"micros":226,"calls":[]},"build_ready",{"micros":20,"calls":[]},"clean_ready",{"micros":0,"calls":[]},"optimize_ready",{"micros":1,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: a800375d61ae4353b7ce70125b26a4d2).
+2024-06-28 15:54:45,157 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-28 15:54:45,157 - INFO - Got a request to RESUME the websocket.
+2024-06-28 15:54:49,885 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 15:54:55,855 - INFO - Shard ID None session has been invalidated.
+2024-06-28 15:54:56,438 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-28 15:55:01,927 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-28 15:55:02,324 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-b-j0zl",{"micros":68298,"calls":["id_created",{"micros":820,"calls":[]},"session_lookup_time",{"micros":5781,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-112",{"micros":61315,"calls":["start_session",{"micros":30216,"calls":["discord-api-rpc-74479cdc5b-fsbtj",{"micros":26613,"calls":["get_user",{"micros":4703},"get_guilds",{"micros":2532},"send_scheduled_deletion_message",{"micros":6},"guild_join_requests",{"micros":603},"authorized_ip_coro",{"micros":5}]}]},"starting_guild_connect",{"micros":61,"calls":[]},"presence_started",{"micros":11769,"calls":[]},"guilds_started",{"micros":177,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":19051,"calls":[]},"connect_finished",{"micros":19056,"calls":[]},"build_ready",{"micros":26,"calls":[]},"clean_ready",{"micros":0,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: 91cb2564278e32472319f1d496a2a5a2).
+2024-06-28 15:55:49,360 - WARNING - Can't keep up, shard ID None websocket is 11.2s behind.
+2024-06-28 15:56:49,346 - INFO - Somehow timed out waiting for chunks.
+2024-06-28 15:59:04,861 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-28 15:59:04,862 - INFO - Got a request to RESUME the websocket.
+2024-06-28 15:59:06,632 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 15:59:06,915 - INFO - Shard ID None session has been invalidated.
+2024-06-28 15:59:07,248 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-28 15:59:13,053 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-28 15:59:14,378 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-6fxm",{"micros":45299,"calls":["id_created",{"micros":1011,"calls":[]},"session_lookup_time",{"micros":270,"calls":[]},"session_lookup_finished",{"micros":20,"calls":[]},"discord-sessions-prd-1-81",{"micros":42714,"calls":["start_session",{"micros":31715,"calls":["discord-api-rpc-74479cdc5b-x2642",{"micros":27340,"calls":["get_user",{"micros":5168},"get_guilds",{"micros":2692},"send_scheduled_deletion_message",{"micros":11},"guild_join_requests",{"micros":793},"authorized_ip_coro",{"micros":9}]}]},"starting_guild_connect",{"micros":54,"calls":[]},"presence_started",{"micros":249,"calls":[]},"guilds_started",{"micros":136,"calls":[]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":10531,"calls":[]},"connect_finished",{"micros":10536,"calls":[]},"build_ready",{"micros":18,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":0,"calls":[]}]}]}] (Session ID: b27bc13b0c27357727693ee010e24a08).
+2024-06-28 16:00:39,427 - INFO - Somehow timed out waiting for chunks.
+2024-06-28 18:38:57,106 - INFO - Got a request to RESUME the websocket.
+2024-06-28 18:38:57,490 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 18:38:57,764 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-9swk",{"micros":29768,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":28625,"calls":[]},"session_lookup_finished",{"micros":20,"calls":[]},"discord-sessions-prd-1-81",{"micros":124}]}].
+2024-06-28 21:29:19,473 - INFO - Got a request to RESUME the websocket.
+2024-06-28 21:29:19,850 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-28 21:29:20,116 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-p0m7",{"micros":43786,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":269,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-81",{"micros":113}]}].
+2024-06-29 00:34:12,510 - INFO - Got a request to RESUME the websocket.
+2024-06-29 00:34:12,877 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 00:34:13,105 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-jm4r",{"micros":6623,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":340,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-81",{"micros":90}]}].
+2024-06-29 01:00:20,571 - INFO - Got a request to RESUME the websocket.
+2024-06-29 01:00:20,932 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 01:00:21,177 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-c-m1vg",{"micros":19266,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":297,"calls":[]},"session_lookup_finished",{"micros":18,"calls":[]},"discord-sessions-prd-1-81",{"micros":119}]}].
+2024-06-29 01:34:58,589 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-29 01:34:58,590 - INFO - Got a request to RESUME the websocket.
+2024-06-29 01:34:58,927 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 01:34:59,155 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-7qv8",{"micros":1340,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":244,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-81",{"micros":97}]}].
+2024-06-29 01:56:09,304 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-29 01:56:09,305 - INFO - Got a request to RESUME the websocket.
+2024-06-29 01:56:09,641 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 01:56:09,875 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-0r9f",{"micros":2688,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":300,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-81",{"micros":151}]}].
+2024-06-29 03:53:22,920 - INFO - Got a request to RESUME the websocket.
+2024-06-29 03:53:23,287 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 03:53:23,517 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-dxtl",{"micros":2676,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":973,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-81",{"micros":113}]}].
+2024-06-29 04:45:28,774 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-29 04:45:28,775 - INFO - Got a request to RESUME the websocket.
+2024-06-29 04:45:29,136 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 04:45:29,364 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-c-2sfm",{"micros":2249,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":386,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-81",{"micros":140}]}].
+2024-06-29 06:53:12,455 - INFO - Got a request to RESUME the websocket.
+2024-06-29 06:53:12,828 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 06:53:13,070 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-4jml",{"micros":13717,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":348,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-81",{"micros":99}]}].
+2024-06-29 08:33:02,101 - INFO - Got a request to RESUME the websocket.
+2024-06-29 08:33:02,481 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 08:33:02,752 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-c8nn",{"micros":41617,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":315,"calls":[]},"session_lookup_finished",{"micros":19,"calls":[]},"discord-sessions-prd-1-81",{"micros":69}]}].
+2024-06-29 08:49:22,375 - INFO - Got a request to RESUME the websocket.
+2024-06-29 08:49:22,713 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 08:49:22,985 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-z00w",{"micros":44401,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":365,"calls":[]},"session_lookup_finished",{"micros":19,"calls":[]},"discord-sessions-prd-1-81",{"micros":87}]}].
+2024-06-29 09:35:54,252 - INFO - Got a request to RESUME the websocket.
+2024-06-29 09:35:54,633 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 09:35:54,859 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-rrp2",{"micros":2002,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":1271,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-81",{"micros":192}]}].
+2024-06-29 11:32:21,636 - INFO - Got a request to RESUME the websocket.
+2024-06-29 11:32:21,979 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 11:32:22,207 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-l73b",{"micros":7088,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":274,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-81",{"micros":73}]}].
+2024-06-29 12:37:21,193 - INFO - Got a request to RESUME the websocket.
+2024-06-29 12:37:21,534 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 12:37:21,804 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-c-wtxs",{"micros":40233,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":333,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-81",{"micros":116}]}].
+2024-06-29 13:11:23,687 - INFO - Got a request to RESUME the websocket.
+2024-06-29 13:11:24,059 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 13:11:24,292 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-pz0z",{"micros":7332,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":4534,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-81",{"micros":88}]}].
+2024-06-29 15:10:57,032 - INFO - Got a request to RESUME the websocket.
+2024-06-29 15:10:57,372 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 15:10:57,600 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-nrc2",{"micros":3828,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":2606,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-81",{"micros":99}]}].
+2024-06-29 15:49:05,172 - INFO - Got a request to RESUME the websocket.
+2024-06-29 15:49:05,533 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 15:49:05,802 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-c-n16k",{"micros":41052,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":251,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-81",{"micros":106}]}].
+2024-06-29 17:35:52,580 - INFO - Got a request to RESUME the websocket.
+2024-06-29 17:35:52,958 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 17:35:53,224 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-tlsh",{"micros":41709,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":470,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-81",{"micros":83}]}].
+2024-06-29 18:52:48,819 - INFO - Got a request to RESUME the websocket.
+2024-06-29 18:52:49,186 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 18:52:49,423 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-p0m7",{"micros":1395,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":266,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-81",{"micros":131}]}].
+2024-06-29 21:16:16,715 - INFO - Got a request to RESUME the websocket.
+2024-06-29 21:16:17,118 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 21:16:17,402 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-hfw4",{"micros":47092,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":257,"calls":[]},"session_lookup_finished",{"micros":11,"calls":[]},"discord-sessions-prd-1-81",{"micros":128}]}].
+2024-06-29 23:00:14,121 - INFO - Got a request to RESUME the websocket.
+2024-06-29 23:00:14,502 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-29 23:00:14,747 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-m0zn",{"micros":1178,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":310,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-81",{"micros":99}]}].
+2024-06-30 01:37:32,063 - INFO - Got a request to RESUME the websocket.
+2024-06-30 01:37:32,462 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 01:37:32,705 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-c-2659",{"micros":18613,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":293,"calls":[]},"session_lookup_finished",{"micros":21,"calls":[]},"discord-sessions-prd-1-81",{"micros":106}]}].
+2024-06-30 02:16:35,508 - INFO - Got a request to RESUME the websocket.
+2024-06-30 02:16:35,858 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 02:16:36,099 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-3wr0",{"micros":16519,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":332,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-81",{"micros":113}]}].
+2024-06-30 03:49:20,374 - INFO - Got a request to RESUME the websocket.
+2024-06-30 03:49:20,757 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 03:49:20,991 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-1sxp",{"micros":1309,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":330,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-81",{"micros":146}]}].
+2024-06-30 06:24:31,530 - INFO - Got a request to RESUME the websocket.
+2024-06-30 06:24:31,860 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 06:24:32,088 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-cc2x",{"micros":2911,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":1614,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-81",{"micros":87}]}].
+2024-06-30 10:24:10,871 - INFO - Got a request to RESUME the websocket.
+2024-06-30 10:24:11,256 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 10:24:11,483 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-d93m",{"micros":1067,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":202,"calls":[]},"session_lookup_finished",{"micros":17,"calls":[]},"discord-sessions-prd-1-81",{"micros":203}]}].
+2024-06-30 12:07:52,188 - INFO - Got a request to RESUME the websocket.
+2024-06-30 12:07:52,533 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 12:07:52,771 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-qbht",{"micros":10650,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":259,"calls":[]},"session_lookup_finished",{"micros":10,"calls":[]},"discord-sessions-prd-1-81",{"micros":116}]}].
+2024-06-30 13:00:38,034 - INFO - Got a request to RESUME the websocket.
+2024-06-30 13:00:38,440 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 13:00:38,673 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-kc5k",{"micros":3321,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":2039,"calls":[]},"session_lookup_finished",{"micros":17,"calls":[]},"discord-sessions-prd-1-81",{"micros":144}]}].
+2024-06-30 14:23:46,004 - INFO - Got a request to RESUME the websocket.
+2024-06-30 14:23:46,356 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 14:23:46,584 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-q76g",{"micros":1163,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":204,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-81",{"micros":107}]}].
+2024-06-30 14:49:52,195 - INFO - Got a request to RESUME the websocket.
+2024-06-30 14:49:52,558 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 14:49:52,789 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-9p49",{"micros":6301,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":310,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-81",{"micros":92}]}].
+2024-06-30 17:16:49,480 - INFO - Got a request to RESUME the websocket.
+2024-06-30 17:16:49,889 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 17:16:50,124 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-d-lp9n",{"micros":5201,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":4483,"calls":[]},"session_lookup_finished",{"micros":17,"calls":[]},"discord-sessions-prd-1-81",{"micros":102}]}].
+2024-06-30 18:52:43,897 - INFO - Got a request to RESUME the websocket.
+2024-06-30 18:52:44,282 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 18:52:44,516 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-c-bmbn",{"micros":1237,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":259,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-81",{"micros":116}]}].
+2024-06-30 21:09:17,762 - INFO - Got a request to RESUME the websocket.
+2024-06-30 21:09:18,144 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 21:09:18,394 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-1kds",{"micros":1411,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":278,"calls":[]},"session_lookup_finished",{"micros":19,"calls":[]},"discord-sessions-prd-1-81",{"micros":124}]}].
+2024-06-30 21:13:27,485 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-30 21:13:27,485 - INFO - Got a request to RESUME the websocket.
+2024-06-30 21:13:27,836 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 21:13:28,068 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-c-66vj",{"micros":1621,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":317,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-81",{"micros":56}]}].
+2024-06-30 21:25:16,065 - INFO - Websocket closed with WSCloseCode.ABNORMAL_CLOSURE, attempting a reconnect.
+2024-06-30 21:25:16,066 - INFO - Got a request to RESUME the websocket.
+2024-06-30 21:25:16,438 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 21:25:16,669 - INFO - Shard ID None has successfully RESUMED session b27bc13b0c27357727693ee010e24a08 under trace ["gateway-prd-us-east1-b-s8p1",{"micros":1585,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":262,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-81",{"micros":172}]}].
+2024-06-30 23:37:29,464 - WARNING - Can't keep up, shard ID None websocket is 12.9s behind.
+2024-06-30 23:39:35,569 - WARNING - Can't keep up, shard ID None websocket is 15.2s behind.
+2024-06-30 23:39:48,399 - WARNING - Can't keep up, shard ID None websocket is 28.0s behind.
+2024-06-30 23:39:51,121 - WARNING - Can't keep up, shard ID None websocket is 30.8s behind.
+2024-06-30 23:39:51,749 - WARNING - Can't keep up, shard ID None websocket is 31.4s behind.
+2024-06-30 23:41:17,884 - WARNING - Can't keep up, shard ID None websocket is 35.0s behind.
+2024-06-30 23:43:27,879 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-30 23:43:27,880 - INFO - Got a request to RESUME the websocket.
+2024-06-30 23:43:29,930 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 23:43:33,366 - INFO - Shard ID None session has been invalidated.
+2024-06-30 23:43:33,698 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-30 23:43:39,300 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-30 23:43:39,621 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-ppk8",{"micros":48921,"calls":["id_created",{"micros":1289,"calls":[]},"session_lookup_time",{"micros":1285,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-225",{"micros":46084,"calls":["start_session",{"micros":42526,"calls":["discord-api-rpc-f9dff5b5-r7928",{"micros":38981,"calls":["get_user",{"micros":7281},"get_guilds",{"micros":4360},"send_scheduled_deletion_message",{"micros":6},"guild_join_requests",{"micros":1},"authorized_ip_coro",{"micros":6}]}]},"starting_guild_connect",{"micros":70,"calls":[]},"presence_started",{"micros":920,"calls":[]},"guilds_started",{"micros":155,"calls":[]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":2386,"calls":[]},"connect_finished",{"micros":2391,"calls":[]},"build_ready",{"micros":17,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":0,"calls":[]}]}]}] (Session ID: 416ed490d62d5dec8f904f5ce010b560).
+2024-06-30 23:43:46,913 - WARNING - Shard ID 0 timed out waiting for chunks for guild_id 975999406941822996.
+2024-06-30 23:47:16,449 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-30 23:47:16,449 - INFO - Got a request to RESUME the websocket.
+2024-06-30 23:47:17,950 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 23:47:22,346 - INFO - Shard ID None session has been invalidated.
+2024-06-30 23:47:22,662 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-30 23:47:28,410 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-30 23:47:28,850 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-hrjw",{"micros":111915,"calls":["id_created",{"micros":756,"calls":[]},"session_lookup_time",{"micros":366,"calls":[]},"session_lookup_finished",{"micros":22,"calls":[]},"discord-sessions-prd-1-3",{"micros":109217,"calls":["start_session",{"micros":50033,"calls":["discord-api-rpc-f9dff5b5-n9h5r",{"micros":40845,"calls":["get_user",{"micros":4863},"get_guilds",{"micros":3016},"send_scheduled_deletion_message",{"micros":7},"guild_join_requests",{"micros":448},"authorized_ip_coro",{"micros":7}]}]},"starting_guild_connect",{"micros":58,"calls":[]},"presence_started",{"micros":32248,"calls":[]},"guilds_started",{"micros":142,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":26712,"calls":[]},"connect_finished",{"micros":26717,"calls":[]},"build_ready",{"micros":14,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":0,"calls":[]}]}]}] (Session ID: bd47ad0d3de0a4f80d7854e290672c15).
+2024-06-30 23:47:36,483 - WARNING - Shard ID 0 timed out waiting for chunks for guild_id 975999406941822996.
+2024-06-30 23:50:35,849 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-30 23:50:35,849 - INFO - Got a request to RESUME the websocket.
+2024-06-30 23:50:36,495 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 23:50:40,627 - INFO - Shard ID None session has been invalidated.
+2024-06-30 23:50:40,977 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-30 23:50:46,964 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-30 23:50:47,327 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-mtz3",{"micros":67495,"calls":["id_created",{"micros":651,"calls":[]},"session_lookup_time",{"micros":2643,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-77",{"micros":63947,"calls":["start_session",{"micros":30773,"calls":["discord-api-rpc-f9dff5b5-6sx5k",{"micros":27570,"calls":["get_user",{"micros":4128},"get_guilds",{"micros":3286},"send_scheduled_deletion_message",{"micros":5},"guild_join_requests",{"micros":3859},"authorized_ip_coro",{"micros":7}]}]},"starting_guild_connect",{"micros":58,"calls":[]},"presence_started",{"micros":1088,"calls":[]},"guilds_started",{"micros":167,"calls":[]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":31831,"calls":[]},"connect_finished",{"micros":31837,"calls":[]},"build_ready",{"micros":17,"calls":[]},"clean_ready",{"micros":0,"calls":[]},"optimize_ready",{"micros":1,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: 6e142b6439c61957ea98ff9df475e7d6).
+2024-06-30 23:50:54,774 - WARNING - Shard ID 0 timed out waiting for chunks for guild_id 975999406941822996.
+2024-06-30 23:53:38,331 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-30 23:53:38,332 - INFO - Got a request to RESUME the websocket.
+2024-06-30 23:53:39,008 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 23:53:42,431 - INFO - Shard ID None session has been invalidated.
+2024-06-30 23:53:42,699 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-30 23:53:48,245 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-30 23:53:48,614 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-prm6",{"micros":87829,"calls":["id_created",{"micros":1107,"calls":[]},"session_lookup_time",{"micros":23099,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-123",{"micros":60746,"calls":["start_session",{"micros":44603,"calls":["discord-api-rpc-f9dff5b5-95zxj",{"micros":37140,"calls":["get_user",{"micros":5979},"get_guilds",{"micros":3568},"send_scheduled_deletion_message",{"micros":6},"guild_join_requests",{"micros":2698},"authorized_ip_coro",{"micros":8}]}]},"starting_guild_connect",{"micros":78,"calls":[]},"presence_started",{"micros":336,"calls":[]},"guilds_started",{"micros":156,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":15383,"calls":[]},"connect_finished",{"micros":15389,"calls":[]},"build_ready",{"micros":174,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: f52d29239df47c85d399d8d44d02058d).
+2024-06-30 23:53:56,001 - WARNING - Shard ID 0 timed out waiting for chunks for guild_id 975999406941822996.
+2024-06-30 23:57:28,488 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-30 23:57:28,489 - INFO - Got a request to RESUME the websocket.
+2024-06-30 23:57:30,453 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 23:57:33,452 - INFO - Shard ID None session has been invalidated.
+2024-06-30 23:57:33,729 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-30 23:57:39,180 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-30 23:57:39,551 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-fl0g",{"micros":75289,"calls":["id_created",{"micros":1260,"calls":[]},"session_lookup_time",{"micros":471,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-177",{"micros":73277,"calls":["start_session",{"micros":31866,"calls":["discord-api-rpc-f9dff5b5-9thqv",{"micros":28157,"calls":["get_user",{"micros":4649},"get_guilds",{"micros":2277},"send_scheduled_deletion_message",{"micros":6},"guild_join_requests",{"micros":328},"authorized_ip_coro",{"micros":8}]}]},"starting_guild_connect",{"micros":51,"calls":[]},"presence_started",{"micros":280,"calls":[]},"guilds_started",{"micros":143,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":40903,"calls":[]},"connect_finished",{"micros":40909,"calls":[]},"build_ready",{"micros":22,"calls":[]},"clean_ready",{"micros":0,"calls":[]},"optimize_ready",{"micros":1,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: adfaf11b707d7182762d65bc97b355a0).
+2024-06-30 23:57:46,987 - WARNING - Shard ID 0 timed out waiting for chunks for guild_id 975999406941822996.
+2024-06-30 23:59:24,360 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-06-30 23:59:24,360 - INFO - Got a request to RESUME the websocket.
+2024-06-30 23:59:26,030 - INFO - Shard ID None has sent the RESUME payload.
+2024-06-30 23:59:30,258 - INFO - Shard ID None session has been invalidated.
+2024-06-30 23:59:30,526 - INFO - Got a request to IDENTIFY the websocket.
+2024-06-30 23:59:36,351 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-06-30 23:59:36,796 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-kb92",{"micros":155479,"calls":["id_created",{"micros":727,"calls":[]},"session_lookup_time",{"micros":3597,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-225",{"micros":150285,"calls":["start_session",{"micros":106548,"calls":["discord-api-rpc-f9dff5b5-lmkhj",{"micros":95441,"calls":["get_user",{"micros":24114},"get_guilds",{"micros":5785},"send_scheduled_deletion_message",{"micros":9},"guild_join_requests",{"micros":1},"authorized_ip_coro",{"micros":11}]}]},"starting_guild_connect",{"micros":65,"calls":[]},"presence_started",{"micros":7967,"calls":[]},"guilds_started",{"micros":153,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":35522,"calls":[]},"connect_finished",{"micros":35528,"calls":[]},"build_ready",{"micros":18,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":1,"calls":[]},"split_ready",{"micros":0,"calls":[]}]}]}] (Session ID: 5e693c1b60fcf52e4a381bcc124f7e72).
+2024-06-30 23:59:44,216 - WARNING - Shard ID 0 timed out waiting for chunks for guild_id 975999406941822996.
+2024-07-01 00:02:42,083 - WARNING - Can't keep up, shard ID None websocket is 25.7s behind.
+2024-07-01 00:04:05,876 - INFO - Timed out receiving packet. Attempting a reconnect.
+2024-07-01 00:04:05,876 - INFO - Got a request to RESUME the websocket.
+2024-07-01 00:04:07,351 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 00:04:09,828 - INFO - Shard ID None session has been invalidated.
+2024-07-01 00:04:10,102 - INFO - Got a request to IDENTIFY the websocket.
+2024-07-01 00:04:15,640 - INFO - Shard ID None has sent the IDENTIFY payload.
+2024-07-01 00:04:16,009 - INFO - Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-263w",{"micros":88988,"calls":["id_created",{"micros":1131,"calls":[]},"session_lookup_time",{"micros":279,"calls":[]},"session_lookup_finished",{"micros":22,"calls":[]},"discord-sessions-prd-1-173",{"micros":87277,"calls":["start_session",{"micros":40770,"calls":["discord-api-rpc-f9dff5b5-79d9h",{"micros":37692,"calls":["get_user",{"micros":4516},"get_guilds",{"micros":10448},"send_scheduled_deletion_message",{"micros":6},"guild_join_requests",{"micros":0},"authorized_ip_coro",{"micros":9}]}]},"starting_guild_connect",{"micros":62,"calls":[]},"presence_started",{"micros":20921,"calls":[]},"guilds_started",{"micros":204,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":25281,"calls":[]},"connect_finished",{"micros":25294,"calls":[]},"build_ready",{"micros":19,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":1,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: 424b19b2979e490297da7d6fcaa1c458).
+2024-07-01 00:04:23,260 - WARNING - Shard ID 0 timed out waiting for chunks for guild_id 975999406941822996.
+2024-07-01 03:56:39,875 - INFO - Got a request to RESUME the websocket.
+2024-07-01 03:56:40,208 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 03:56:40,433 - INFO - Shard ID None has successfully RESUMED session 424b19b2979e490297da7d6fcaa1c458 under trace ["gateway-prd-us-east1-c-7zh7",{"micros":1146,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":254,"calls":[]},"session_lookup_finished",{"micros":13,"calls":[]},"discord-sessions-prd-1-173",{"micros":59}]}].
+2024-07-01 06:18:01,713 - INFO - Got a request to RESUME the websocket.
+2024-07-01 06:18:02,034 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 06:18:02,284 - INFO - Shard ID None has successfully RESUMED session 424b19b2979e490297da7d6fcaa1c458 under trace ["gateway-prd-us-east1-b-tlr1",{"micros":30712,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":484,"calls":[]},"session_lookup_finished",{"micros":17,"calls":[]},"discord-sessions-prd-1-173",{"micros":74}]}].
+2024-07-01 08:55:15,712 - INFO - Got a request to RESUME the websocket.
+2024-07-01 08:55:16,056 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 08:55:16,286 - INFO - Shard ID None has successfully RESUMED session 424b19b2979e490297da7d6fcaa1c458 under trace ["gateway-prd-us-east1-c-30b6",{"micros":5321,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":184,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-173",{"micros":98}]}].
+2024-07-01 12:24:33,527 - INFO - Got a request to RESUME the websocket.
+2024-07-01 12:24:33,922 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 12:24:34,193 - INFO - Shard ID None has successfully RESUMED session 424b19b2979e490297da7d6fcaa1c458 under trace ["gateway-prd-us-east1-d-gtcq",{"micros":44737,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":357,"calls":[]},"session_lookup_finished",{"micros":22,"calls":[]},"discord-sessions-prd-1-173",{"micros":79}]}].
+2024-07-01 15:43:17,373 - INFO - Got a request to RESUME the websocket.
+2024-07-01 15:43:17,765 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 15:43:17,989 - INFO - Shard ID None has successfully RESUMED session 424b19b2979e490297da7d6fcaa1c458 under trace ["gateway-prd-us-east1-d-0mv8",{"micros":1502,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":323,"calls":[]},"session_lookup_finished",{"micros":11,"calls":[]},"discord-sessions-prd-1-173",{"micros":62}]}].
+2024-07-01 16:00:38,885 - INFO - Got a request to RESUME the websocket.
+2024-07-01 16:00:39,244 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 16:00:39,500 - INFO - Shard ID None has successfully RESUMED session 424b19b2979e490297da7d6fcaa1c458 under trace ["gateway-prd-us-east1-b-pmb4",{"micros":32113,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":261,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-173",{"micros":80}]}].
+2024-07-01 17:28:43,811 - INFO - Got a request to RESUME the websocket.
+2024-07-01 17:28:44,210 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 17:28:44,460 - INFO - Shard ID None has successfully RESUMED session 424b19b2979e490297da7d6fcaa1c458 under trace ["gateway-prd-us-east1-c-66vj",{"micros":6188,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":5127,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-173",{"micros":82}]}].
+2024-07-01 20:19:07,165 - INFO - Got a request to RESUME the websocket.
+2024-07-01 20:19:07,548 - INFO - Shard ID None has sent the RESUME payload.
+2024-07-01 20:19:07,779 - INFO - Shard ID None has successfully RESUMED session 424b19b2979e490297da7d6fcaa1c458 under trace ["gateway-prd-us-east1-b-sgs6",{"micros":677,"calls":["id_created",{"micros":0,"calls":[]},"session_lookup_time",{"micros":246,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-173",{"micros":101}]}].
