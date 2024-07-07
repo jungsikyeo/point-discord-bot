@@ -1750,7 +1750,7 @@ async def give_alpha_call_rewards(guild_id, call_channel_id, announce_channel_id
         connection.close()
 
 
-async def bulk_role(ctx, channel: Union[discord.TextChannel, int, str], role: Union[discord.Role, int, str]):
+async def bulk_role(ctx, channel: Union[discord.TextChannel, discord.Thread, int, str], role: Union[discord.Role, int, str]):
     # 입력값이 롤 객체인 경우
     if isinstance(role, discord.Role):
         role_found = role
@@ -1770,7 +1770,7 @@ async def bulk_role(ctx, channel: Union[discord.TextChannel, int, str], role: Un
         return
 
     # 입력값이 채널 객체인 경우
-    if isinstance(channel, discord.TextChannel):
+    if isinstance(channel, discord.TextChannel) or isinstance(channel, discord.Thread):
         channel_found = channel
     # 입력값이 채널 ID인 경우
     elif isinstance(channel, int):

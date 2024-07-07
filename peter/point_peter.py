@@ -89,7 +89,7 @@ logger.info(f"This is an info message from point_{folder_name}")
     name='bulk-role'
 )
 @commands.has_any_role(*mod_role_ids)
-async def bulk_role(ctx, channel: Union[discord.TextChannel, int, str], role: Union[discord.Role, int, str]):
+async def bulk_role(ctx, channel: Union[discord.TextChannel, discord.Thread, int, str], role: Union[discord.Role, int, str]):
     await base_bot.bulk_role(ctx, channel, role)
 
 
