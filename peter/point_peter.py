@@ -98,56 +98,55 @@ async def bulk_role(ctx, channel: Union[discord.TextChannel, discord.Thread, int
 
 all_question = [
     {
-        "Q": "question 11111???",
-        "A": "A group of players who team up for raids and battles (Web2)",
-        "B": "A decentralized autonomous organization (DAO) that manages in-game assets and earnings (P2E)",
+        "Q": "1. Which aspect of MapleStory Universe intrigues you the most?",
+        "A": "(A) Innovative gaming experiences and adventures offered by the MapleStory IP",
+        "B": "(B) Ability to manage and utilize digital assets within the MapleStory Universe ecosystem",
     },
     {
-        "Q": "What do you find more interesting in a game?",
-        "A": "Exciting and novel gameplay experiences filled with new challenges and growth (Web2)",
-        "B": "In-game asset accumulation through a well-designed economic system and strategic play (P2E)",
+        "Q": "2. What makes you more engaged when playing a game?",
+        "A": "(A) Overcoming challenges, experiencing character growth, and discovering new content",
+        "B": "(B) Being part of a sophisticated economic system, where I can own and develop game items as my unique asset",
     },
     {
-        "Q": "What are you looking forward to with MapleStory Universe?",
-        "A": "New gameplay experiences created with the MapleStory IP (Web2, MS)",
-        "B": "NFTs and decentralized assets that can be earned in MapleStory Universe (P2E)",
+        "Q": "3. Which feature of MapleStory N makes you most anticipating?",
+        "A": "(A) Ability to acquire items through strategic gameplay without relying on a cash shop",
+        "B": "(B) Opportunity to engage with a game environment that provides real-world value to in-game achievements",
     },
     {
-        "Q": "What are your thoughts on in-game purchases?",
-        "A": "I pay for the game itself or for enjoying its content (Web2)",
-        "B": "I view in-game purchases as potential investments that can generate real-world income (P2E)",
+        "Q": "4. What comes to mind when you hear about 'total item ownership'?",
+        "A": "(A) Ability to engage in a more open trading system amongst users, fostering a sense of community",
+        "B": "(B) Ability to create additional value through freely investing in, lending, and trading items",
     },
     {
-        "Q": "Do you have experience purchasing or investing in NFTs or tokens?",
-        "A": "No or only limited experience",
-        "B": "Actively investing in NFTs/tokens",
+        "Q": "5. Imagine you are a member of a guild. Which aspect would make you feel most rewarding?",
+        "A": "(A) Working together to overcome challenges and share the excitement of making achievements collectively",
+        "B": "(B) Working together to gather resources efficiently and contribute to collective growth",
     },
     {
-        "Q": "What are you most looking forward to about MapleStory N?",
-        "A": "Owning items or characters as NFTs (Web3)",
-        "B": "Generating new income through MapleStory N (P2E)",
+        "Q": "6. What do you think about in-game purchases?",
+        "A": "(A) A way to enhance the overall gaming experience by accessing additional content",
+        "B": "(B) An investment that helps extend the gaming experience to real-world value",
     },
     {
-        "Q": "What comes to mind when you hear about providing item ownership to users?",
-        "A": "Items can be traded freely without restrictions (Web2)",
-        "B": "Item ownership can create additional value through investment, lending, etc. (P2E)",
+        "Q": "7. Please describe your experience with buying or investing in digital assets.",
+        "A": "(A) Little to no experience",
+        "B": "(B) Some experience",
     },
 ]
-view_timeout = 5 * 60
+view_timeout = 1 * 60
 
 
 class WelcomeView(View):
-    def __init__(self, db):
+    def __init__(self):
         super().__init__(timeout=None)
-        self.db = db
 
-    @button(label="Start", style=ButtonStyle.primary)
+    @button(label="Q&A Start", style=ButtonStyle.primary)
     async def button_start(self, _, interaction: Interaction):
         user = interaction.user
         for role in user.roles:
             if role.id == int(os.getenv("A_ROLE_ID")) or role.id == int(os.getenv("B_ROLE_ID")):
                 await interaction.response.send_message(
-                    content=f"# You have already been granted {role.mention}.",
+                    content=f"You have already been granted {role.mention}.",
                     ephemeral=True
                 )
                 return
@@ -158,23 +157,40 @@ class WelcomeView(View):
             "B": 0,
         }
 
-        content = f"# **1. {all_question[0].get('Q')}**\n" \
+        content = f"# **{all_question[0].get('Q')}**\n" \
                   f"```" \
-                  f"A) {all_question[0].get('A')}\n\n" \
-                  f"B) {all_question[0].get('B')}" \
+                  f"{all_question[0].get('A')}\n\n" \
+                  f"{all_question[0].get('B')}" \
                   f"```"
 
         await interaction.response.send_message(
             content=content,
-            view=QuestionSelectView(self.db, my_selected, interaction),
+            view=QuestionSelectView(my_selected, interaction),
+            ephemeral=True
+        )
+
+    @button(label="Remove Role", style=ButtonStyle.danger)
+    async def button_remove_role(self, _, interaction: Interaction):
+        user = interaction.user
+        for role in user.roles:
+            if role.id == int(os.getenv("A_ROLE_ID")) or role.id == int(os.getenv("B_ROLE_ID")):
+                await user.remove_roles(role)
+                await interaction.response.send_message(
+                    content=f"{role.mention} has been removed.",
+                    ephemeral=True
+                )
+                return
+
+        await interaction.response.send_message(
+            content=f"There are no roles to remove.\n"
+                    f"Do a Q&A and get a role.",
             ephemeral=True
         )
 
 
 class QuestionSelectView(View):
-    def __init__(self, db, my_selected, org_interaction: Interaction):
+    def __init__(self, my_selected, org_interaction: Interaction):
         super().__init__(timeout=view_timeout)
-        self.db = db
         self.my_selected = my_selected
         self.org_interaction = org_interaction
 
@@ -190,7 +206,7 @@ class QuestionSelectView(View):
             for role in user.roles:
                 if role.id == int(os.getenv("A_ROLE_ID")) or role.id == int(os.getenv("B_ROLE_ID")):
                     await self.org_interaction.edit_original_response(
-                        content=f"# You have already been granted {role.mention}."
+                        content=f"You have already been granted {role.mention}."
                     )
                     return
 
@@ -203,17 +219,17 @@ class QuestionSelectView(View):
 
             await self.org_interaction.edit_original_response(
                 view=None,
-                content=f"# You've been given {add_role.mention}."
+                content=f"You've been given {add_role.mention}."
             )
         else:
-            content = f"# **{q_index+1}. {all_question[q_index].get('Q')}**\n" \
+            content = f"# **{all_question[q_index].get('Q')}**\n" \
                       f"```" \
-                      f"A) {all_question[q_index].get('A')}\n\n" \
-                      f"B) {all_question[q_index].get('B')}\n" \
+                      f"{all_question[q_index].get('A')}\n\n" \
+                      f"{all_question[q_index].get('B')}\n" \
                       f"```"
             await self.org_interaction.edit_original_response(
                 content=content,
-                view=QuestionSelectView(self.db, self.my_selected, interaction),
+                view=QuestionSelectView(self.my_selected, interaction),
             )
 
     @button(label="B", style=ButtonStyle.danger)
@@ -228,7 +244,7 @@ class QuestionSelectView(View):
             for role in user.roles:
                 if role.id == int(os.getenv("A_ROLE_ID")) or role.id == int(os.getenv("B_ROLE_ID")):
                     await self.org_interaction.edit_original_response(
-                        content=f"# You have already been granted {role.mention}."
+                        content=f"You have already been granted {role.mention}."
                     )
                     return
 
@@ -241,22 +257,25 @@ class QuestionSelectView(View):
 
             await self.org_interaction.edit_original_response(
                 view=None,
-                content=f"# You've been given {add_role.mention}."
+                content=f"You've been given {add_role.mention}."
             )
         else:
-            content = f"# **{q_index+1}. {all_question[q_index].get('Q')}**\n" \
+            content = f"# **{all_question[q_index].get('Q')}**\n" \
                       f"```" \
-                      f"A) {all_question[q_index].get('A')}\n\n" \
-                      f"B) {all_question[q_index].get('B')}\n" \
+                      f"{all_question[q_index].get('A')}\n\n" \
+                      f"{all_question[q_index].get('B')}\n" \
                       f"```"
             await self.org_interaction.edit_original_response(
                 content=content,
-                view=QuestionSelectView(self.db, self.my_selected, interaction),
+                view=QuestionSelectView(self.my_selected, interaction),
             )
 
     async def on_timeout(self):
-        if self.org_interaction:
-            await self.org_interaction.delete_original_response()
+        try:
+            if self.org_interaction:
+                await self.org_interaction.delete_original_response()
+        except:
+            pass
 
 
 @bot.command(
@@ -264,10 +283,68 @@ class QuestionSelectView(View):
 )
 @commands.has_any_role(*mod_role_ids)
 async def open_qna(ctx):
-    description = "질문을 시작합니다."
+    description = "Start the Q&A.\n" \
+                  "Please select the answer to the question with the button"
 
-    embed = Embed(title="Open Question", description=description, color=0xFFFFFF)
-    view = WelcomeView(db)
+    embed = Embed(title="Open Question", description=description, color=0x9C3EFF)
+    view = WelcomeView()
+    await ctx.send(embed=embed, view=view)
+
+
+event_role_ids = list(map(int, os.getenv('EVENT_ROLE_IDS').split(',')))
+event_rookie_role_id = int(os.getenv('EVENT_ROOKIE_ROLE_ID'))
+event_novice_role_id = int(os.getenv('EVENT_NOVICE_ROLE_ID'))
+
+
+class RoleClaim(View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @button(label="Role Claim", style=discord.ButtonStyle.green, custom_id="role_claim")
+    async def button_role_claim(self, _, interaction: Interaction):
+        own_role_count = 0
+
+        event_rookie_role = interaction.guild.get_role(int(os.getenv("EVENT_ROOKIE_ROLE_ID")))
+        event_novice_role = interaction.guild.get_role(int(os.getenv("EVENT_NOVICE_ROLE_ID")))
+
+        user = interaction.user
+        user_roles = interaction.user.roles
+        for role in user_roles:
+            if role.id in event_role_ids:
+                own_role_count += 1
+
+        if 3 <= own_role_count < 5:
+            add_role = event_rookie_role
+            await user.remove_roles(event_novice_role)
+            await user.add_roles(add_role)
+        elif own_role_count >= 5:
+            add_role = event_novice_role
+            await user.remove_roles(event_rookie_role)
+            await user.add_roles(add_role)
+        else:
+            await user.remove_roles(event_rookie_role)
+            await user.remove_roles(event_novice_role)
+            await interaction.response.send_message(
+                content="You still don't have enough roles.",
+                ephemeral=True
+            )
+            return
+
+        await interaction.response.send_message(
+            content=f"You are given a {add_role.mention}",
+            ephemeral=True
+        )
+
+
+@bot.command(
+    name='role-claim'
+)
+@commands.has_any_role(*mod_role_ids)
+async def role_claim(ctx):
+    description = "클레임을 시작합니다."
+
+    embed = Embed(title="Role Claim", description=description, color=0x9C3EFF)
+    view = RoleClaim()
     await ctx.send(embed=embed, view=view)
 
 
