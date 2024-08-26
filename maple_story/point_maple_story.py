@@ -219,7 +219,7 @@ class QuestionSelectView(View):
 
             await self.org_interaction.edit_original_response(
                 view=None,
-                content=f"The Gamer role {add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#1277481622660321321>.\n"
+                content=f"{add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#1277481622660321321>.\n"
                         f"_※ If you want to change your role, click the 'Remove Role' button and you may retake the Tuner's Personality Test._"
             )
         else:
@@ -258,7 +258,7 @@ class QuestionSelectView(View):
 
             await self.org_interaction.edit_original_response(
                 view=None,
-                content=f"The Degen role {add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#1277481664175538238>.\n"
+                content=f"{add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#1277481664175538238>.\n"
                         f"_※ If you want to change your role, click the 'Remove Role' button and you may retake the Tuner's Personality Test._"
             )
         else:
