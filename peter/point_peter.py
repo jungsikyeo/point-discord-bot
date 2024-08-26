@@ -128,7 +128,7 @@ all_question = [
         "B": "(B) An investment that helps extend the gaming experience to real-world value",
     },
     {
-        "Q": "7. Please describe your experience with buying or investing in digital assets.",
+        "Q": "7. Please describe your experience interacting with and using blockchain.",
         "A": "(A) Little to no experience",
         "B": "(B) Some experience",
     },
@@ -140,7 +140,7 @@ class WelcomeView(View):
     def __init__(self):
         super().__init__(timeout=None)
 
-    @button(label="Q&A Start", style=ButtonStyle.primary)
+    @button(label="Start", style=ButtonStyle.primary)
     async def button_start(self, _, interaction: Interaction):
         user = interaction.user
         for role in user.roles:
@@ -219,7 +219,8 @@ class QuestionSelectView(View):
 
             await self.org_interaction.edit_original_response(
                 view=None,
-                content=f"You've been given {add_role.mention}."
+                content=f"The Gamer role {add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#1277481622660321321>.\n"
+                        f"_※ If you want to change your role, click the 'Remove Role' button and you may retake the Tuner's Personality Test._"
             )
         else:
             content = f"# **{all_question[q_index].get('Q')}**\n" \
@@ -257,7 +258,8 @@ class QuestionSelectView(View):
 
             await self.org_interaction.edit_original_response(
                 view=None,
-                content=f"You've been given {add_role.mention}."
+                content=f"The Degen role {add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#1277481664175538238>.\n"
+                        f"_※ If you want to change your role, click the 'Remove Role' button and you may retake the Tuner's Personality Test._"
             )
         else:
             content = f"# **{all_question[q_index].get('Q')}**\n" \
@@ -283,10 +285,10 @@ class QuestionSelectView(View):
 )
 @commands.has_any_role(*mod_role_ids)
 async def open_qna(ctx):
-    description = "Start the Q&A.\n" \
-                  "Please select the answer to the question with the button"
+    description = "Choose your preferred answer for each question.\n" \
+                  "A role will be assigned based on the test results."
 
-    embed = Embed(title="Open Question", description=description, color=0x9C3EFF)
+    embed = Embed(title="Tuner's Personality Test", description=description, color=0x9C3EFF)
     view = WelcomeView()
     await ctx.send(embed=embed, view=view)
 
