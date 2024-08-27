@@ -100,22 +100,22 @@ all_question = [
     {
         "Q": "1. Which aspect of MapleStory Universe intrigues you the most?",
         "A": "(A) Innovative gaming experiences and adventures offered by the MapleStory IP",
-        "B": "(B) Ability to manage and utilize digital assets within the MapleStory Universe ecosystem",
+        "B": "(B) Ability to own and manage NFT items within the blockchain system",
     },
     {
         "Q": "2. What makes you more engaged when playing a game?",
         "A": "(A) Overcoming challenges, experiencing character growth, and discovering new content",
-        "B": "(B) Being part of a sophisticated economic system, where I can own and develop game items as my unique asset",
+        "B": "(B) Being part of a sophisticated economic system, where I can own non-fungible items",
     },
     {
         "Q": "3. Which feature of MapleStory N makes you most anticipating?",
         "A": "(A) Ability to acquire items through strategic gameplay without relying on a cash shop",
-        "B": "(B) Opportunity to engage with a game environment that provides real-world value to in-game achievements",
+        "B": "(B) Opportunity to leave lasting accomplishments by recording my in-game achievements as immutable data within the blockchain system",
     },
     {
         "Q": "4. What comes to mind when you hear about 'total item ownership'?",
         "A": "(A) Ability to engage in a more open trading system amongst users, fostering a sense of community",
-        "B": "(B) Ability to create additional value through freely investing in, lending, and trading items",
+        "B": "(B) Ability to create additional value through freely lending or trading NFT items",
     },
     {
         "Q": "5. Imagine you are a member of a guild. Which aspect would make you feel most rewarding?",
@@ -125,7 +125,7 @@ all_question = [
     {
         "Q": "6. What do you think about in-game purchases?",
         "A": "(A) A way to enhance the overall gaming experience by accessing additional content",
-        "B": "(B) An investment that helps extend the gaming experience to real-world value",
+        "B": "(B) Opportunity to take full ownership on in-game items",
     },
     {
         "Q": "7. Please describe your experience interacting with and using blockchain.",
