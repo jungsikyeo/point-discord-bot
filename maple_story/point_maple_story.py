@@ -341,10 +341,10 @@ async def role_claim(ctx):
     description = "Thank you to all the explorers who have been active in the MapleStory Universe community since discord opened!\n\n" \
                   "As a reward for your contribution to energizing the MapleStory Universe community through various activities, you can claim additional roles based on the number of roles you've earned.\n" \
                   "Don't miss out on these upcoming events and be sure to participate to earn your roles.\n\n" \
-                  "Depending on how many of the <@&1250717660094660609>, <@&1251104950730227734>, <@&1251104961639485511>, and <@&1251104988264923216> roles you have, you can claim the following roles by pressing the ** 'Claim' ** button.\n\n" \
-                  "- [3 roles → <@&1251105081223286855>]\n" \
-                  "- [5 roles → <@&1251105098021736470>]\n\n" \
-                  "※ If you have 5 or more roles after holding <@&1251105081223286855> role, you can claim the <@&1251105098021736470> role as well."
+                  "Depending on how many of the <@&1252111835537215518>, <@&1252112597747105824>, <@&1252112585453469796>, and <@&1252112567917350932> roles you have, you can claim the following roles by pressing the ** 'Claim' ** button.\n\n" \
+                  "- [3 roles → <@&1252112617942810697>]\n" \
+                  "- [5 roles → <@&1252112640671617074>]\n\n" \
+                  "※ If you have 5 or more roles after holding <@&1252112617942810697> role, you can claim the <@&1252112640671617074> role as well."
 
     embed = Embed(title="Community Special Role", description=description, color=0x9C3EFF)
     view = RoleClaim()
