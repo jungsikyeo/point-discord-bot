@@ -297,7 +297,7 @@ class RoleClaim(View):
     def __init__(self):
         super().__init__(timeout=None)
 
-    @button(label="Role Claim", style=discord.ButtonStyle.green, custom_id="role_claim")
+    @button(label="Claim", style=discord.ButtonStyle.green, custom_id="role_claim")
     async def button_role_claim(self, _, interaction: Interaction):
         own_role_count = 0
 
@@ -346,7 +346,7 @@ async def role_claim(ctx):
                   "- [5 roles → <@&1251105098021736470>]\n\n" \
                   "※ If you have 5 or more roles after holding <@&1251105081223286855> role, you can claim the <@&1251105098021736470> role as well."
 
-    embed = Embed(title="Role Claim", description=description, color=0x9C3EFF)
+    embed = Embed(title="Community Special Role", description=description, color=0x9C3EFF)
     view = RoleClaim()
     await ctx.send(embed=embed, view=view)
 
