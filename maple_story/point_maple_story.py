@@ -210,18 +210,7 @@ class QuestionSelectView(View):
                     )
                     return
 
-            if self.my_selected["A"] > self.my_selected["B"]:
-                add_role = interaction.guild.get_role(int(os.getenv("A_ROLE_ID")))
-                await user.add_roles(add_role)
-            else:
-                add_role = interaction.guild.get_role(int(os.getenv("B_ROLE_ID")))
-                await user.add_roles(add_role)
-
-            await self.org_interaction.edit_original_response(
-                view=None,
-                content=f"{add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#1277481622660321321>.\n"
-                        f"_※ If you want to change your role, click the 'Remove Role' button and you may retake the Tuner's Personality Test._"
-            )
+            await self.add_role(user, interaction)
         else:
             content = f"# **{all_question[q_index].get('Q')}**\n" \
                       f"```" \
@@ -249,18 +238,7 @@ class QuestionSelectView(View):
                     )
                     return
 
-            if self.my_selected["A"] > self.my_selected["B"]:
-                add_role = interaction.guild.get_role(int(os.getenv("A_ROLE_ID")))
-                await user.add_roles(add_role)
-            else:
-                add_role = interaction.guild.get_role(int(os.getenv("B_ROLE_ID")))
-                await user.add_roles(add_role)
-
-            await self.org_interaction.edit_original_response(
-                view=None,
-                content=f"{add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#1277481664175538238>.\n"
-                        f"_※ If you want to change your role, click the 'Remove Role' button and you may retake the Tuner's Personality Test._"
-            )
+            await self.add_role(user, interaction)
         else:
             content = f"# **{all_question[q_index].get('Q')}**\n" \
                       f"```" \
@@ -271,6 +249,23 @@ class QuestionSelectView(View):
                 content=content,
                 view=QuestionSelectView(self.my_selected, interaction),
             )
+
+    async def add_role(self, user, interaction):
+        channel_id = ""
+        if self.my_selected["A"] > self.my_selected["B"]:
+            add_role = interaction.guild.get_role(int(os.getenv("A_ROLE_ID")))
+            await user.add_roles(add_role)
+            channel_id = "1277481622660321321"
+        else:
+            add_role = interaction.guild.get_role(int(os.getenv("B_ROLE_ID")))
+            await user.add_roles(add_role)
+            channel_id = "1277481664175538238"
+
+        await self.org_interaction.edit_original_response(
+            view=None,
+            content=f"{add_role.mention} is assigned on your test results, and we hope you'll interact with like-minded users in <#{channel_id}>.\n"
+                    f"_※ If you want to change your role, click the 'Remove Role' button and you may retake the Tuner's Personality Test._"
+        )
 
     async def on_timeout(self):
         try:
