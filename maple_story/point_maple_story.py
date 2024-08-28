@@ -1,9 +1,9 @@
 import os
 import sys
 import logging
-import discord as discord
-from discord.ui import View, button
-from discord import Embed, ButtonStyle
+import discord
+from discord.ui import View, button, Select, Modal, InputText
+from discord import Embed, ButtonStyle, InputTextStyle
 from discord.ext import commands
 from typing import Union
 from dotenv import load_dotenv
@@ -285,6 +285,69 @@ async def open_qna(ctx):
 
     embed = Embed(title="Tuner's Personality Test", description=description, color=0x9C3EFF)
     view = WelcomeView()
+    await ctx.send(embed=embed, view=view)
+
+
+event_role_ids = list(map(int, os.getenv('EVENT_ROLE_IDS').split(',')))
+event_rookie_role_id = int(os.getenv('EVENT_ROOKIE_ROLE_ID'))
+event_novice_role_id = int(os.getenv('EVENT_NOVICE_ROLE_ID'))
+
+
+class RoleClaim(View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @button(label="Role Claim", style=discord.ButtonStyle.green, custom_id="role_claim")
+    async def button_role_claim(self, _, interaction: Interaction):
+        own_role_count = 0
+
+        event_rookie_role = interaction.guild.get_role(int(os.getenv("EVENT_ROOKIE_ROLE_ID")))
+        event_novice_role = interaction.guild.get_role(int(os.getenv("EVENT_NOVICE_ROLE_ID")))
+
+        user = interaction.user
+        user_roles = interaction.user.roles
+        for role in user_roles:
+            if role.id in event_role_ids:
+                own_role_count += 1
+
+        if 3 <= own_role_count < 5:
+            add_role = event_rookie_role
+            await user.remove_roles(event_novice_role)
+            await user.add_roles(add_role)
+        elif own_role_count >= 5:
+            add_role = event_novice_role
+            await user.remove_roles(event_rookie_role)
+            await user.add_roles(add_role)
+        else:
+            await user.remove_roles(event_rookie_role)
+            await user.remove_roles(event_novice_role)
+            await interaction.response.send_message(
+                content="You still don't have enough roles.",
+                ephemeral=True
+            )
+            return
+
+        await interaction.response.send_message(
+            content=f"You are given a {add_role.mention}",
+            ephemeral=True
+        )
+
+
+@bot.command(
+    name='role-claim'
+)
+@commands.has_any_role(*mod_role_ids)
+async def role_claim(ctx):
+    description = "Thank you to all the explorers who have been active in the MapleStory Universe community since discord opened!\n\n" \
+                  "As a reward for your contribution to energizing the MapleStory Universe community through various activities, you can claim additional roles based on the number of roles you've earned.\n" \
+                  "Don't miss out on these upcoming events and be sure to participate to earn your roles.\n\n" \
+                  "Depending on how many of the <@&1250717660094660609>, <@&1251104950730227734>, <@&1251104961639485511>, and <@&1251104988264923216> roles you have, you can claim the following roles by pressing the ** 'Claim' ** button.\n\n" \
+                  "- [3 roles → <@&1251105081223286855>]\n" \
+                  "- [5 roles → <@&1251105098021736470>]\n\n" \
+                  "※ If you have 5 or more roles after holding <@&1251105081223286855> role, you can claim the <@&1251105098021736470> role as well."
+
+    embed = Embed(title="Role Claim", description=description, color=0x9C3EFF)
+    view = RoleClaim()
     await ctx.send(embed=embed, view=view)
 
 
