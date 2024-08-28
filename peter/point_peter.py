@@ -316,7 +316,7 @@ class RoleClaim(View):
             await user.add_roles(add_role)
         elif own_role_count >= 5:
             add_role = event_novice_role
-            await user.remove_roles(event_rookie_role)
+            await user.add_roles(event_rookie_role)
             await user.add_roles(add_role)
         else:
             await user.remove_roles(event_rookie_role)
