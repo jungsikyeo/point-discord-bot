@@ -99,8 +99,8 @@ async def bulk_role(ctx, channel: Union[discord.TextChannel, discord.Thread, int
 all_question = [
     {
         "Q": "1. Which aspect of MapleStory Universe intrigues you the most?",
-        "A": "(A) Innovative gaming experiences and adventures offered by the MapleStory IP",
-        "B": "(B) Ability to own and manage NFT items within the blockchain system",
+        "A": "(A) Ability to own and manage NFT items within the blockchain system",
+        "B": "(B) Innovative gaming experiences and adventures offered by the MapleStory IP",
     },
     {
         "Q": "2. What makes you more engaged when playing a game?",
@@ -109,8 +109,8 @@ all_question = [
     },
     {
         "Q": "3. Which feature of MapleStory N makes you most anticipating?",
-        "A": "(A) Ability to acquire items through strategic gameplay without relying on a cash shop",
-        "B": "(B) Opportunity to leave lasting accomplishments by recording my in-game achievements as immutable data within the blockchain system",
+        "A": "(A) Opportunity to leave lasting accomplishments by recording my in-game achievements as immutable data within the blockchain system",
+        "B": "(B) Ability to acquire items through strategic gameplay without relying on a cash shop",
     },
     {
         "Q": "4. What comes to mind when you hear about 'total item ownership'?",
@@ -118,22 +118,40 @@ all_question = [
         "B": "(B) Ability to create additional value through freely lending or trading NFT items",
     },
     {
-        "Q": "5. Imagine you are a member of a guild. Which aspect would make you feel most rewarding?",
-        "A": "(A) Working together to overcome challenges and share the excitement of making achievements collectively",
-        "B": "(B) Working together to gather resources efficiently and contribute to collective growth",
-    },
-    {
-        "Q": "6. What do you think about in-game purchases?",
-        "A": "(A) A way to enhance the overall gaming experience by accessing additional content",
-        "B": "(B) Opportunity to take full ownership on in-game items",
-    },
-    {
-        "Q": "7. Please describe your experience interacting with and using blockchain.",
-        "A": "(A) Little to no experience",
-        "B": "(B) Some experience",
+        "Q": "5. Please describe your experience interacting with and using blockchain.",
+        "A": "(A) Some experience",
+        "B": "(B) Little to no experience",
     },
 ]
+
+real_answer = [
+    {
+        "A": "B",
+        "B": "A"
+    },
+    {
+        "A": "A",
+        "B": "B"
+    },
+    {
+        "A": "B",
+        "B": "A"
+    },
+    {
+        "A": "A",
+        "B": "B"
+    },
+    {
+        "A": "B",
+        "B": "A"
+    },
+]
+
 view_timeout = 1 * 60
+
+
+async def get_real_answer(index, select_type):
+    return real_answer[index].get(select_type)
 
 
 class WelcomeView(View):
@@ -198,10 +216,16 @@ class QuestionSelectView(View):
     async def button_a(self, _, interaction: Interaction):
         await interaction.response.defer(ephemeral=True)
 
-        self.my_selected["A"] = self.my_selected["A"] + 1
+        my_real_selected = await get_real_answer(self.my_selected["A"] + self.my_selected["B"], "A")
+
+        if my_real_selected == "A":
+            self.my_selected["A"] += 1
+        else:
+            self.my_selected["B"] += 1
+
         q_index = self.my_selected["A"] + self.my_selected["B"]
 
-        if q_index > 6:
+        if q_index > 4:
             user = interaction.user
             for role in user.roles:
                 if role.id == int(os.getenv("A_ROLE_ID")) or role.id == int(os.getenv("B_ROLE_ID")):
@@ -226,10 +250,16 @@ class QuestionSelectView(View):
     async def button_b(self, _, interaction: Interaction):
         await interaction.response.defer(ephemeral=True)
 
-        self.my_selected["B"] = self.my_selected["B"] + 1
+        my_real_selected = await get_real_answer(self.my_selected["A"] + self.my_selected["B"], "B")
+
+        if my_real_selected == "A":
+            self.my_selected["A"] += 1
+        else:
+            self.my_selected["B"] += 1
+
         q_index = self.my_selected["A"] + self.my_selected["B"]
 
-        if q_index > 6:
+        if q_index > 4:
             user = interaction.user
             for role in user.roles:
                 if role.id == int(os.getenv("A_ROLE_ID")) or role.id == int(os.getenv("B_ROLE_ID")):
@@ -251,7 +281,6 @@ class QuestionSelectView(View):
             )
 
     async def add_role(self, user, interaction):
-        channel_id = ""
         if self.my_selected["A"] > self.my_selected["B"]:
             add_role = interaction.guild.get_role(int(os.getenv("A_ROLE_ID")))
             await user.add_roles(add_role)
