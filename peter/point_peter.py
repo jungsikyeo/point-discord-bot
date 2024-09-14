@@ -151,6 +151,7 @@ view_timeout = 1 * 60
 
 
 async def get_real_answer(index, select_type):
+    logger.info(f"{index} - {select_type}: {real_answer[index].get(select_type)}")
     return real_answer[index].get(select_type)
 
 
