@@ -225,7 +225,7 @@ class QuestionSelectView(View):
 
         q_index = self.my_selected["A"] + self.my_selected["B"]
 
-        if q_index > 6:
+        if q_index > 4:
             user = interaction.user
             for role in user.roles:
                 if role.id == int(os.getenv("A_ROLE_ID")) or role.id == int(os.getenv("B_ROLE_ID")):
@@ -259,7 +259,7 @@ class QuestionSelectView(View):
 
         q_index = self.my_selected["A"] + self.my_selected["B"]
 
-        if q_index > 6:
+        if q_index > 4:
             user = interaction.user
             for role in user.roles:
                 if role.id == int(os.getenv("A_ROLE_ID")) or role.id == int(os.getenv("B_ROLE_ID")):
