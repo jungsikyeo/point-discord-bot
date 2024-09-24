@@ -373,6 +373,7 @@ async def role_claim(ctx):
                   "Depending on how many of the <@&1250717660094660609>, <@&1251104950730227734>, <@&1251104961639485511>, and <@&1251104988264923216> roles you have, you can claim the following roles by pressing the ** 'Claim' ** button.\n\n" \
                   "- [3 roles → <@&1251105081223286855>]\n" \
                   "- [5 roles → <@&1251105098021736470>]\n\n" \
+                  "[Special benefits](https://discord.com/channels/975999406941822996/1252122532669292638/1288054963888455700) will be given according to the exchanged role.\n\n" \
                   "※ If you have 5 or more roles after holding <@&1251105081223286855> role, you can claim the <@&1251105098021736470> role as well."
 
     embed = Embed(title="Community Special Role", description=description, color=0x9C3EFF)
