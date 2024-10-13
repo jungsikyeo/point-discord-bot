@@ -94,38 +94,38 @@ async def giveaway_raffle(ctx):
     await base_bot.giveaway_raffle(ctx)
 
 
-@bot.command(
-    name='today'
-)
-async def today(ctx):
-    today_channel_id = os.getenv("TODAY_CHANNEL_ID")
-    today_self_rewards_amount = int(os.getenv("TODAY_SELF_REWARDS_AMOUNT"))
-    if ctx.channel.id == int(today_channel_id):
-        await base_bot.today_self_rewards(ctx, today_self_rewards_amount)
-
-
-@bot.command(
-    name='level-rewards'
-)
-@commands.has_any_role(*mod_role_ids)
-async def level_rewards(ctx):
-    await base_bot.level_rewards(ctx)
-
-
-@bot.command(
-    name='level-reset'
-)
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
-async def level_reset(ctx):
-    await base_bot.level_reset(ctx)
-
-
-@bot.command(
-    name='level-list'
-)
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
-async def level_list(ctx):
-    await base_bot.level_list(ctx)
+# @bot.command(
+#     name='today'
+# )
+# async def today(ctx):
+#     today_channel_id = os.getenv("TODAY_CHANNEL_ID")
+#     today_self_rewards_amount = int(os.getenv("TODAY_SELF_REWARDS_AMOUNT"))
+#     if ctx.channel.id == int(today_channel_id):
+#         await base_bot.today_self_rewards(ctx, today_self_rewards_amount)
+#
+#
+# @bot.command(
+#     name='level-rewards'
+# )
+# @commands.has_any_role(*mod_role_ids)
+# async def level_rewards(ctx):
+#     await base_bot.level_rewards(ctx)
+#
+#
+# @bot.command(
+#     name='level-reset'
+# )
+# @commands.has_any_role(*team_role_ids, *mod_role_ids)
+# async def level_reset(ctx):
+#     await base_bot.level_reset(ctx)
+#
+#
+# @bot.command(
+#     name='level-list'
+# )
+# @commands.has_any_role(*team_role_ids, *mod_role_ids)
+# async def level_list(ctx):
+#     await base_bot.level_list(ctx)
 
 
 @bot.event
@@ -134,9 +134,9 @@ async def on_ready():
     bot.add_cog(base_bot.RaffleCog(bot, db))
 
     guild_id = int(os.getenv("GUILD_ID"))
-    call_channel_id = int(os.getenv("ALPHA_CALL_CHANNEL_ID"))
-    announce_channel_id = int(os.getenv("ALPHA_CALL_ANNOUNCE_CHANNEL_ID"))
-    base_bot.alpha_call_rewards.start(guild_id, call_channel_id, announce_channel_id)
+    # call_channel_id = int(os.getenv("ALPHA_CALL_CHANNEL_ID"))
+    # announce_channel_id = int(os.getenv("ALPHA_CALL_ANNOUNCE_CHANNEL_ID"))
+    # base_bot.alpha_call_rewards.start(guild_id, call_channel_id, announce_channel_id)
 
 
 bot.run(bot_token)
