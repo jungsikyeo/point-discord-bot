@@ -24,7 +24,6 @@ mysql_id = os.getenv("MYSQL_ID")
 mysql_passwd = os.getenv("MYSQL_PASSWD")
 mysql_db = os.getenv("MYSQL_DB")
 
-
 global logger
 level_reset_status = False
 
@@ -1825,3 +1824,81 @@ async def alpha_call_rewards(guild_id, call_channel_id, announce_channel_id):
     if now.hour == 17 and now.minute == 00:  # 한국시간 17시 00분
         logger.info(f"alpha call batch start! now time: {now}")
         await give_alpha_call_rewards(guild_id, call_channel_id, announce_channel_id)
+
+
+event_role_channel_id = None
+no_xp_roles = {}
+
+
+async def bulk_add_role(ctx, role: Union[Role, int, str]):
+    # 입력값이 롤 객체인 경우
+    if isinstance(role, Role):
+        role_found = role
+    # 입력값이 역할 ID인 경우
+    elif isinstance(role, int):
+        role_found = discord.utils.get(ctx.guild.roles, id=role)
+    # 입력값이 역할 이름인 경우
+    else:
+        role_found = discord.utils.get(ctx.guild.roles, name=role)
+
+    if role_found is None:
+        embed = Embed(title="Error",
+                      description=f"❌ Role not found for name, ID, or mention {role}. Please enter a valid role name, ID, or mention.\n\n"
+                                  f"❌ {role} 이름, ID 또는 멘션의 역할을 찾을 수 없습니다. 올바른 역할 이름, ID 또는 멘션을 입력해주세요.",
+                      color=0xff0000)
+        await ctx.reply(embed=embed, mention_author=True)
+        return
+
+    # 컨텍스트가 스레드인지 확인
+    if not isinstance(ctx.channel, discord.Thread):
+        embed = discord.Embed(title="Error",
+                              description="❌ 이 명령어는 스레드 내에서만 사용할 수 있습니다.\n\n"
+                                          "❌ This command can only be used within a thread.",
+                              color=0xff0000)
+        await ctx.send(embed=embed)
+        return
+
+    # 스레드가 특정 이벤트 채널에 속하는지 확인
+    if ctx.channel.parent_id != event_role_channel_id:
+        embed = discord.Embed(title="Error",
+                              description=f"❌ 이 스레드는 <#{event_role_channel_id}> 채널에 속하지 않습니다.\n\n"
+                                          f"❌ This thread does not belong to <#{event_role_channel_id}> channel.",
+                              color=0xff0000)
+        await ctx.send(embed=embed)
+        return
+
+    user_ids = []
+    try:
+        # 스레드의 모든 메시지를 가져와 각 메시지의 작성자 ID를 수집합니다.
+        async for message in ctx.channel.history(limit=None):
+            if message.author != ctx.bot.user:  # 봇은 제외
+                user_ids.append(message.author.id)
+
+        # 수집된 사용자 ID에서 중복을 제거합니다.
+        unique_user_ids = set(user_ids)
+
+        for user_id in set(user_ids):
+            member = ctx.guild.get_member(user_id)
+            if any(mod_role.id in no_xp_roles for mod_role in member.roles):
+                unique_user_ids.remove(member.id)
+
+        # 각 사용자에게 역할을 부여합니다.
+        for user_id in unique_user_ids:
+            member = ctx.guild.get_member(user_id)
+            if member is not None:
+                await member.add_roles(role_found)
+                await ctx.send(f"🟢 Role `{role_found.name}` has been assigned to <@{member.id}>.")
+
+        embed = discord.Embed(title=f"{role_found.name} assigned",
+                              description=f"✅ 총 {len(unique_user_ids)}명의 사용자에게 `{role_found.name}` 역할이 부여되었습니다.\n\n"
+                                          f"✅ The `{role_found.name}` role has been assigned to {len(unique_user_ids)} users.",
+                              color=0x00ff00)
+        await ctx.send(embed=embed)
+
+    except Exception as e:
+        logger.error(f'Error: {e}')
+        embed = discord.Embed(title="Error",
+                              description="🔴 명령어 처리 중 오류가 발생했습니다.\n\n"
+                                          "🔴 An error occurred while processing the command.",
+                              color=0xff0000)
+        await ctx.send(embed=embed)
