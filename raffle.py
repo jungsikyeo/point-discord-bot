@@ -32,14 +32,14 @@ def pick_winner(weights):
             return user
 
 
-def get_products(db, guild_id):
+def get_products(db, guild_id, item_type):
     connection = db.get_connection()
     cursor = connection.cursor()
     products = None
     try:
         cursor.execute(
             query.select_guild_products_raffle(),
-            (guild_id,)
+            (guild_id, item_type)
         )
         products = cursor.fetchall()
     except Exception as e:
@@ -51,14 +51,14 @@ def get_products(db, guild_id):
     return products
 
 
-def get_user_tickets(db, guild_id):
+def get_user_tickets(db, guild_id, item_type):
     connection = db.get_connection()
     cursor = connection.cursor()
     ticket_holders = {}
     try:
         cursor.execute(
             query.select_guild_raffle_user_tickets(),
-            (guild_id,)
+            (guild_id, item_type)
         )
         user_tickets = cursor.fetchall()
 
@@ -80,10 +80,10 @@ def get_user_tickets(db, guild_id):
     return ticket_holders
 
 
-def setting_data(db, guild_id):
-    products = get_products(db, guild_id)
+def setting_data(db, guild_id, item_type):
+    products = get_products(db, guild_id, item_type)
     prizes = {product.get('name'): product.get('quantity') for product in products}
-    ticket_holders = get_user_tickets(db, guild_id)
+    ticket_holders = get_user_tickets(db, guild_id, item_type)
 
     return products, prizes, ticket_holders
 
@@ -91,7 +91,7 @@ def setting_data(db, guild_id):
 def start_raffle(db, guild_id, action_type, action_user_id):
     connection = db.get_connection()
     cursor = connection.cursor()
-    products, prizes, ticket_holders = setting_data(db, guild_id)
+    products, prizes, ticket_holders = setting_data(db, guild_id, 'RAFFLE')
     winners = {}
     try:
         for prize, count in prizes.items():
@@ -118,10 +118,6 @@ def start_raffle(db, guild_id, action_type, action_user_id):
                     query.insert_guild_round_winners(),
                     (product_id, guild_id, raffle_round, winner, action_type, action_user_id,)
                 )
-        cursor.execute(
-            query.update_guild_rounds(),
-            ('CLOSE', guild_id, raffle_round)
-        )
         connection.commit()
     except Exception as e:
         connection.rollback()
@@ -131,6 +127,39 @@ def start_raffle(db, guild_id, action_type, action_user_id):
         connection.close()
     return winners
 
+
+def start_fcfs(db, guild_id, action_type, action_user_id):
+    connection = db.get_connection()
+    cursor = connection.cursor()
+    products, prizes, ticket_holders = setting_data(db, guild_id, 'FCFS')
+    winners = {}
+    try:
+        for prize, count in prizes.items():
+            weights = {user: tickets.get(prize, 0) for user, tickets in ticket_holders.items()}
+            for user, weight in weights.items():
+                winners.setdefault(prize, []).append(user)
+
+        raffle_round = 0
+        for product in products:
+            for winner in winners[product.get('name')]:
+                product_id = product.get('id')
+                raffle_round = product.get('round')
+                cursor.execute(
+                    query.insert_guild_round_winners(),
+                    (product_id, guild_id, raffle_round, winner, action_type, action_user_id,)
+                )
+        cursor.execute(
+            query.update_guild_rounds(),
+            ('CLOSE', guild_id, raffle_round)
+        )
+        connection.commit()
+    except Exception as e:
+        connection.rollback()
+        logger.error(f'start_fcfs db error: {e}')
+    finally:
+        cursor.close()
+        connection.close()
+    return winners
 
 # if __name__ == '__main__':
 #     if len(sys.argv) > 1:

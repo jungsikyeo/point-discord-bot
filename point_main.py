@@ -241,6 +241,19 @@ class BuyButton(View):
                         await interaction.response.send_message(description, ephemeral=True)
                         logger.error(f'button_buy error: The purchase has been completed, so there is no quantity left.')
                         return
+
+                    cursor.execute(
+                        query.select_guild_user_tickets(),
+                        (guild_id, user_id,)
+                    )
+                    user_tickets = cursor.fetchall()
+
+                    for ticket in user_tickets:
+                        if self.product.get('id') == ticket.get('id'):
+                            description = "```❌ You have already purchased the prize.```"
+                            await interaction.response.send_message(description, ephemeral=True)
+                            logger.error(f'button_buy error: You have already purchased the prize.')
+                            return
                 else:
                     description = "```❌ There was a problem applying for the item.```"
                     await interaction.response.send_message(description, ephemeral=True)
@@ -1460,11 +1473,16 @@ async def giveaway_raffle(ctx):
 
         event_announce_channel = store.get('raffle_announce_channel')
 
-        result = raffle.start_raffle(db, guild_id, action_type, action_user_id)
+        result_raffle = raffle.start_raffle(db, guild_id, action_type, action_user_id)
+        result_fcfs = raffle.start_fcfs(db, guild_id, action_type, action_user_id)
 
         description = "Congratulations! " \
                       "here is the winner list of last giveaway\n\n"
-        for product, users in result.items():
+        for product, users in result_raffle.items():
+            users_str = '\n'.join([f"<@{user}>" for user in users])
+            description += f"🏆 `{product}` winner:\n{users_str}\n\n"
+
+        for product, users in result_fcfs.items():
             users_str = '\n'.join([f"<@{user}>" for user in users])
             description += f"🏆 `{product}` winner:\n{users_str}\n\n"
 

@@ -131,7 +131,7 @@ async def level_list(ctx):
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)
-    bot.add_cog(base_bot.RaffleCog(bot, db))
+    # bot.add_cog(base_bot.RaffleCog(bot, db))
 
     guild_id = int(os.getenv("GUILD_ID"))
     call_channel_id = int(os.getenv("ALPHA_CALL_CHANNEL_ID"))

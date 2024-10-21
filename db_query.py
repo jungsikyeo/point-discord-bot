@@ -75,7 +75,7 @@ def select_guild_products_raffle():
         from products p 
         inner join rounds r on r.guild_id = p.guild_id and r.round = p.round and r.round_status = 'OPEN'
         where p.guild_id = %s
-        AND p.item_type = 'RAFFLE'
+        AND p.item_type = %s
     """
 
 
@@ -98,7 +98,7 @@ def select_guild_raffle_user_tickets():
         inner join products p on p.guild_id = u.guild_id and p.id = u.product_id
         inner join rounds r on r.guild_id = u.guild_id and r.round = p.round and r.round_status = 'OPEN'
         where u.guild_id = %s
-        and p.item_type = 'RAFFLE'
+        and p.item_type = %s
         group by u.user_id, p.id, p.name 
     """
 
