@@ -1976,7 +1976,7 @@ async def export_role_members(ctx, role_input: str = None):
                     'Username': member.name,
                     'User Tag': str(member),
                     'Nickname': member.nick if member.nick else member.name,
-                    'User ID': member.id,
+                    'User ID': str(member.id),
                     'Join Date': member.joined_at.strftime('%Y-%m-%d %H:%M:%S') if member.joined_at else 'Unknown',
                     'Account Created': member.created_at.strftime('%Y-%m-%d %H:%M:%S')
                 }
@@ -1991,7 +1991,7 @@ async def export_role_members(ctx, role_input: str = None):
                     'Role Name': role.name,
                     'Member Count': len(members_data),
                     'Role Color': str(role.color),
-                    'Role ID': role.id,
+                    'Role ID': str(role.id),
                     'Role Position': role.position
                 })
 
