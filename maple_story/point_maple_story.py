@@ -381,6 +381,11 @@ async def role_claim(ctx):
     await ctx.send(embed=embed, view=view)
 
 
+@bot.command(name="export-role")
+async def export_role_members(ctx, role: str = None):
+    await base_bot.export_role_members(ctx, role)
+
+
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)

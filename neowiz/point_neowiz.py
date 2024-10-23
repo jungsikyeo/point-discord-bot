@@ -137,11 +137,6 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
     await base_bot.bulk_add_role(ctx, role)
 
 
-@bot.command(name="export-role")
-async def export_role_members(ctx, role: str = None):
-    await base_bot.export_role_members(ctx, role)
-
-
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)
