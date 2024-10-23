@@ -8,6 +8,7 @@ import db_query as query
 import raffle
 import datetime
 import asyncio
+import pandas as pd
 from discord.ext import tasks, commands
 from discord.interactions import Interaction
 from discord.ui import View, button, Select, Modal, InputText
@@ -1845,6 +1846,7 @@ async def alpha_call_rewards(guild_id, call_channel_id, announce_channel_id):
 
 
 event_role_channel_id = None
+log_channel_id = None
 no_xp_roles = {}
 
 
@@ -1900,12 +1902,18 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
             if any(mod_role.id in no_xp_roles for mod_role in member.roles):
                 unique_user_ids.remove(member.id)
 
+        channel = bot.get_channel(int(log_channel_id))
+
         # 각 사용자에게 역할을 부여합니다.
         for user_id in unique_user_ids:
             member = ctx.guild.get_member(user_id)
             if member is not None:
                 await member.add_roles(role_found)
-                await ctx.send(f"🟢 Role `{role_found.name}` has been assigned to <@{member.id}>.")
+
+                if channel:
+                    await channel.send(f"🟢 Role `{role_found.name}` has been assigned to <@{member.id}>.")
+                else:
+                    await ctx.send(f"🟢 Role `{role_found.name}` has been assigned to <@{member.id}>.")
 
         embed = discord.Embed(title=f"{role_found.name} assigned",
                               description=f"✅ 총 {len(unique_user_ids)}명의 사용자에게 `{role_found.name}` 역할이 부여되었습니다.\n\n"
@@ -1920,3 +1928,111 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
                                           "🔴 An error occurred while processing the command.",
                               color=0xff0000)
         await ctx.send(embed=embed)
+
+
+async def export_role_members(ctx, role_input: str = None):
+    # Send initial progress message
+    progress_msg = await ctx.send("Starting member list extraction...")
+
+    try:
+        if role_input:
+            # Single role export
+            role = None
+            if len(ctx.message.role_mentions) > 0:
+                role = ctx.message.role_mentions[0]
+            else:
+                role = discord.utils.get(ctx.guild.roles, name=role_input)
+
+            if not role:
+                await progress_msg.edit(content="Could not find the specified role. Please check if the role name is correct.")
+                return
+
+            roles_to_process = [role]
+            await progress_msg.edit(content=f"Extracting member list for role {role.mention}...")
+        else:
+            # All roles export
+            roles_to_process = sorted(ctx.guild.roles[1:], key=lambda x: x.position, reverse=True)  # Exclude @everyone
+            await progress_msg.edit(content="Extracting member lists for all roles...")
+
+        # Create a folder for excel files if processing multiple roles
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        if len(roles_to_process) > 1:
+            folder_name = f"role_export_{timestamp}"
+            os.makedirs(folder_name, exist_ok=True)
+
+        # Process each role
+        all_files = []
+        summary_data = []
+
+        for role in roles_to_process:
+            # Skip roles with no members
+            if not role.members:
+                continue
+
+            # Collect member information
+            members_data = []
+            for member in role.members:
+                member_info = {
+                    'Username': member.name,
+                    'User Tag': str(member),
+                    'Nickname': member.nick if member.nick else member.name,
+                    'User ID': member.id,
+                    'Join Date': member.joined_at.strftime('%Y-%m-%d %H:%M:%S') if member.joined_at else 'Unknown',
+                    'Account Created': member.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
+                members_data.append(member_info)
+
+            # Create DataFrame
+            if members_data:
+                df = pd.DataFrame(members_data)
+
+                # Add to summary data
+                summary_data.append({
+                    'Role Name': role.name,
+                    'Member Count': len(members_data),
+                    'Role Color': str(role.color),
+                    'Role ID': role.id,
+                    'Role Position': role.position
+                })
+
+                # Save to Excel
+                if len(roles_to_process) > 1:
+                    filename = os.path.join(folder_name, f"role_members_{role.name}_{timestamp}.xlsx")
+                else:
+                    filename = f"role_members_{role.name}_{timestamp}.xlsx"
+
+                df.to_excel(filename, index=False, engine='openpyxl')
+                all_files.append(filename)
+
+        # Create summary sheet if processing multiple roles
+        if len(roles_to_process) > 1:
+            summary_df = pd.DataFrame(summary_data)
+            summary_filename = os.path.join(folder_name, f"_summary_{timestamp}.xlsx")
+            summary_df.to_excel(summary_filename, index=False, engine='openpyxl')
+            all_files.append(summary_filename)
+
+        # Send files
+        if not all_files:
+            await progress_msg.edit(content="No members found in the specified role(s).")
+            return
+
+        for file in all_files:
+            await ctx.send(file=discord.File(file))
+
+        # Final message
+        if len(roles_to_process) > 1:
+            await progress_msg.edit(content=f"Exported member lists for {len(summary_data)} roles with members.")
+        else:
+            await progress_msg.edit(content=f"Exported member list for role '{roles_to_process[0].name}'.")
+
+        # Cleanup local files
+        for file in all_files:
+            try:
+                os.remove(file)
+                if len(roles_to_process) > 1:
+                    os.rmdir(folder_name)
+            except Exception:
+                pass
+
+    except Exception as e:
+        await progress_msg.edit(content=f"An error occurred: {str(e)}")

@@ -137,6 +137,11 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
     await base_bot.bulk_add_role(ctx, role)
 
 
+@bot.command(name="export-role")
+async def export_role_members(ctx, role: str = None):
+    await base_bot.export_role_members(ctx, role)
+
+
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)
@@ -147,6 +152,7 @@ async def on_ready():
     # announce_channel_id = int(os.getenv("ALPHA_CALL_ANNOUNCE_CHANNEL_ID"))
     # base_bot.alpha_call_rewards.start(guild_id, call_channel_id, announce_channel_id)
     base_bot.event_role_channel_id = int(os.getenv("EVENT_ROLE_CHANNEL_ID"))  # 이벤트 채널 ID 설정
+    base_bot.log_channel_id = int(os.getenv("LOG_CHANNEL_ID"))
     base_bot.no_xp_roles = no_xp_roles
 
 
