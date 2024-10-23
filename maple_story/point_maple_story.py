@@ -381,7 +381,10 @@ async def role_claim(ctx):
     await ctx.send(embed=embed, view=view)
 
 
-@bot.command(name="export-role")
+@bot.command(
+    name="export-role"
+)
+@commands.has_any_role(*mod_role_ids)
 async def export_role_members(ctx, role: str = None):
     await base_bot.export_role_members(ctx, role)
 
