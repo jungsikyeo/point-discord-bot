@@ -135,13 +135,13 @@ async def on_message(message):
                             """, (points, current_time, user_id, guild_id))
                             connection.commit()
 
-                            old_level = bot.rank_to_level(current_xp)['level']
-                            new_level = bot.rank_to_level(current_xp + points)['level']
+                            old_level = base_bot.rank_to_level(current_xp)['level']
+                            new_level = base_bot.rank_to_level(current_xp + points)['level']
 
                             if old_level != new_level:
                                 # LEVEL UP => role check
                                 logger.info(f"{user_name} ({user_id}) LEVEL{old_level} -> LEVEL{new_level}")
-                                await bot.set_level_to_roles(guild_id, user_id, new_level)
+                                await base_bot.set_level_to_roles(guild_id, user_id, new_level)
 
             else:
                 # logger.info(f"{user_name} -> new")
