@@ -1919,7 +1919,10 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
                               description=f"✅ 총 {len(unique_user_ids)}명의 사용자에게 `{role_found.name}` 역할이 부여되었습니다.\n\n"
                                           f"✅ The `{role_found.name}` role has been assigned to {len(unique_user_ids)} users.",
                               color=0x00ff00)
-        await ctx.send(embed=embed)
+        if channel:
+            await channel.send(embed=embed)
+        else:
+            await ctx.send(embed=embed)
 
     except Exception as e:
         logger.error(f'Error: {e}')
@@ -1927,7 +1930,8 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
                               description="🔴 명령어 처리 중 오류가 발생했습니다.\n\n"
                                           "🔴 An error occurred while processing the command.",
                               color=0xff0000)
-        await ctx.send(embed=embed)
+        channel = bot.get_channel(int(log_channel_id))
+        await channel.send(embed=embed)
 
 
 async def export_role_members(ctx, role_input: str = None):
