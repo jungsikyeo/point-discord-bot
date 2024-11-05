@@ -112,7 +112,7 @@ async def on_message(message):
                         filtered_count = filtered_result['filtered_count'] if filtered_result else 0
 
                         if filtered_count >= 2:
-                            points = (math.sqrt(filtered_count) ** (1/3)) * 5
+                            points = (math.sqrt(filtered_count) ** (1/3)) * 10
                         else:
                             points = 0
 
