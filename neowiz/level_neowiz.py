@@ -197,7 +197,7 @@ async def get_rank(ctx: ApplicationContext,
     description="Show the top active users",
     guild_ids=guild_ids
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def rank_leaderboard(ctx: ApplicationContext):
     await base_bot.rank_leaderboard(ctx)
 
@@ -207,7 +207,7 @@ async def rank_leaderboard(ctx: ApplicationContext):
     description="Add rank XP to user",
     guild_ids=guild_ids
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def give_xp(ctx: ApplicationContext, member: Member, points: int):
     await base_bot.give_xp(ctx, member, points)
 
@@ -217,7 +217,7 @@ async def give_xp(ctx: ApplicationContext, member: Member, points: int):
     description="Remove rank XP to user",
     guild_ids=guild_ids
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def remove_xp(ctx: ApplicationContext, member: Member, xp: int):
     await base_bot.remove_xp(ctx, member, xp)
 
@@ -227,7 +227,7 @@ async def remove_xp(ctx: ApplicationContext, member: Member, xp: int):
     description="Delete the XP stats and remove roles",
     guild_ids=guild_ids
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def reset_leaderboard_stats(ctx: ApplicationContext):
     await base_bot.reset_leaderboard_stats(ctx)
 

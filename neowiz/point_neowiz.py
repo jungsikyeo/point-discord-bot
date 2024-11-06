@@ -42,7 +42,7 @@ logger.info(f"This is an info message from point_{folder_name}")
 @bot.command(
     name='store-setting'
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def store_setting(ctx):
     await base_bot.store_setting(ctx)
 
@@ -50,7 +50,7 @@ async def store_setting(ctx):
 @bot.command(
     name='store-main'
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def store_main(ctx):
     await base_bot.store_main(ctx)
 
@@ -58,7 +58,7 @@ async def store_main(ctx):
 @bot.command(
     name='add-item'
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def add_item(ctx):
     await base_bot.add_item(ctx)
 
@@ -82,7 +82,7 @@ async def remove_rewards(ctx, user_tag, amount):
 @bot.command(
     name='give-role-rewards'
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def give_role_rewards(ctx, role: Union[Role, int, str], amount):
     await base_bot.give_role_rewards(ctx, role, amount)
 
@@ -90,7 +90,7 @@ async def give_role_rewards(ctx, role: Union[Role, int, str], amount):
 @bot.command(
     name='giveaway-raffle'
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def giveaway_raffle(ctx):
     await base_bot.giveaway_raffle(ctx)
 
@@ -108,7 +108,7 @@ async def giveaway_raffle(ctx):
 @bot.command(
     name='level-rewards'
 )
-@commands.has_any_role(*mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def level_rewards(ctx):
     await base_bot.level_rewards(ctx)
 
@@ -116,7 +116,7 @@ async def level_rewards(ctx):
 @bot.command(
     name='level-reset'
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def level_reset(ctx):
     await base_bot.level_reset(ctx)
 
@@ -124,7 +124,7 @@ async def level_reset(ctx):
 @bot.command(
     name='level-list'
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def level_list(ctx):
     await base_bot.level_list(ctx)
 
@@ -132,7 +132,7 @@ async def level_list(ctx):
 @bot.command(
     name='bulk-add-role'
 )
-@commands.has_any_role(*team_role_ids, *mod_role_ids)
+@commands.has_any_role(*team_role_ids)
 async def bulk_add_role(ctx, role: Union[Role, int, str]):
     await base_bot.bulk_add_role(ctx, role)
 
