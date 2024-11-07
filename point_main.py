@@ -91,7 +91,7 @@ class WelcomeView(View):
             for user_ticket in all_user_tickets:
                 description += f"""`[{user_ticket.get('item_type')}]{user_ticket.get('name')}`     x{user_ticket.get('tickets')}\n"""
             embed = make_embed({
-                'title': f"My Tickets - {all_user_tickets[0].get('round')}Round",
+                'title': f"My Tickets",
                 'description': description,
                 'color': 0xFFFFFF,
             })
@@ -1298,7 +1298,7 @@ async def store_main(ctx):
         for product in products:
             items += f"`[{product.get('item_type')}]{product.get('name')}` x{product.get('quantity')}\n"
 
-        embed.add_field(name=f"Store Items - {store.get('max_round')}Round", value=items)
+        embed.add_field(name=f"Store Items", value=items)
 
         view = WelcomeView(db)
         await ctx.send(embed=embed, view=view)
