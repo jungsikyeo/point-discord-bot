@@ -1,6 +1,6 @@
 import asyncio
 import os
-from .db_pool import Database
+import db_pool
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from web3 import Web3
@@ -17,7 +17,7 @@ mysql_id = os.getenv("MYSQL_ID")
 mysql_passwd = os.getenv("MYSQL_PASSWD")
 mysql_db = os.getenv("MYSQL_DB")
 
-db = Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
+db = db_pool.Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 
 # Global state variables
 class ListenerState:
