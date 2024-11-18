@@ -1,11 +1,15 @@
+import asyncio
 import os
 import sys
 import logging
+from datetime import datetime
+
+import aiohttp
 import discord
 from discord.ui import View, button, Select, Modal, InputText
 from discord import Embed, ButtonStyle, InputTextStyle
 from discord.ext import commands
-from typing import Union
+from typing import Union, Optional, Dict
 from dotenv import load_dotenv
 from discord.interactions import Interaction
 
@@ -370,7 +374,7 @@ async def role_claim(ctx):
     description = "Thank you to all the explorers who have been active in the MapleStory Universe community since discord opened!\n\n" \
                   "As a reward for your contribution to energizing the MapleStory Universe community through various activities, you can claim additional roles based on the number of roles you've earned.\n" \
                   "Don't miss out on these upcoming events and be sure to participate to earn your roles.\n\n" \
-                  "Depending on how many of the <@&1252111835537215518>, <@&1252112597747105824>, <@&1252112585453469796>, <@&1252112567917350932>, and <@&1252112533981233182> roles you have, you can claim the following roles by pressing the ** 'Claim' ** button.\n\n" \
+                  "Depending on how many of the <@&1252111835537215518>, <@&1252112597747105824>, <@&1252112585453469796>, <@&1252112567917350932>, <@&1252112533981233182>, and <@&1252112534350336001> roles you have, you can claim the following roles by pressing the ** 'Claim' ** button.\n\n" \
                   "- [3 roles → <@&1252112617942810697>]\n" \
                   "- [5 roles → <@&1252112640671617074>]\n" \
                   "[Special benefits](https://discord.com/channels/975999406941822996/1252122532669292638/1288054963888455700) will be given according to the exchanged role.\n\n" \
@@ -389,10 +393,111 @@ async def export_role_members(ctx, role: str = None):
     await base_bot.export_role_members(ctx, role)
 
 
+async def fetch_web_nickname(session: aiohttp.ClientSession, address: str) -> Optional[int]:
+    """Fetch web nickname from MSU API"""
+    try:
+        url = f"https://internal-api.msu.io/v1/web/account/{address}"
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
+                nickname = data.get("account", {}).get("nickname")
+                if nickname and "#" in nickname:
+                    return int(nickname.split("#")[1])
+            return None
+    except Exception as e:
+        print(f"Error fetching web nickname for {address}: {str(e)}")
+        return None
+
+
+async def process_open_transactions(connection, cursor) -> Optional[Dict]:
+    """Fetch single OPEN status transaction"""
+    query = """
+            SELECT id, user, nickname
+            FROM nickname_tx_maple
+            WHERE status = 'OPEN'
+            ORDER BY id ASC
+        """
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+async def update_transaction_status(connection, cursor, tx_user: int, web_nickname: Optional[int]):
+    """Update transaction with web nickname and close status"""
+    if not web_nickname:
+        print(f"Error updating transaction {tx_user}: {tx_user} web nickname is None")
+        return
+
+    try:
+        query = """
+                UPDATE nickname_tx_maple
+                SET web_nickname = %s,
+                    status = 'CLOSE',
+                    timestamp_close = %s
+                WHERE user = %s
+            """
+        current_time = datetime.now()
+        cursor.execute(query, (web_nickname, current_time, tx_user))
+        connection.commit()
+        print(f"Updated transaction {tx_user} with web_nickname {web_nickname}")
+    except Exception as e:
+        connection.rollback()
+        print(f"Error updating transaction {tx_user}: {str(e)}")
+
+
+async def web_nickname_batch_processor(base_bot):
+    """Background task for processing web nicknames"""
+    print("Starting web nickname batch processor...")
+
+    async with aiohttp.ClientSession() as session:
+        while True:
+            try:
+                connection = db.get_connection()
+                cursor = connection.cursor()
+
+                try:
+                    # Get all OPEN transactions
+                    open_transactions = await process_open_transactions(connection, cursor)
+                    if open_transactions:
+                        print(f"Found {len(open_transactions)} OPEN transactions to process")
+
+                        # Process each transaction
+                        for tx in open_transactions:
+                            web_nickname = await fetch_web_nickname(session, tx['user'])
+                            if web_nickname is None:
+                                web_nickname = 'Unfinished'
+                            await update_transaction_status(connection, cursor, tx['user'], web_nickname)
+                            await send_message_nickname(bot, tx['nickname'], web_nickname)
+                            await asyncio.sleep(1)
+
+                        print("Batch processing completed")
+
+                finally:
+                    cursor.close()
+                    connection.close()
+
+                # Wait for 5 seconds before next batch
+                await asyncio.sleep(5)
+
+            except Exception as e:
+                print(f"Error in batch processor: {str(e)}")
+                await asyncio.sleep(5)
+
+
+async def send_message_nickname(bot, nickname, web_nickname):
+    description = f"{web_nickname} User has created {nickname} nickname."
+
+    embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
+
+    channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
+    channel = bot.get_channel(channel_id)
+    await channel.send(embed=embed)
+
+
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)
     # bot.add_cog(base_bot.RaffleCog(bot, db))
+    asyncio.create_task(web_nickname_batch_processor(base_bot))
 
 
 bot.run(bot_token)
