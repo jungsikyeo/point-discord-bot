@@ -9,6 +9,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 mysql_ip = os.getenv("MYSQL_IP")
