@@ -1851,6 +1851,10 @@ no_xp_roles = {}
 
 
 async def bulk_add_role(ctx, role: Union[Role, int, str]):
+    logger.info(f"guild: {ctx.guild}")
+    logger.info(f"role: {role}")
+
+
     # 입력값이 롤 객체인 경우
     if isinstance(role, Role):
         role_found = role
