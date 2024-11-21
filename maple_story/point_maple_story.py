@@ -514,7 +514,10 @@ async def on_ready():
     base_bot.config_logging(logger)
     # bot.add_cog(base_bot.RaffleCog(bot, db))
     for guild in bot.guilds:
-        if guild.id == 1162108644842819766:
+        # test
+        # if guild.id == 1162108644842819766:
+        # prd
+        if guild.id == 975999406941822996:
             asyncio.create_task(web_nickname_batch_processor(bot))
 
 
