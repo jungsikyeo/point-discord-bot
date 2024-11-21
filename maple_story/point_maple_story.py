@@ -484,39 +484,38 @@ async def web_nickname_batch_processor(bot):
 
 
 async def send_message_nickname(bot, nickname, web_nickname):
-    logger.info(f"bot: {bot}")
-    for guild in bot.guilds:
-        if int(os.getenv("GUILD_ID")) == guild.id:
-            # 4글자: 빨강 31
-            # 5글자: 노랑 33
-            # 6글자: 초록 32
-            # 7글자 이상: 파랑 34
-            nick_len = len(nickname)
-            if nick_len == 4:
-                color_num = 31
-            elif nick_len == 5:
-                color_num = 33
-            elif nick_len == 6:
-                color_num = 32
-            else:
-                color_num = 34
+    # 4글자: 빨강 31
+    # 5글자: 노랑 33
+    # 6글자: 초록 32
+    # 7글자 이상: 파랑 34
+    nick_len = len(nickname)
+    if nick_len == 4:
+        color_num = 31
+    elif nick_len == 5:
+        color_num = 33
+    elif nick_len == 6:
+        color_num = 32
+    else:
+        color_num = 34
 
-            description = f"```ansi\n" \
-                          f"· {web_nickname} has reserved the name, [1;30m\"[1;{color_num}m{nickname}[1;30m\".\n" \
-                          f"```"
+    description = f"```ansi\n" \
+                  f"· {web_nickname} has reserved the name, [1;30m\"[1;{color_num}m{nickname}[1;30m\".\n" \
+                  f"```"
 
-            embed = Embed(title="Name Successfully Reserved!", description=description, color=0x9C3EFF)
+    embed = Embed(title="Name Successfully Reserved!", description=description, color=0x9C3EFF)
 
-            channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
-            channel = bot.get_channel(channel_id)
-            await channel.send(embed=embed)
+    channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
+    channel = bot.get_channel(channel_id)
+    await channel.send(embed=embed)
 
 
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)
     # bot.add_cog(base_bot.RaffleCog(bot, db))
-    asyncio.create_task(web_nickname_batch_processor(bot))
+    for guild in bot.guilds:
+        if guild.id == 1162108644842819766:
+            asyncio.create_task(web_nickname_batch_processor(bot))
 
 
 bot.run(bot_token)
