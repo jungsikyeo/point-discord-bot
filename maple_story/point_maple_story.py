@@ -466,7 +466,7 @@ async def web_nickname_batch_processor(base_bot):
                             if web_nickname is None:
                                 web_nickname = 'Unfinished'
                             await update_transaction_status(connection, cursor, tx['user'], web_nickname)
-                            await send_message_nickname(bot, tx['nickname'], web_nickname)
+                            await send_message_nickname(base_bot, tx['nickname'], web_nickname)
                             await asyncio.sleep(1)
 
                         print("Batch processing completed")
@@ -484,13 +484,16 @@ async def web_nickname_batch_processor(base_bot):
 
 
 async def send_message_nickname(bot, nickname, web_nickname):
-    description = f"{web_nickname} User has created {nickname} nickname."
+    if bot.guild.id == int(os.getenv("GUILD_ID")):
+        description = f"```ansi" \
+                      f"[1;32m {web_nickname}[0;30m User has created {nickname} nickname." \
+                      f"```"
 
-    embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
+        embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
 
-    channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
-    channel = bot.get_channel(channel_id)
-    await channel.send(embed=embed)
+        channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
+        channel = bot.get_channel(channel_id)
+        await channel.send(embed=embed)
 
 
 @bot.event
