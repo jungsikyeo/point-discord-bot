@@ -484,16 +484,15 @@ async def web_nickname_batch_processor(base_bot):
 
 
 async def send_message_nickname(bot, nickname, web_nickname):
-    if bot.guild.id == int(os.getenv("GUILD_ID")):
-        description = f"```ansi" \
-                      f"[1;32m {web_nickname}[0;30m User has created {nickname} nickname." \
-                      f"```"
+    description = f"```ansi" \
+                  f"[1;32m {web_nickname}[0;30m User has created {nickname} nickname." \
+                  f"```"
 
-        embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
+    embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
 
-        channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
-        channel = bot.get_channel(channel_id)
-        await channel.send(embed=embed)
+    channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
+    channel = bot.get_channel(channel_id)
+    await channel.send(embed=embed)
 
 
 @bot.event
