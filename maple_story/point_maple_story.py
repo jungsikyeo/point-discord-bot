@@ -487,11 +487,15 @@ async def send_message_nickname(bot, nickname, web_nickname):
     logger.info(f"bot: {bot}")
     for guild in bot.guilds:
         if int(os.getenv("GUILD_ID")) == guild.id:
+            nick_len = len(nickname)
+
+
+
             description = f"```ansi\n" \
-                          f"{web_nickname} User has created [1;31m{nickname}\n" \
+                          f"· {web_nickname} has reserved the name, [1;30m\"[1;31m{nickname}[1;30m\".\n" \
                           f"```"
 
-            embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
+            embed = Embed(title="Name Successfully Reserved!", description=description, color=0x9C3EFF)
 
             channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
             channel = bot.get_channel(channel_id)
