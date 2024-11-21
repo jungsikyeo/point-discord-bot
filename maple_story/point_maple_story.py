@@ -488,7 +488,7 @@ async def send_message_nickname(bot, nickname, web_nickname):
     for guild in bot.guilds:
         if int(os.getenv("GUILD_ID")) == guild.id:
             description = f"```ansi\n" \
-                          f"{web_nickname} User has created [1;31m {nickname}\n" \
+                          f"{web_nickname} User has created [1;31m{nickname}\n" \
                           f"```"
 
             embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
