@@ -444,7 +444,7 @@ async def update_transaction_status(connection, cursor, tx_user: int, web_nickna
         print(f"Error updating transaction {tx_user}: {str(e)}")
 
 
-async def web_nickname_batch_processor(base_bot):
+async def web_nickname_batch_processor(bot):
     """Background task for processing web nicknames"""
     print("Starting web nickname batch processor...")
 
@@ -466,7 +466,7 @@ async def web_nickname_batch_processor(base_bot):
                             if web_nickname is None:
                                 web_nickname = 'Unfinished'
                             await update_transaction_status(connection, cursor, tx['user'], web_nickname)
-                            await send_message_nickname(base_bot, tx['nickname'], web_nickname)
+                            await send_message_nickname(bot, tx['nickname'], web_nickname)
                             await asyncio.sleep(1)
 
                         print("Batch processing completed")
@@ -485,22 +485,24 @@ async def web_nickname_batch_processor(base_bot):
 
 async def send_message_nickname(bot, nickname, web_nickname):
     logger.info(f"bot: {bot}")
-    description = f"```ansi" \
-                  f"[1;32m {web_nickname}[0;30m User has created {nickname} nickname." \
-                  f"```"
+    for guild in bot.guilds:
+        if int(os.getenv("GUILD_ID")) == guild.id:
+            description = f"```ansi" \
+                          f"[1;32m {web_nickname}[0;30m User has created {nickname} nickname." \
+                          f"```"
 
-    embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
+            embed = Embed(title="Created nickname", description=description, color=0x9C3EFF)
 
-    channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
-    channel = bot.get_channel(channel_id)
-    await channel.send(embed=embed)
+            channel_id = int(os.getenv("NICKNAME_CHANNEL_ID"))
+            channel = bot.get_channel(channel_id)
+            await channel.send(embed=embed)
 
 
 @bot.event
 async def on_ready():
     base_bot.config_logging(logger)
     # bot.add_cog(base_bot.RaffleCog(bot, db))
-    asyncio.create_task(web_nickname_batch_processor(base_bot))
+    asyncio.create_task(web_nickname_batch_processor(bot))
 
 
 bot.run(bot_token)
