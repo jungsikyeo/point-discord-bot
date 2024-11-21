@@ -484,6 +484,7 @@ async def web_nickname_batch_processor(base_bot):
 
 
 async def send_message_nickname(bot, nickname, web_nickname):
+    logger.info(f"bot: {bot}")
     description = f"```ansi" \
                   f"[1;32m {web_nickname}[0;30m User has created {nickname} nickname." \
                   f"```"
