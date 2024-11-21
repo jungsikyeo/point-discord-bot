@@ -1857,18 +1857,13 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
 
     # 입력값이 롤 객체인 경우
     if isinstance(role, Role):
-        logger.info(f"111111")
         role_found = role
     # 입력값이 역할 ID인 경우
     elif isinstance(role, int):
-        logger.info(f"222222")
         role_found = discord.utils.get(ctx.guild.roles, id=role)
-        logger.info(f"222----1111")
     # 입력값이 역할 이름인 경우
     else:
-        logger.info(f"3333")
         role_found = discord.utils.get(ctx.guild.roles, name=role)
-        logger.info(f"3333--11111")
 
     if role_found is None:
         embed = Embed(title="Error",
@@ -1906,10 +1901,10 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
         # 수집된 사용자 ID에서 중복을 제거합니다.
         unique_user_ids = set(user_ids)
 
-        for user_id in set(user_ids):
-            member = ctx.guild.get_member(user_id)
-            if any(mod_role.id in no_xp_roles for mod_role in member.roles):
-                unique_user_ids.remove(member.id)
+        # for user_id in set(user_ids):
+        #     member = ctx.guild.get_member(user_id)
+        #     if any(mod_role.id in no_xp_roles for mod_role in member.roles):
+        #         unique_user_ids.remove(member.id)
 
         channel = bot.get_channel(int(log_channel_id))
 
