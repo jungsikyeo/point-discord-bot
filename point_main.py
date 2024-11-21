@@ -1857,13 +1857,18 @@ async def bulk_add_role(ctx, role: Union[Role, int, str]):
 
     # 입력값이 롤 객체인 경우
     if isinstance(role, Role):
+        logger.info(f"111111")
         role_found = role
     # 입력값이 역할 ID인 경우
     elif isinstance(role, int):
+        logger.info(f"222222")
         role_found = discord.utils.get(ctx.guild.roles, id=role)
+        logger.info(f"222----1111")
     # 입력값이 역할 이름인 경우
     else:
+        logger.info(f"3333")
         role_found = discord.utils.get(ctx.guild.roles, name=role)
+        logger.info(f"3333--11111")
 
     if role_found is None:
         embed = Embed(title="Error",
