@@ -1,6 +1,6 @@
 import asyncio
 import os
-from .db_pool import Database
+from db_pool import Database
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from web3 import Web3
@@ -22,8 +22,8 @@ db = Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 # Global state variables
 class ListenerState:
     is_running: bool = False
-    current_block: int = 35792324
-    last_processed_block: int = 35792324
+    current_block: int = 53383700
+    last_processed_block: int = 53383700
     last_event_time: Optional[datetime] = None
     recent_events: List[dict] = []
     max_recent_events: int = 100
@@ -32,9 +32,14 @@ class ListenerState:
 
 state = ListenerState()
 
-# Initialize Web3 and Contract
-web3 = Web3(Web3.HTTPProvider("https://rpc.ankr.com/avalanche_fuji"))
-CONTRACT_ADDRESS = web3.to_checksum_address("0x984570351F0CD43e7cC55B5153301F4FD301f424")
+# 테스트넷
+# web3 = Web3(Web3.HTTPProvider("https://rpc.ankr.com/avalanche_fuji"))
+# CONTRACT_ADDRESS = web3.to_checksum_address("0x984570351F0CD43e7cC55B5153301F4FD301f424")
+
+# 메인넷
+web3 = Web3(Web3.HTTPProvider("https://api.avax.network/ext/bc/C/rpc"))
+CONTRACT_ADDRESS = web3.to_checksum_address("0xcFb703b39F3C2b08A74E35BB8Cf1296B5F5Cf8a8")
+
 EVENT_SIGNATURE = "0x" + web3.keccak(text="NicknameRegistered(address,string)").hex()
 
 contract_abi = [
