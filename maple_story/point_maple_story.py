@@ -457,6 +457,7 @@ async def web_nickname_batch_processor(bot):
                 try:
                     # Get all OPEN transactions
                     open_transactions = await process_open_transactions(connection, cursor)
+                    logger.info(open_transactions)
                     if open_transactions:
                         print(f"Found {len(open_transactions)} OPEN transactions to process")
 
