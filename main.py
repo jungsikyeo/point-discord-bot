@@ -1,6 +1,6 @@
 import asyncio
 import os
-from db_pool import Database
+from .db_pool import Database
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from web3 import Web3
