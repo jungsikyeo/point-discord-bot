@@ -401,8 +401,7 @@ async def fetch_web_nickname(session: aiohttp.ClientSession, address: str) -> Op
             if response.status == 200:
                 data = await response.json()
                 nickname = data.get("account", {}).get("nickname")
-                if nickname and "#" in nickname:
-                    return int(nickname.split("#")[1])
+                return nickname
             return None
     except Exception as e:
         print(f"Error fetching web nickname for {address}: {str(e)}")
