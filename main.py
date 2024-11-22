@@ -22,8 +22,8 @@ db = Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 # Global state variables
 class ListenerState:
     is_running: bool = False
-    current_block: int = 53383700
-    last_processed_block: int = 53383700
+    current_block: int = 53391377
+    last_processed_block: int = 53391377
     last_event_time: Optional[datetime] = None
     recent_events: List[dict] = []
     max_recent_events: int = 100
