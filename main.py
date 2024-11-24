@@ -22,8 +22,8 @@ db = Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 # Global state variables
 class ListenerState:
     is_running: bool = False
-    current_block: int = 53391377
-    last_processed_block: int = 53391377
+    current_block: int = None
+    last_processed_block: int = None
     last_event_time: Optional[datetime] = None
     recent_events: List[dict] = []
     max_recent_events: int = 100
@@ -65,6 +65,23 @@ contract_abi = [
 ]
 
 contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=contract_abi)
+
+async def initialize_block_numbers():
+    """Initialize the current and last processed block numbers"""
+    try:
+        # Get the latest block number
+        latest_block = web3.eth.block_number
+        # Start from 100 blocks behind to catch any recent events
+        start_block = max(latest_block - 100, 0)
+
+        state.current_block = start_block
+        state.last_processed_block = start_block
+        print(f"Initialized starting block to {start_block} (latest block: {latest_block})")
+    except Exception as e:
+        print(f"Error initializing block numbers: {str(e)}")
+        # Fallback to a safe default if web3 call fails
+        state.current_block = 0
+        state.last_processed_block = 0
 
 class NicknameEvent(BaseModel):
     transaction_hash: str
@@ -208,8 +225,9 @@ async def blockchain_listener():
 async def lifespan(app: FastAPI):
     # Startup
     print("Starting up...")
+    await initialize_block_numbers()
     state.is_running = True
-    # Start both background tasks
+    # Start background task
     state.background_task = asyncio.create_task(blockchain_listener())
     yield
     # Shutdown
