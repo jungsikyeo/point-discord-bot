@@ -138,7 +138,7 @@ def start_fcfs(db, guild_id, action_type, action_user_id):
             weights = {user: tickets.get(prize, 0) for user, tickets in ticket_holders.items()}
             for user, weight in weights.items():
                 winners.setdefault(prize, []).append(user)
-
+        pprint(winners)
         raffle_round = 0
         for product in products:
             for winner in winners[product.get('name')]:

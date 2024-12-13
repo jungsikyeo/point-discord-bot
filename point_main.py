@@ -1474,6 +1474,9 @@ async def giveaway_raffle(ctx):
 
         event_announce_channel = store.get('raffle_announce_channel')
 
+        if not event_announce_channel:
+            event_announce_channel = ctx.channel.id
+
         result_raffle = raffle.start_raffle(db, guild_id, action_type, action_user_id)
         result_fcfs = raffle.start_fcfs(db, guild_id, action_type, action_user_id)
 
@@ -1481,23 +1484,29 @@ async def giveaway_raffle(ctx):
                       "here is the winner list of last giveaway\n\n"
         for product, users in result_raffle.items():
             users_str = '\n'.join([f"<@{user}>" for user in users])
-            description += f"🏆 `{product}` winner:\n{users_str}\n\n"
+            description = f"🏆 `{product}` winner:\n{users_str}\n\n"
+
+            embed = make_embed({
+                'title': f'🎉 Giveaway `{product}` Raffle Winner 🎉',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
+
+            channel = bot.get_channel(int(event_announce_channel))
+            await channel.send(embed=embed)
 
         for product, users in result_fcfs.items():
             users_str = '\n'.join([f"<@{user}>" for user in users])
-            description += f"🏆 `{product}` winner:\n{users_str}\n\n"
+            description = f"🏆 `{product}` winner:\n{users_str}\n\n"
 
-        embed = make_embed({
-            'title': '🎉 Giveaway Winner 🎉',
-            'description': description,
-            'color': 0xFFFFFF,
-        })
+            embed = make_embed({
+                'title': f'🎉 Giveaway `{product}` FCFS Winner 🎉',
+                'description': description,
+                'color': 0xFFFFFF,
+            })
 
-        if not event_announce_channel:
-            event_announce_channel = ctx.channel.id
-
-        channel = bot.get_channel(int(event_announce_channel))
-        await channel.send(embed=embed)
+            channel = bot.get_channel(int(event_announce_channel))
+            await channel.send(embed=embed)
 
         description = f"Check it out on the <#{int(event_announce_channel)}> channel."
         embed = make_embed({
