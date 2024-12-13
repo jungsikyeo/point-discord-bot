@@ -1483,7 +1483,7 @@ async def giveaway_raffle(ctx):
         description = "Congratulations! " \
                       "here is the winner list of last giveaway\n\n"
         for product, users in result_raffle.items():
-            users_str = '\n'.join([f"{user.mention}" for user in users])
+            users_str = '\n'.join([f"<@{user}>" for user in users])
             description = f"🏆 `{product}` winner:\n{users_str}\n\n"
 
             embed = make_embed({
@@ -1496,7 +1496,7 @@ async def giveaway_raffle(ctx):
             await channel.send(embed=embed)
 
         for product, users in result_fcfs.items():
-            users_str = '\n'.join([f"{user.mention}" for user in users])
+            users_str = '\n'.join([f"<@{user}>" for user in users])
             description = f"🏆 `{product}` winner:\n{users_str}\n\n"
 
             embed = make_embed({
