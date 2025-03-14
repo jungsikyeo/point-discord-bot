@@ -142,7 +142,7 @@ async def on_message(message):
                             if old_level != new_level:
                                 # LEVEL UP => role check
                                 logger.info(f"{user_name} ({user_id}) LEVEL{old_level} -> LEVEL{new_level}")
-                                await base_bot.set_level_to_roles(guild_id, user_id, new_level)
+                                await base_bot.set_level_to_roles_trala(guild_id, user_id, new_level)
 
             else:
                 # logger.info(f"{user_name} -> new")
