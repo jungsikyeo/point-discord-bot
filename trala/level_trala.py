@@ -32,8 +32,9 @@ mod_role_ids = list(map(int, os.getenv('MOD_ROLE_ID').split(',')))
 guild_ids = list(map(int, os.getenv('GUILD_ID').split(',')))
 enabled_channel_list = list(map(int, os.getenv('XP_ENABLED_CHANNEL_LIST').split(',')))
 no_xp_roles = list(map(int, os.getenv('NO_XP_ROLE_LIST').split(',')))
-level_2_role_id = int(os.getenv('LEVEL_2_ROLE_ID'))
+level_3_role_id = int(os.getenv('LEVEL_3_ROLE_ID'))
 level_5_role_id = int(os.getenv('LEVEL_5_ROLE_ID'))
+level_7_role_id = int(os.getenv('LEVEL_7_ROLE_ID'))
 level_10_role_id = int(os.getenv('LEVEL_10_ROLE_ID'))
 level_12_role_id = int(os.getenv('LEVEL_12_ROLE_ID'))
 level_15_role_id = int(os.getenv('LEVEL_15_ROLE_ID'))
@@ -112,7 +113,7 @@ async def on_message(message):
                         filtered_count = filtered_result['filtered_count'] if filtered_result else 0
 
                         if filtered_count >= 2:
-                            points = (math.sqrt(filtered_count) ** (1/3)) * 13
+                            points = (math.sqrt(filtered_count) ** (1/3)) * 20
                         else:
                             points = 0
 
@@ -170,13 +171,14 @@ async def on_ready():
     base_bot.config_logging(logger)
 
     base_bot.folder_name = folder_name
-    base_bot.level_2_role_id = level_2_role_id
+    base_bot.level_3_role_id = level_3_role_id
     base_bot.level_5_role_id = level_5_role_id
+    base_bot.level_7_role_id = level_7_role_id
     base_bot.level_10_role_id = level_10_role_id
     base_bot.level_12_role_id = level_12_role_id
     base_bot.level_15_role_id = level_15_role_id
     base_bot.level_20_role_id = level_20_role_id
-    base_bot.no_rank_members = list(map(int, os.getenv('NO_RANK_MEMBERS').split(',')))
+    # base_bot.no_rank_members = list(map(int, os.getenv('NO_RANK_MEMBERS').split(',')))
 
 
 rank_search_users = {}

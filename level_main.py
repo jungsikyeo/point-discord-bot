@@ -36,10 +36,17 @@ db = db_pool.Database(mysql_ip, mysql_port, mysql_id, mysql_passwd, mysql_db)
 
 folder_name = None
 level_2_role = None
+level_3_role = None
 level_5_role = None
+level_7_role = None
 level_10_role = None
+level_12_role = None
+level_15_role = None
+level_20_role = None
 level_2_role_id = None
+level_3_role_id = None
 level_5_role_id = None
+level_7_role_id = None
 level_10_role_id = None
 level_12_role_id = None
 level_15_role_id = None
@@ -163,6 +170,95 @@ async def set_level_to_roles(local_server, user_id: int, level: int):
         await user.remove_roles(level_15_role)
         await user.remove_roles(level_20_role)
         logger.info(f"{user_id} -> Delete: 2, 5, 10, 12, 15, 20 Add: x")
+
+
+async def set_level_to_roles_trala(local_server, user_id: int, level: int):
+    global level_3_role, level_5_role, level_7_role, level_10_role, level_12_role, level_15_role, level_20_role
+    global level_3_role_id, level_5_role_id, level_7_role_id, level_10_role_id, level_12_role_id, level_15_role_id, level_20_role_id
+    level_3_role = bot.get_guild(local_server).get_role(level_3_role_id)
+    level_5_role = bot.get_guild(local_server).get_role(level_5_role_id)
+    level_7_role = bot.get_guild(local_server).get_role(level_7_role_id)
+    level_10_role = bot.get_guild(local_server).get_role(level_10_role_id)
+    level_12_role = bot.get_guild(local_server).get_role(level_12_role_id)
+    level_15_role = bot.get_guild(local_server).get_role(level_15_role_id)
+    level_20_role = bot.get_guild(local_server).get_role(level_20_role_id)
+
+    searchfi = bot.get_guild(local_server)
+    user = searchfi.get_member(int(user_id))
+
+    if level >= 20:
+        await user.add_roles(level_3_role)
+        await user.add_roles(level_5_role)
+        await user.add_roles(level_7_role)
+        await user.add_roles(level_10_role)
+        await user.add_roles(level_12_role)
+        await user.add_roles(level_15_role)
+        await user.add_roles(level_20_role)
+        logger.info(f"{user_id} -> Delete: x, Add: 3, 5, 7, 10, 12, 15, 20")
+    elif 20 > level >= 15:
+        await user.add_roles(level_3_role)
+        await user.add_roles(level_5_role)
+        await user.add_roles(level_7_role)
+        await user.add_roles(level_10_role)
+        await user.add_roles(level_12_role)
+        await user.add_roles(level_15_role)
+        await user.remove_roles(level_20_role)
+        logger.info(f"{user_id} -> Delete: 20 Add: 3, 5, 7, 10, 12, 15")
+    elif 15 > level >= 12:
+        await user.add_roles(level_3_role)
+        await user.add_roles(level_5_role)
+        await user.add_roles(level_7_role)
+        await user.add_roles(level_10_role)
+        await user.add_roles(level_12_role)
+        await user.remove_roles(level_15_role)
+        await user.remove_roles(level_20_role)
+        logger.info(f"{user_id} -> Delete: 15, 20 Add: 3, 5, 7, 10, 12")
+    elif 12 > level >= 10:
+        await user.add_roles(level_3_role)
+        await user.add_roles(level_5_role)
+        await user.add_roles(level_7_role)
+        await user.add_roles(level_10_role)
+        await user.remove_roles(level_12_role)
+        await user.remove_roles(level_15_role)
+        await user.remove_roles(level_20_role)
+        logger.info(f"{user_id} -> Delete: 12, 15, 20 Add: 3, 5, 7, 10")
+    elif 10 > level >= 7:
+        await user.add_roles(level_3_role)
+        await user.add_roles(level_5_role)
+        await user.add_roles(level_7_role)
+        await user.remove_roles(level_10_role)
+        await user.remove_roles(level_12_role)
+        await user.remove_roles(level_15_role)
+        await user.remove_roles(level_20_role)
+        logger.info(f"{user_id} -> Delete: 10, 12, 15, 20 Add: 3, 5, 7")
+    elif 7 > level >= 5:
+        await user.add_roles(level_3_role)
+        await user.add_roles(level_5_role)
+        await user.remove_roles(level_7_role)
+        await user.remove_roles(level_10_role)
+        await user.remove_roles(level_12_role)
+        await user.remove_roles(level_15_role)
+        await user.remove_roles(level_20_role)
+        logger.info(f"{user_id} -> Delete: 10, 12, 15, 20 Add: 3, 5, 7")
+    elif 5 > level >= 3:
+        await user.add_roles(level_3_role)
+        await user.remove_roles(level_7_role)
+        await user.remove_roles(level_5_role)
+        await user.remove_roles(level_10_role)
+        await user.remove_roles(level_10_role)
+        await user.remove_roles(level_12_role)
+        await user.remove_roles(level_15_role)
+        await user.remove_roles(level_20_role)
+        logger.info(f"{user_id} -> Delete: 5, 7, 10, 12, 15, 20 Add: 3")
+    else:
+        await user.remove_roles(level_3_role)
+        await user.remove_roles(level_5_role)
+        await user.remove_roles(level_7_role)
+        await user.remove_roles(level_10_role)
+        await user.remove_roles(level_12_role)
+        await user.remove_roles(level_15_role)
+        await user.remove_roles(level_20_role)
+        logger.info(f"{user_id} -> Delete: 3, 5, 7, 10, 12, 15, 20 Add: x")
 
 
 rank_search_users = {}
@@ -378,7 +474,10 @@ async def give_xp(ctx: ApplicationContext, member: Member, points: int):
             new_level = rank_to_level(current_xp + points)['level']
 
             if old_level != new_level:
-                await set_level_to_roles(guild_id, user_id, new_level)
+                if folder_name == "trala":
+                    await set_level_to_roles_trala(guild_id, user_id, new_level)
+                else:
+                    await set_level_to_roles(guild_id, user_id, new_level)
 
             embed = make_embed({
                 "title": "XP successfully added",
