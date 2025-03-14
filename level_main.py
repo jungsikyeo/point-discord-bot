@@ -242,8 +242,8 @@ async def set_level_to_roles_trala(local_server, user_id: int, level: int):
         logger.info(f"{user_id} -> Delete: 10, 12, 15, 20 Add: 3, 5, 7")
     elif 5 > level >= 3:
         await user.add_roles(level_3_role)
-        await user.remove_roles(level_7_role)
         await user.remove_roles(level_5_role)
+        await user.remove_roles(level_7_role)
         await user.remove_roles(level_10_role)
         await user.remove_roles(level_10_role)
         await user.remove_roles(level_12_role)
