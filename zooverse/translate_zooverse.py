@@ -54,7 +54,7 @@ class TranslateButton(View):
 
     @button(label="Korean", style=discord.ButtonStyle.gray, custom_id="korean_button")
     async def button_kor(self, _, interaction: Interaction):
-        connection = db.get_connection()
+        connection = self.db.get_connection()
         cursor = connection.cursor()
         try:
             cursor.execute("""
@@ -99,7 +99,7 @@ class TranslateButton(View):
 
     @button(label="English", style=discord.ButtonStyle.gray, custom_id="english_button")
     async def button_eng(self, _, interaction: Interaction):
-        connection = db.get_connection()
+        connection = self.db.get_connection()
         cursor = connection.cursor()
         try:
             cursor.execute("""
@@ -144,7 +144,7 @@ class TranslateButton(View):
 
     @button(label="Chinese", style=discord.ButtonStyle.gray, custom_id="chinese_button")
     async def button_chn(self, _, interaction: Interaction):
-        connection = db.get_connection()
+        connection = self.db.get_connection()
         cursor = connection.cursor()
         try:
             cursor.execute("""
@@ -190,39 +190,45 @@ class TranslateButton(View):
 
 @bot.event
 async def on_message(message):
-    if message.author == bot.user or message.author.bot:
+    # 자신의 봇 메시지만 무시
+    if message.author == bot.user:
         return
 
+    # 허용된 채널에서 메시지가 있고, 내용이 있는 경우에만 처리
     if message.channel.id in allowed_channels and len(message.content.strip()) > 0:
-        connection = db.get_connection()
-        try:
-            with connection.cursor() as cursor:
+        await handle_translation(message)
+
+
+async def handle_translation(message):
+    connection = db.get_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                select id
+                from messages_translate
+                where guild_id = %s 
+                and message_id = %s
+            """, (guild_id, message.id))
+            result = cursor.fetchone()
+
+            if not result:
                 cursor.execute("""
-                    select id
-                    from messages_translate
-                    where guild_id = %s 
-                    and message_id = %s
-                """, (guild_id, message.id))
-                result = cursor.fetchone()
+                    insert into messages_translate(guild_id, message_id, channel_name, user_id, user_name, message_org)
+                    values (%s, %s, %s, %s, %s, %s) 
+                """, (guild_id, message.id, message.channel.name, message.author.id, message.author, message.content))
+                connection.commit()
 
-                if not result:
-                    cursor.execute("""
-                        insert into messages_translate(guild_id, message_id, channel_name, user_id, user_name, message_org)
-                        values (%s, %s, %s, %s, %s, %s) 
-                    """, (guild_id, message.id, message.channel.name, message.author.id, message.author, message.content))
-                    connection.commit()
-
-                view = TranslateButton(db, guild_id, message.id)
-                # custom_id를 각 버튼에 추가하여 영구적으로 만들기
-                for child in view.children:
-                    if isinstance(child, discord.ui.Button):
-                        child.custom_id = f"{child.label.lower()}_{message.id}"
-                await message.channel.send(view=view, reference=message)
-        except Exception as e:
-            logger.error(f"Error handling message: {e}")
-            connection.rollback()
-        finally:
-            connection.close()
+            view = TranslateButton(db, guild_id, message.id)
+            # custom_id를 각 버튼에 추가하여 영구적으로 만들기
+            for child in view.children:
+                if isinstance(child, discord.ui.Button):
+                    child.custom_id = f"{child.label.lower()}_{message.id}"
+            await message.channel.send(view=view, reference=message)
+    except Exception as e:
+        logger.error(f"Error handling message: {e}")
+        connection.rollback()
+    finally:
+        connection.close()
 
 
 @bot.event
